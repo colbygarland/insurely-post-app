@@ -42,11 +42,16 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
 
     public function isLinkedinAuthenticated(){
         return !empty($this->linkedin_refresh_token);
+    }
+
+    public function admin(){
+        return in_array($this->email, ['colbygarland@gmail.com']);
     }
 }

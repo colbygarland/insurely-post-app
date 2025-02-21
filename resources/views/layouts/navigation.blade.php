@@ -18,6 +18,12 @@
                     <x-nav-link :href="route('posts')" :active="request()->routeIs('posts')">
                         {{ __('Post To LinkedIn') }}
                     </x-nav-link>
+
+                    @if(auth()->user()->admin())
+                        <x-nav-link :href="route('users.list')" :active="request()->routeIs('users.list')">
+                            {{ __('Users') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
