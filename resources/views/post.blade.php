@@ -27,7 +27,11 @@
             @if(count($postsToBeSent) == 0)
                 <div class="bg-blue-100 text-blue-900 inline-block rounded-lg py-2 px-4 mb-4">There currently are no new posts from WordPress.</div>
             @else
-                <a href="/posts/manually-post-to-linkedin" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Send Posts Manually to LinkedIn</a>
+                @if(auth()->user()->isLinkedinAuthenticated())
+                    <a href="/posts/manually-post-to-linkedin" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Send Posts Manually to LinkedIn</a>
+                @else 
+                    <p>You must authenticate with LinkedIn first.</p>
+                @endif
             @endif
             <div class="grid grid-cols-3 gap-8 mt-4">
                 @foreach ($postsToBeSent as $post)
@@ -62,7 +66,11 @@
                           </p>
                           <p>
                             <a href="{{ $post->link }}" target="_blank" class="text-gray-900 inline-flex items-center px-4 py-2 bg-transparent border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-gray-700 hover:text-white focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">View Article</a>
-                            <a href="/posts/manually-post-to-single-to-linkedin/{{ $post->id }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Re-post</a>
+                            @if(auth()->user()->isLinkedinAuthenticated())
+                                <a href="/posts/manually-post-to-single-to-linkedin/{{ $post->id }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Re-post</a>
+                            @else 
+                                <a href="/get-token" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Authenticate with LinkedIn</a>
+                            @endif
                           </p>
                       </div>
                   @endforeach

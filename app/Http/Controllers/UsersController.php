@@ -15,6 +15,10 @@ class UsersController extends Controller
         ]);
     }
 
+    public function unauthorized(){
+        return view('unauthorized');
+    }
+
     public function verify(Request $request, string $id){
         $user = User::find($id);
         $user->verified_at = Carbon::now();
