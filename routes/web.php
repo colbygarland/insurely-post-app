@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/unauthorized', [UsersController::class, 'unauthorized'])->name('unauthorized');
 
 Route::middleware(['auth', Verified::class])->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [PostsController::class, 'index'])->name('posts');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -21,7 +21,6 @@ Route::middleware(['auth', Verified::class])->group(function () {
     // Linkedin related things 
     Route::get('access-token', [LinkedInController::class, 'saveTokens']);
     Route::get('get-token', [LinkedInController::class, 'redirectToAuth']);
-    Route::get('posts', [PostsController::class, 'index'])->name('posts');
     Route::get('posts/make/{id}', [LinkedInController::class, 'makePostToLinkedIn']);
     Route::get('posts/confirm/{id}', [PostsController::class, 'confirmPost']);
     Route::get('posts/list', [PostsController::class, 'list']);

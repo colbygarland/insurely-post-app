@@ -76,14 +76,14 @@ class LinkedInController extends Controller
         } catch(Exception $e){
             Log::error('Error creating post: ' . $e->getMessage());
             Session::flash('errorMessage', 'Something went wrong. Error: ' . $e->getMessage());
-            return redirect('/posts');
+            return redirect('/');
         }
 
         // Mark the post as published
         $post->markPublished();
 
         Session::flash('successMessage', 'LinkedIn post successfully created.');
-        return redirect('/posts');
+        return redirect('/');
     }
 
     public function companySearch(Request $request)

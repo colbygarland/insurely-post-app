@@ -30,7 +30,7 @@ class PostsController extends Controller
     {
         Post::fetchFromWordpress();
         Session::flash('successMessage', 'Posts successfully synced with WordPress.');
-        return redirect('/posts');
+        return redirect('/');
     }
 
     public function list()
@@ -79,7 +79,7 @@ class PostsController extends Controller
             Session::flash('errorMessage', 'Something went wrong. Posts were not sent to LinkedIn.'); 
         }
 
-        return redirect('/posts');
+        return redirect('/');
     }
 
     public function manuallyPostSingleToLinkedIn(Request $request, string $postId)
@@ -92,7 +92,7 @@ class PostsController extends Controller
             Session::flash('errorMessage', 'Something went wrong. Post was not sent to LinkedIn.'); 
         }
 
-        return redirect('/posts');
+        return redirect('/');
     }
 
     public function manuallyMarkAllPublished()
@@ -105,6 +105,6 @@ class PostsController extends Controller
             Session::flash('successMessage', 'No posts to publish.');
         }
         
-        return redirect('/posts');
+        return redirect('/');
     }
 }
