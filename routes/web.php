@@ -21,6 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::get('posts/confirm/{id}', [PostsController::class, 'confirmPost']);
     Route::get('posts/list', [PostsController::class, 'list']);
     Route::get('posts/manually-post-to-linkedin', [PostsController::class, 'manuallyPostToLinkedIn']);
+    Route::get('posts/manually-post-to-single-to-linkedin/{id}', [PostsController::class, 'manuallyPostSingleToLinkedIn']);
     Route::get('posts/manually-mark-published', [PostsController::class, 'manuallyMarkAllPublished']);
     Route::get('company-lookup', [LinkedInController::class, 'companySearch']);
 

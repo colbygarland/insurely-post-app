@@ -82,6 +82,19 @@ class PostsController extends Controller
         return redirect('/posts');
     }
 
+    public function manuallyPostSingleToLinkedIn(Request $request, string $postId)
+    {
+        $post = Post::find($postId);
+        $postsCreatedSuccessfully = Post::postToLinkedIn($post);
+        if($postsCreatedSuccessfully){
+            Session::flash('successMessage', 'Post was successfully sent to LinkedIn.'); 
+        } else {
+            Session::flash('errorMessage', 'Something went wrong. Post was not sent to LinkedIn.'); 
+        }
+
+        return redirect('/posts');
+    }
+
     public function manuallyMarkAllPublished()
     {
         $count = Post::where('published_at', null)->update(['published_at' => Carbon::now()]);

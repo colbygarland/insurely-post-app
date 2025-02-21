@@ -134,10 +134,14 @@ class Post extends Model
         return Post::where('published_at', null)->limit(self::$maxLimit)->get();
     }
 
-    public static function postToLinkedIn()
+    public static function postToLinkedIn(Post $post = null)
     {
-        // Get the latest posts that have not been published yet 
-        $posts = Post::postsToBeSent();
+        if($post){
+            $posts = [$post];
+        } else {
+            // Get the latest posts that have not been published yet 
+            $posts = Post::postsToBeSent();
+        }
 
         foreach($posts as $post){
             try {
