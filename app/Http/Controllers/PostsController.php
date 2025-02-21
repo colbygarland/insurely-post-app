@@ -14,7 +14,7 @@ class PostsController extends Controller
 
     public function index(){
         return view('post', [
-            'postsAlreadySent' => Post::where('published_at', '!=', null)->get(),
+            'postsAlreadySent' => Post::where('published_at', '!=', null)->limit(25)->get(),
             'postsToBeSent' => Post::postsToBeSent()
         ]);
     }
