@@ -47,15 +47,18 @@ class User extends Authenticatable
         ];
     }
 
-    public function isLinkedinAuthenticated(){
-        return !empty($this->linkedin_refresh_token) || !empty($this->linkedin_access_token);
+    public function isLinkedinAuthenticated()
+    {
+        return ! empty($this->linkedin_refresh_token) || ! empty($this->linkedin_access_token);
     }
 
-    public function admin(){
+    public function admin()
+    {
         return in_array($this->email, ['colbygarland@gmail.com']);
     }
 
-    public function verified(){
+    public function verified()
+    {
         return $this->verified_at != null;
     }
 }

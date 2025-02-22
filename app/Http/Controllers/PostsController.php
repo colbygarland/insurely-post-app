@@ -2,27 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Request;
 use App\Models\Post;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 class PostsController extends Controller
 {
-    
-
-    public function index(){
+    public function index()
+    {
         return view('post', [
             'postsAlreadySent' => Post::where('published_at', '!=', null)->limit(25)->get(),
-            'postsToBeSent' => Post::postsToBeSent()
+            'postsToBeSent' => Post::postsToBeSent(),
         ]);
     }
 
-    public function confirmPost(int $postId){
+    public function confirmPost(int $postId)
+    {
         $post = Post::find($postId);
+
         return view('post-create', [
-            'post' => $post
+            'post' => $post,
         ]);
     }
 
@@ -30,28 +30,31 @@ class PostsController extends Controller
     {
         Post::fetchFromWordpress();
         Session::flash('successMessage', 'Posts successfully synced with WordPress.');
+
         return redirect('/');
     }
 
     public function list()
     {
         $posts = Post::all();
+
         return response()->json([
             'meta' => [
-                'count' => count($posts)
+                'count' => count($posts),
             ],
-            'data' => $posts
+            'data' => $posts,
         ]);
     }
 
     public function get(string $postId)
     {
         $post = Post::findOrFail($postId);
+
         return response()->json([
             'meta' => [
-                'message' => 'Post fetched successfully'
+                'message' => 'Post fetched successfully',
             ],
-            'data' => $post
+            'data' => $post,
         ]);
     }
 
@@ -64,19 +67,19 @@ class PostsController extends Controller
         return response()->json([
             'meta' => [
                 'message' => 'Post updated successfully',
-                'attributes_changed' => $request->all()
+                'attributes_changed' => $request->all(),
             ],
-            'data' => $post
+            'data' => $post,
         ]);
     }
 
     public function manuallyPostToLinkedIn()
     {
         $postsCreatedSuccessfully = Post::postToLinkedIn();
-        if($postsCreatedSuccessfully){
-            Session::flash('successMessage', 'Posts were successfully sent to LinkedIn.'); 
+        if ($postsCreatedSuccessfully) {
+            Session::flash('successMessage', 'Posts were successfully sent to LinkedIn.');
         } else {
-            Session::flash('errorMessage', 'Something went wrong. Posts were not sent to LinkedIn.'); 
+            Session::flash('errorMessage', 'Something went wrong. Posts were not sent to LinkedIn.');
         }
 
         return redirect('/');
@@ -86,10 +89,10 @@ class PostsController extends Controller
     {
         $post = Post::find($postId);
         $postsCreatedSuccessfully = Post::postToLinkedIn($post);
-        if($postsCreatedSuccessfully){
-            Session::flash('successMessage', 'Post was successfully sent to LinkedIn.'); 
+        if ($postsCreatedSuccessfully) {
+            Session::flash('successMessage', 'Post was successfully sent to LinkedIn.');
         } else {
-            Session::flash('errorMessage', 'Something went wrong. Post was not sent to LinkedIn.'); 
+            Session::flash('errorMessage', 'Something went wrong. Post was not sent to LinkedIn.');
         }
 
         return redirect('/');
@@ -98,13 +101,13 @@ class PostsController extends Controller
     public function manuallyMarkAllPublished()
     {
         $count = Post::where('published_at', null)->update(['published_at' => Carbon::now()]);
-        
-        if($count > 0){
+
+        if ($count > 0) {
             Session::flash('successMessage', 'Posts all marked as published.');
         } else {
             Session::flash('successMessage', 'No posts to publish.');
         }
-        
+
         return redirect('/');
     }
 }

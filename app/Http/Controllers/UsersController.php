@@ -9,22 +9,26 @@ use Illuminate\Support\Facades\Session;
 
 class UsersController extends Controller
 {
-    public function list(){
+    public function list()
+    {
         return view('users', [
-            'users' => User::all()
+            'users' => User::all(),
         ]);
     }
 
-    public function unauthorized(){
+    public function unauthorized()
+    {
         return view('unauthorized');
     }
 
-    public function verify(Request $request, string $id){
+    public function verify(Request $request, string $id)
+    {
         $user = User::find($id);
         $user->verified_at = Carbon::now();
         $user->save();
 
         Session::flash('successMessage', 'User successfully verified.');
+
         return redirect('/users');
     }
 }

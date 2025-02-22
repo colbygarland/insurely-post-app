@@ -15,7 +15,7 @@ class Verified
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!$request->user()->verified()){
+        if (! $request->user()->verified()) {
             return redirect('/unauthorized');
         }
 
