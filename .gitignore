@@ -3,6 +3,7 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/node_modules
 /vendor
 .env
 .env.backup
