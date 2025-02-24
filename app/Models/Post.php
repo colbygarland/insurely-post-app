@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class Post extends Model
 {
-    private static $wordpressUrl = 'https://insurely.ca/wp-json/wp/v2/posts?per_page=25';
+    private static $wordpressUrl = 'https://v0-simple-api-endpoint-bb3acqzo8-colbygarlands-projects.vercel.app/api/fetch-url?url=https://insurely.ca/wp-json/wp/v2/posts?per_page=25';
 
     // The max number of posts to send to LinkedIn at one time
     private static $maxLimit = 5;
