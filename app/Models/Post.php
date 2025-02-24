@@ -122,7 +122,7 @@ class Post extends Model
     {
         $posts = Http::withHeaders([
             'Content-Type' => 'application/json',
-        ])->get(self::$wordpressUrl); // TODO: paginate?
+        ])->timeout(30)->get(self::$wordpressUrl); // TODO: paginate?
         Log::debug('Response from wordpress: '.json_encode($posts, JSON_PRETTY_PRINT));
         // loop through these and create a model in the DB for them, if they don't already exist, based on the wordpress_id.
         $posts_created = [];
