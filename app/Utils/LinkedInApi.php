@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use App\Models\Post;
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Support\Env;
@@ -71,7 +72,7 @@ class LinkedInApi
     public static function createSharePost(Post $post)
     {
         Log::debug('Creating a post on LinkedIn');
-        $user = Auth::user();
+        $user = Auth::user() ?? User::where('email', 'kateb@insurely.ca')->first();
 
         // Create the image first
         // TODO: Ensure the post has an image with it as well
