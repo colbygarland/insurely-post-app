@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/unauthorized', [UsersController::class, 'unauthorized'])->name('unauthorized');
 
 Route::middleware(['auth', Verified::class])->group(function () {
-    Route::get('/', [PostsController::class, 'index'])->name('posts');
+    Route::get('/', [PostsController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
