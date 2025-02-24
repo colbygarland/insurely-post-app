@@ -120,8 +120,9 @@ class Post extends Model
 
     public static function fetchFromWordpress()
     {
-        $posts = Http::get(self::$wordpressUrl); // TODO: paginate?
-        throw new Exception(json_encode($posts, JSON_PRETTY_PRINT));
+        $posts = Http::withHeaders([
+            'Content-Type' => 'application/json',
+        ])->get(self::$wordpressUrl); // TODO: paginate?
         Log::debug('Response from wordpress: '.json_encode($posts, JSON_PRETTY_PRINT));
         // loop through these and create a model in the DB for them, if they don't already exist, based on the wordpress_id.
         $posts_created = [];
