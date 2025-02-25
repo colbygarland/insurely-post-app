@@ -21,6 +21,12 @@
                             {{ __('Users') }}
                         </x-nav-link>
                     @endif
+
+                    @if(auth()->user()->admin())
+                    <x-nav-link :href="route('settings')" :active="request()->routeIs('settings')">
+                        {{ __('Settings') }}
+                    </x-nav-link>
+                @endif
                 </div>
             </div>
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\LinkedInController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Middleware\Verified;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/users', [UsersController::class, 'list'])->name('users.list');
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::get('/users/verify-user/{id}', [UsersController::class, 'verify']);
 
     // Linkedin related things
