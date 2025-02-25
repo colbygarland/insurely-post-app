@@ -7,6 +7,18 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            @if(Session::has('successMessage'))
+                <div class="bg-green-100 text-green-900 inline-block rounded-lg py-2 px-4 mb-4">
+                    <h2 class="text-xl font-bold mb-2">Success!</h2>
+                    {{ Session::get('successMessage') }}
+                </div>
+            @endif
+            @if(Session::has('errorMessage'))
+                <div class="bg-red-100 text-red-900 inline-block rounded-lg py-2 px-4 mb-4">
+                    <h2 class="text-xl font-bold mb-2">Uh oh, something went wrong.</h2>
+                    {{ Session::get('errorMessage') }}
+                </div>
+            @endif
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     @include('profile.partials.update-profile-information-form')

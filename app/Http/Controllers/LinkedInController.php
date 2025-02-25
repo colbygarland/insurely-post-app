@@ -111,4 +111,13 @@ class LinkedInController extends Controller
 
         return response()->json($response);
     }
+
+    public function revokeTokens()
+    {
+        $user = Auth::user();
+        $user->revokeLinkedinTokens();
+        Session::flash('successMessage', 'Tokens successfully revoked.');
+
+        return redirect('/profile');
+    }
 }

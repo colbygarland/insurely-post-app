@@ -52,6 +52,13 @@ class User extends Authenticatable
         return ! empty($this->linkedin_refresh_token) || ! empty($this->linkedin_access_token);
     }
 
+    public function revokeLinkedinTokens()
+    {
+        $this->linkedin_access_token = null;
+        $this->linkedin_refresh_token = null;
+        $this->save();
+    }
+
     public function admin()
     {
         return in_array($this->email, ['colbygarland@gmail.com']);

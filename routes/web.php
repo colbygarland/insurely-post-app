@@ -15,6 +15,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile/revoke-linkedin-tokens', [LinkedInController::class, 'revokeTokens']);
     Route::get('/users', [UsersController::class, 'list'])->name('users.list');
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::get('/users/verify-user/{id}', [UsersController::class, 'verify']);
