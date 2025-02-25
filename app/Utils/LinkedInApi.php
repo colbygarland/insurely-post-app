@@ -82,7 +82,13 @@ class LinkedInApi
         Log::debug('Post: '.json_encode($post->toArray()));
 
         // Then create the post
-        $response = self::post($user->linkedin_access_token, 'https://api.linkedin.com/rest/posts', [
+        // Sending via the connector because the server keeps getting blocked for some reason..
+        $response = self::post($user->linkedin_access_token, env('CONNECTOR_URL'), [
+            /** Needed if using the connector */
+            'accessToken' => $user->linkedin_access_token,
+            'linkedin_version' => self::$API_VERSION,
+            'restli' => '2.0.0',
+            /** end  */
             'author' => self::$URN,
             'lifecycleState' => 'PUBLISHED',
             'commentary' => $post->getSummary(),
