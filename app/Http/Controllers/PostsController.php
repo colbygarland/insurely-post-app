@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Utils\LinkedInApi;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -75,6 +76,9 @@ class PostsController extends Controller
 
     public function manuallyPostToLinkedIn()
     {
+        // First ping the server to ensure it is all warmed up
+        LinkedInApi::pingServer();
+
         $postsCreatedSuccessfully = Post::postToLinkedIn();
         if ($postsCreatedSuccessfully) {
             Session::flash('successMessage', 'Posts were successfully sent to LinkedIn.');
