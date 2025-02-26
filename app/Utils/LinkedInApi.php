@@ -83,7 +83,7 @@ class LinkedInApi
 
         // Then create the post
         // Sending via the connector because the server keeps getting blocked for some reason..
-        $response = self::post($user->linkedin_access_token, env('CONNECTOR_URL').'/api/linkedin', [
+        $response = self::post($user->linkedin_access_token, env('CONNECTOR_URL').'api/linkedin', [
             /** Needed if using the connector */
             'accessToken' => $user->linkedin_access_token,
             'linkedin_version' => self::$API_VERSION,
@@ -256,7 +256,7 @@ class LinkedInApi
     {
         Log::debug('pinging server');
 
-        $response = Http::get(env('CONNECTOR_URL').'/api/ping');
+        $response = Http::get(env('CONNECTOR_URL').'api/ping');
         $json = $response->body();
         Log::debug('Pong response from server: '.$json);
 
