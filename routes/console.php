@@ -9,7 +9,7 @@ Schedule::command('telescope:prune --hours=48')->daily();
 // Ping the server to keep it warm before we post
 Schedule::call(function () {
     LinkedInApi::pingServer();
-})->everyMinute();
+})->everyFiveMinutes();
 
 Schedule::call(function () {
     $run = env('SCHEDULE_POSTS');
