@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Middleware\Verified;
+use App\Utils\LinkedInApi;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/unauthorized', [UsersController::class, 'unauthorized'])->name('unauthorized');
@@ -30,6 +31,9 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::get('posts/manually-post-to-single-to-linkedin/{id}', [PostsController::class, 'manuallyPostSingleToLinkedIn']);
     Route::get('posts/manually-mark-published', [PostsController::class, 'manuallyMarkAllPublished']);
     Route::get('company-lookup', [LinkedInController::class, 'companySearch']);
+    Route::get('ping', function () {
+        return response()->json(LinkedInApi::pingServer());
+    });
 
     // WordPress related things
     Route::get('wordpress/fetch_from_wordpress', [PostsController::class, 'fetchFromWordpress']);
