@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AiController;
 use App\Http\Controllers\LinkedInController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfileController;
@@ -38,5 +39,12 @@ Route::middleware(['auth', Verified::class])->group(function () {
     // WordPress related things
     Route::get('wordpress/fetch_from_wordpress', [PostsController::class, 'fetchFromWordpress']);
 });
+
+// Outbound agent stuff
+Route::post('ai/outbound-call', [AiController::class, 'outboundCall']);
+Route::post('ai/outbound-call-twiml', [AiController::class, 'outboundCallTwiml']);
+Route::get('ai/outbound-call-twiml', [AiController::class, 'outboundCallTwiml']);
+Route::put('ai/outbound-call-twiml', [AiController::class, 'outboundCallTwiml']);
+Route::patch('ai/outbound-call-twiml', [AiController::class, 'outboundCallTwiml']);
 
 require __DIR__.'/auth.php';

@@ -123,4 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'Twilio' => 'Aloha\Twilio\Support\Laravel\Facade',
+
 ];
