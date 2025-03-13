@@ -105,10 +105,11 @@ class Post extends Model
     {
         $summary = $this->summary;
 
-        // Append the quote
-        /** @disregard */
-        $verbage = str_contains(strtolower($this->quote_job_title), 'owner') ? 'of' : 'from';
-        $summary .= "\n\n\"$this->quote_body\", says $this->quote_author, $this->quote_job_title $verbage $this->quote_company";
+        if ($this->quote_body && $this->quote_author) {
+            // Append the quote
+            $verbage = str_contains(strtolower($this->quote_job_title), 'owner') ? 'of' : 'from';
+            $summary .= "\n\n\"$this->quote_body\", says $this->quote_author, $this->quote_job_title $verbage $this->quote_company";
+        }
 
         // Append the Link to the Article
         $summary .= "\n\nRead the full article here: $this->link";
