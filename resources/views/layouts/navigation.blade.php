@@ -15,6 +15,9 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('posts')">
                         {{ __('Home') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('ai.index')" :active="request()->routeIs('ai.index')">
+                        {{ __('AI Outbound Call') }}
+                    </x-nav-link>
 
                     @if(auth()->user()->admin())
                         <x-nav-link :href="route('users.list')" :active="request()->routeIs('users.list')">

@@ -2,63 +2,82 @@
 
 namespace App\Http\Controllers;
 
-use Aloha\Twilio\Twilio;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
 
 class AiController extends Controller
 {
-    private $twilioClient;
-
-    public function __construct()
+    public function index()
     {
-        // Ensure env variables are set
-        if (! env('ELEVENLABS_API_KEY')) {
-            throw new Exception('Missing required environment variables.');
-        }
-
-        $this->twilioClient = new Twilio(env('TWILIO_ACCOUNT_SID'), env('TWILIO_AUTH_TOKEN'), env('TWILIO_PHONE_NUMBER'));
+        return view('outbound-call');
     }
 
     public function outboundCall(Request $request)
     {
-        $host = $request->headers->get('host');
-        $number = $request->input('number');
-        $prompt = urlencode($request->input('prompt', ''));
-        $firstMessage = urlencode($request->input('first_message', ''));
+        $number = $request->number;
+        $firstName = $request->firstName;
+        $lastName = $request->lastName;
+        $email = $request->email;
+        $timezone = $request->timezone;
+        $isWebUI = $request->isWebUI;
 
-        $twimlUrl = url("/ai/outbound-call-twiml?prompt={$prompt}&first_message={$firstMessage}");
+        if (! $number) {
+            return response()->json(['error' => 'Number is required'], 400);
+        }
+        if (! $firstName) {
+            return response()->json(['error' => 'First name is required'], 400);
+        }
+        if (! $lastName) {
+            return response()->json(['error' => 'Last name is required'], 400);
+        }
+        if (! $email) {
+            return response()->json(['error' => 'Email is required'], 400);
+        }
+        if (! $timezone) {
+            return response()->json(['error' => 'Timezone is required'], 400);
+        }
 
         try {
-            $call = $this->twilioClient->call($number, $twimlUrl, [
-                'from' => env('TWILIO_PHONE_NUMBER')]);
-            Log::debug('Initiated outbound call: '.$call);
+            $response = Http::post(env('OUTBOUND_CALLER_URL').'/outbound-call', [
+                'number' => $number,
+                'firstName' => $firstName,
+                'lastName' => $lastName,
+                'email' => $email,
+                'timezone' => $timezone,
+                'caller_api_key' => env('OUTBOUND_CALLER_API_KEY'),
+            ]);
+            $json = $response->json();
 
-            return response()->json(['success' => true, 'callSid' => $call], Response::HTTP_OK);
-        } catch (Exception $exception) {
-            Log::error('Error initiating outbound call: '.$exception->getMessage());
+            if ($response->successful()) {
+                if ($isWebUI) {
+                    Session::flash('successMessage', 'Outbound call initiated successfully');
 
-            return response()->json(['error' => 'Failed to initiate call.', 'success' => false], Response::HTTP_BAD_REQUEST);
+                    return redirect()->route('ai.index');
+                } else {
+                    return response()->json(['message' => 'Outbound call initiated successfully', 'meta' => $json], 200);
+                }
+
+            } else {
+                if ($isWebUI) {
+                    Session::flash('errorMessage', $json);
+
+                    return redirect()->route('ai.index');
+                } else {
+                    return response()->json(['message' => 'Failed to initiate outbound call', 'error' => $json], 500);
+                }
+
+            }
+        } catch (Exception $e) {
+            if ($isWebUI) {
+                Session::flash('errorMessage', $e->getMessage());
+
+                return redirect()->route('ai.index');
+            } else {
+                return response()->json(['message' => 'Failed to make outbound call', 'error' => $e->getMessage()], 500);
+            }
+
         }
-    }
-
-    public function outboundCallTwiml(Request $request)
-    {
-        $prompt = $request->query('prompt', '');
-        $firstMessage = $request->query('first_message', '');
-
-        $twimlResponse = '<?xml version="1.0" encoding="UTF-8"?>
-    <Response>
-        <Connect>
-            <Stream url="wss://'.$request->getHost().'/outbound-media-stream">
-                <Parameter name="prompt" value="'.htmlspecialchars($prompt, ENT_QUOTES, 'UTF-8').'" />
-                <Parameter name="first_message" value="'.htmlspecialchars($firstMessage, ENT_QUOTES, 'UTF-8').'" />
-            </Stream>
-        </Connect>
-    </Response>';
-
-        return new Response($twimlResponse, 200, ['Content-Type' => 'text/xml']);
     }
 }

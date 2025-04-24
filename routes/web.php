@@ -38,13 +38,10 @@ Route::middleware(['auth', Verified::class])->group(function () {
 
     // WordPress related things
     Route::get('wordpress/fetch_from_wordpress', [PostsController::class, 'fetchFromWordpress']);
-});
 
-// Outbound agent stuff
-Route::post('ai/outbound-call', [AiController::class, 'outboundCall']);
-Route::post('ai/outbound-call-twiml', [AiController::class, 'outboundCallTwiml']);
-Route::get('ai/outbound-call-twiml', [AiController::class, 'outboundCallTwiml']);
-Route::put('ai/outbound-call-twiml', [AiController::class, 'outboundCallTwiml']);
-Route::patch('ai/outbound-call-twiml', [AiController::class, 'outboundCallTwiml']);
+    // Outbound agent stuff
+    Route::get('/ai/outbound-call', [AiController::class, 'index'])->name('ai.index');
+    Route::post('/ai/outbound-call', [AiController::class, 'outboundCall'])->name('ai.send');
+});
 
 require __DIR__.'/auth.php';

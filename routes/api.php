@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AiController;
 use App\Http\Controllers\PostsController;
 use App\Http\Middleware\Verified;
 use Illuminate\Http\Request;
@@ -16,3 +17,6 @@ Route::middleware([Verified::class])->group(function () {
     Route::get('posts/get/{post}', [PostsController::class, 'get']);
     Route::post('posts/{post}', [PostsController::class, 'update']);
 });
+
+// Outbound agent stuff
+Route::post('ai/outbound-call', [AiController::class, 'outboundCall']);
