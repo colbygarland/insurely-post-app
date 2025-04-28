@@ -45,7 +45,7 @@
 
                 <div>
                   <x-input-label for="timezone" :value="__('Timezone')" />
-                  <x-text-input id="timezone" name="timezone" type="text" class="mt-1 block w-full" value="MST" required autofocus />
+                  <x-text-input id="timezone" name="timezone" type="text" class="mt-1 block w-full" value="America/Edmonton" required autofocus />
                   <x-input-error class="mt-2" :messages="$errors->get('timezone')" />
                 </div>
 
