@@ -42,6 +42,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
     // Outbound agent stuff
     Route::get('/ai/outbound-call', [AiController::class, 'index'])->name('ai.index');
     Route::post('/ai/outbound-call', [AiController::class, 'outboundCall'])->name('ai.send');
+    Route::post('/ai/upload', [AiController::class, 'upload'])->name('ai.upload');
 });
 
 require __DIR__.'/auth.php';

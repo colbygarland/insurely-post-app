@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class AiController extends Controller
 {
@@ -79,5 +81,18 @@ class AiController extends Controller
             }
 
         }
+    }
+
+    public function upload(Request $request)
+    {
+        $file = $request->file('file');
+        $now = Carbon::now()->format('Y-m-d_H-i-s');
+        $fileName = $now.'_'.'outbound_call_data.csv';
+        $file->storeAs('public/uploads', $fileName);
+        $fileUrl = Storage::url($fileName);
+
+        Session::flash('successMessage', 'File uploaded successfully. File url: '.$fileUrl);
+
+        return redirect()->route('ai.index');
     }
 }

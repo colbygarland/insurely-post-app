@@ -13,6 +13,8 @@
           @if(Session::has('errorMessage'))
               <div class="bg-red-200 text-red-900 inline-block rounded-lg py-2 px-4 mb-4">{{ Session::get('errorMessage') }}</div>
           @endif
+
+          <div class="lg:grid lg:grid-cols-2 lg:gap-6">
           <div class="bg-white shadow-sm sm:rounded-lg mb-16 p-6">
               <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">Make an Outbound Call</h2>
               <form method="post" action="{{ route('ai.send') }}" class="mt-6 space-y-6">
@@ -56,6 +58,28 @@
                 </div>
             </form>
           </div>
+          <div class="bg-white shadow-sm sm:rounded-lg mb-16 p-6">
+              <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">Upload a CSV file</h2>
+              <form method="post" action="{{ route('ai.upload') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
+                @csrf
+                @method('post')
+
+                <div>
+                    <x-input-label for="file" :value="__('CSV File')" />
+                    <x-text-input id="file" name="file" type="file" class="mt-1 block w-full" required autofocus />
+                    <x-input-error class="mt-2" :messages="$errors->get('file')" />
+                </div>
+
+                <input type="hidden" name="isWebUI" value="1">
+        
+                <div class="flex items-center gap-4">
+                    <x-primary-button>Upload CSV</x-primary-button>
+                </div>
+            </form>
+          </div>
+</div>
+
+         
       </div>
   </div>
 </x-app-layout>
