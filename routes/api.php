@@ -20,3 +20,6 @@ Route::middleware([Verified::class])->group(function () {
 
 // Outbound agent stuff
 Route::post('ai/outbound-call', [AiController::class, 'outboundCall']);
+Route::get('ai/current-datetime', function(){
+    return \Carbon\Carbon::now();
+});
