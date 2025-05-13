@@ -65,6 +65,9 @@ class DispatchCall implements ShouldQueue
                 }
             }
             Log::info('DispatchCall: Successfully dispatched all API calls');
+
+            // Remove the file now to prevent it from being called more than once
+            Storage::delete('public/uploads/ocd.csv');
         } catch (Exception $e) {
             Log::error('DispatchCall: Error processing CSV file: '.$e->getMessage());
             Log::error('DispatchCall: Stack trace: '.$e->getTraceAsString());
