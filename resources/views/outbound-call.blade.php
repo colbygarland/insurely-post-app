@@ -59,8 +59,9 @@
             </form>
           </div>
           <div class="">
-          <div class="bg-white shadow-sm sm:rounded-lg p-6 mb-8 lg:mb-16">
+          <div class="bg-white shadow-sm sm:rounded-lg p-6 mb-16">
               <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">Upload a CSV file</h2>
+              <p>The CSV file should have the following columns: <strong>ID</strong>, <strong>First Name</strong>, <strong>Last Name</strong>, <strong>Email</strong>, <strong>Phone Number</strong>. The header should always be the first row.</p>
               <form method="post" action="{{ route('ai.upload') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
                 @csrf
                 @method('post')
