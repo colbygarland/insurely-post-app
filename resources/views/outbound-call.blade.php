@@ -15,7 +15,7 @@
           @endif
 
           <div class="lg:grid lg:grid-cols-2 lg:gap-6">
-          <div class="bg-white shadow-sm sm:rounded-lg mb-16 p-6">
+          <div class="bg-white shadow-sm sm:rounded-lg mb-16 lg:mb-0 p-6">
               <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">Make an Outbound Call</h2>
               <form method="post" action="{{ route('ai.send') }}" class="mt-6 space-y-6">
                 @csrf
@@ -58,7 +58,8 @@
                 </div>
             </form>
           </div>
-          <div class="bg-white shadow-sm sm:rounded-lg mb-16 p-6">
+          <div class="bg-white shadow-sm sm:rounded-lg p-6">
+          <div class="mb-8 lg:mb-16">
               <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">Upload a CSV file</h2>
               <form method="post" action="{{ route('ai.upload') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
                 @csrf
@@ -77,6 +78,16 @@
                 </div>
             </form>
           </div>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">Process CSV file</h2>
+            <p>Using the uploaded CSV file, the AI will make outbound calls to the phone numbers in the CSV file.</p>
+            <form method="post" action="{{ route('ai.process') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
+              @csrf
+              @method('post')
+              <x-primary-button>Process CSV</x-primary-button>
+              <input type="hidden" name="isWebUI" value="1">
+            </form>
+          </div>
+         
 </div>
 
          
