@@ -105,18 +105,18 @@ class AiController extends Controller
         $minutes = $request->minutes;
 
         // Get the full path to the file
-        // $file = Storage::get('public/uploads/'.$this->FILE_NAME);
+        $file = Storage::get('public/uploads/'.$this->FILE_NAME);
 
         // Check if file exists
-        // if (! $file) {
-        //     if ($isWebUI) {
-        //         Session::flash('errorMessage', 'File not found. Upload a CSV first.');
+        if (! $file) {
+            if ($isWebUI) {
+                Session::flash('errorMessage', 'File not found. Upload a CSV first.');
 
-        //         return redirect()->route('ai.index');
-        //     } else {
-        //         return response()->json(['error' => 'File not found. Upload a CSV first.'], 404);
-        //     }
-        // }
+                return redirect()->route('ai.index');
+            } else {
+                return response()->json(['error' => 'File not found. Upload a CSV first.'], 404);
+            }
+        }
 
         Log::info('Calling DispatchCall::dispatch()');
         DispatchCall::dispatch($minutes);
