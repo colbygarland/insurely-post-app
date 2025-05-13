@@ -14,12 +14,15 @@ class DispatchCall implements ShouldQueue
 {
     use InteractsWithQueue, Queueable, SerializesModels;
 
+    private $minutes;
+
     /**
      * Create a new job instance.
      */
-    public function __construct()
+    public function __construct($minutes)
     {
         Log::info('DispatchCall: __construct() started');
+        $this->minutes = $minutes;
     }
 
     /**
@@ -47,9 +50,8 @@ class DispatchCall implements ShouldQueue
             Log::info('DispatchCall: Processed '.count($rows).' rows from CSV');
 
             $totalRows = count($rows);
-            $totalDurationMinutes = config('csv_job.duration_minutes', 60);
-            $delayBetweenJobs = ($totalDurationMinutes * 60) / $totalRows;
-            Log::info('DispatchCall: Will process '.$totalRows.' rows over '.$totalDurationMinutes.' minutes');
+            $delayBetweenJobs = ($this->minutes * 60) / $totalRows;
+            Log::info('DispatchCall: Will process '.$totalRows.' rows over '.$this->minutes.' minutes');
 
             foreach ($rows as $index => $row) {
                 if (count($row) >= 5) {  // Make sure we have all required fields

@@ -102,6 +102,7 @@ class AiController extends Controller
     public function process(Request $request)
     {
         $isWebUI = $request->isWebUI;
+        $minutes = $request->minutes;
 
         // Get the full path to the file
         // $file = Storage::get('public/uploads/'.$this->FILE_NAME);
@@ -118,7 +119,7 @@ class AiController extends Controller
         // }
 
         Log::info('Calling DispatchCall::dispatch()');
-        DispatchCall::dispatch();
+        DispatchCall::dispatch($minutes);
 
         if ($isWebUI) {
             Session::flash('successMessage', 'Job queued.');
