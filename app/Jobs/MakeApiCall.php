@@ -22,7 +22,6 @@ class MakeApiCall implements ShouldQueue
 
     public function handle()
     {
-        return;
         // "Record ID - Contact","First Name","Last Name","Email","Phone Number"
         $id = $this->data[0];
         $firstName = $this->data[1];
