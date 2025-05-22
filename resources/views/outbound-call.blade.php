@@ -14,6 +14,11 @@
               <div class="bg-red-200 text-red-900 inline-block rounded-lg py-2 px-4 mb-4">{{ Session::get('errorMessage') }}</div>
           @endif
 
+        <div class="p-6 pl-0 flex gap-4">
+        <x-primary-button-link href="https://fly-metrics.net/d/fly-logs/fly-logs?orgId=1059613&var-app=insurely-outbound-caller-ai">Historical Outbound Caller Logs</x-primary-button-link>
+        <x-primary-button-link href="https://fly.io/apps/insurely-outbound-caller-ai/monitoring">Live Outbound Caller Logs</x-primary-button-link>
+        </div>
+
           <div class="lg:grid lg:grid-cols-2 lg:gap-6">
           <div class="bg-white shadow-sm sm:rounded-lg mb-16 lg:mb-0 p-6">
               <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">Make an Outbound Call</h2>
