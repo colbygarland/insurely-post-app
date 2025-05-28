@@ -15,8 +15,15 @@
           @endif
 
         <div class="p-6 pl-0 flex gap-4">
-        <x-primary-button-link href="https://fly-metrics.net/d/fly-logs/fly-logs?orgId=1059613&var-app=insurely-outbound-caller-ai">Historical Outbound Caller Logs</x-primary-button-link>
-        <x-primary-button-link href="https://fly.io/apps/insurely-outbound-caller-ai/monitoring">Live Outbound Caller Logs</x-primary-button-link>
+          <div class="">
+            <x-primary-button-link href="https://fly-metrics.net/d/fly-logs/fly-logs?orgId=1059613&var-app=insurely-outbound-caller-ai">Historical Outbound Caller Logs</x-primary-button-link>
+            <x-primary-button-link href="https://fly.io/apps/insurely-outbound-caller-ai/monitoring">Live Outbound Caller Logs</x-primary-button-link>
+            <p class="mt-4"><strong>Useful queries for the logs:</strong></p>
+            <p>For call summaries, search for: "engagement successfully created for"</p>
+            <p>For transfers, search for: "Outbound call transfer from"</p>
+            <p>For meetings successfully booked, search for: "meeting successfully booked for"</p>
+            <p>For voicemails, search for: "No answer received for"</p>
+          </div>
         </div>
 
           <div class="lg:grid lg:grid-cols-2 lg:gap-6">
