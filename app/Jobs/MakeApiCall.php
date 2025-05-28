@@ -8,6 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class MakeApiCall implements ShouldQueue
 {
@@ -22,7 +23,9 @@ class MakeApiCall implements ShouldQueue
 
     public function handle()
     {
-        if (env('OUTBOUND_CALLER_FAILSAFE')) {
+        if (env('OUTBOUND_CALLER_FAILSAFE') === 'true') {
+            Log::info('MakeApiCall: Failsafe is enabled, skipping call');
+
             return;
         }
 
