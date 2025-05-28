@@ -22,6 +22,10 @@ class MakeApiCall implements ShouldQueue
 
     public function handle()
     {
+        if (env('OUTBOUND_CALLER_FAILSAFE')) {
+            return;
+        }
+
         // "Record ID - Contact","First Name","Last Name","Email","Phone Number"
         $id = $this->data[0];
         $firstName = $this->data[1];
