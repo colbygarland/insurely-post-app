@@ -23,7 +23,7 @@ class MakeApiCall implements ShouldQueue
 
     public function handle()
     {
-        if (env('OUTBOUND_CALLER_FAILSAFE') === 'true') {
+        if (env('OUTBOUND_CALLER_FAILSAFE') == 'true') {
             Log::info('MakeApiCall: Failsafe is enabled, skipping call');
 
             return;
