@@ -63,6 +63,12 @@
                   <x-input-error class="mt-2" :messages="$errors->get('timezone')" />
                 </div>
 
+                <div>
+                  <x-input-label for="callType" :value="__('Call Type (outbound or rental)')" />
+                  <x-text-input id="callType" name="callType" type="text" class="mt-1 block w-full" value="outbound" required autofocus />
+                  <x-input-error class="mt-2" :messages="$errors->get('callType')" />
+                </div>
+
                 <input type="hidden" name="isWebUI" value="1">
         
                 <div class="flex items-center gap-4">

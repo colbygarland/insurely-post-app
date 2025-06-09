@@ -28,7 +28,7 @@ class AiController extends Controller
         $timezone = $request->timezone;
         $id = $request->id;
         $isWebUI = $request->isWebUI;
-
+        $callType = $request->callType;
         if (! $number) {
             return response()->json(['error' => 'Number is required'], 400);
         }
@@ -45,6 +45,10 @@ class AiController extends Controller
             return response()->json(['error' => 'Timezone is required'], 400);
         }
 
+        if (! $callType) {
+            return response()->json(['error' => 'Call type is required'], 400);
+        }
+
         try {
             $response = Http::post(env('OUTBOUND_CALLER_URL').'/outbound-call', [
                 'number' => $number,
@@ -53,6 +57,7 @@ class AiController extends Controller
                 'email' => $email,
                 'timezone' => $timezone,
                 'caller_api_key' => env('OUTBOUND_CALLER_API_KEY'),
+                'call_type' => $callType,
             ]);
             $json = $response->json();
 
