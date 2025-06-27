@@ -47,6 +47,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
 
     // Conversation stuff
     Route::get('/ai/conversation/{conversation}', [ConversationController::class, 'show'])->name('ai.conversation.show');
+    Route::get('/ai/conversation/{conversation}/destroy', [ConversationController::class, 'destroy'])->name('ai.conversation.destroy');
 });
 
 require __DIR__.'/auth.php';

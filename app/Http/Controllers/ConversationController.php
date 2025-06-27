@@ -59,4 +59,11 @@ class ConversationController extends Controller
             'conversation' => $conversation,
         ]);
     }
+
+    public function destroy(Conversation $conversation)
+    {
+        $conversation->delete();
+
+        return redirect()->route('ai.index')->with('successMessage', 'Conversation deleted successfully');
+    }
 }
