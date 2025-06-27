@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AiController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\PostsController;
 use App\Http\Middleware\Verified;
 use Illuminate\Http\Request;
@@ -24,3 +25,7 @@ Route::post('ai/process', [AiController::class, 'process'])->name('ai.process');
 Route::get('ai/current-datetime', function () {
     return \Carbon\Carbon::now();
 });
+
+// Conversation stuff
+Route::post('ai/conversation', [ConversationController::class, 'store']);
+Route::get('ai/conversation', [ConversationController::class, 'list']);

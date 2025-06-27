@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AiController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\LinkedInController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfileController;
@@ -43,6 +44,9 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::get('/ai/outbound-call', [AiController::class, 'index'])->name('ai.index');
     Route::post('/ai/outbound-call', [AiController::class, 'outboundCall'])->name('ai.send');
     Route::post('/ai/upload', [AiController::class, 'upload'])->name('ai.upload');
+
+    // Conversation stuff
+    Route::get('/ai/conversation/{conversation}', [ConversationController::class, 'show'])->name('ai.conversation.show');
 });
 
 require __DIR__.'/auth.php';

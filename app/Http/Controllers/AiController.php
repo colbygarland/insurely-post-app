@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\DispatchCall;
+use App\Models\Conversation;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -16,7 +17,23 @@ class AiController extends Controller
 
     public function index()
     {
-        return view('outbound-call');
+        $perPage = 25;
+        $conversations = Conversation::orderBy('created_at', 'desc')->paginate($perPage);
+
+        return view('outbound-call', [
+            'conversations' => $conversations->items(),
+            'pagination' => [
+                'current_page' => $conversations->currentPage(),
+                'last_page' => $conversations->lastPage(),
+                'per_page' => $conversations->perPage(),
+                'total' => $conversations->total(),
+                'from' => $conversations->firstItem(),
+                'to' => $conversations->lastItem(),
+                'has_more_pages' => $conversations->hasMorePages(),
+                'prev_page_url' => $conversations->previousPageUrl(),
+                'next_page_url' => $conversations->nextPageUrl(),
+            ],
+        ]);
     }
 
     public function outboundCall(Request $request)
