@@ -2,6 +2,17 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        @if(Session::has('successMessage'))
+                <div class="bg-green-200 text-green-900 inline-block rounded-lg py-2 px-4 mb-4">
+                    {{ Session::get('successMessage') }}
+                </div>
+            @endif
+
+            @if(Session::has('errorMessage'))
+                <div class="bg-red-200 text-red-900 inline-block rounded-lg py-2 px-4 mb-4">
+                    {{ Session::get('errorMessage') }}
+                </div>
+            @endif
             <!-- Main Conversation Card -->
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                 <!-- Header Section -->
@@ -92,6 +103,21 @@
                             </div>
                         </div>
 
+                        <!-- AI Analysis Result -->
+                        @if($conversation->analyze_result)
+                            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                    <svg class="w-5 h-5 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423L16.5 15.75l.394 1.183a2.25 2.25 0 001.423 1.423L19.5 18.75l-1.183.394a2.25 2.25 0 00-1.423 1.423z"></path>
+                                    </svg>
+                                    AI Analysis
+                                </h3>
+                                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 border-l-4 border-purple-400">
+                                    <div class="text-gray-700 leading-relaxed prose prose-sm max-w-none">{!! $conversation->analyze_result !!}</div>
+                                </div>
+                            </div>
+                        @endif
+
                         <!-- Action Buttons -->
                         <div class="flex justify-end space-x-3 pt-4">
                                                                  <a href="{{ route('ai.conversation.destroy', $conversation->id) }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
@@ -100,13 +126,38 @@
                                      </svg>
                                      Delete Conversation
                                  </a>
-                                                         @if($conversation->message)
-                                 <a href="" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200">
-                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423L16.5 15.75l.394 1.183a2.25 2.25 0 001.423 1.423L19.5 18.75l-1.183.394a2.25 2.25 0 00-1.423 1.423z"></path>
-                                     </svg>
-                                     Push to AI for Review
-                                 </a>
+                            @if($conversation->message && !$conversation->analyze_result)
+                                 <form method="POST" action="{{ route('ai.conversation.analyze', $conversation->id) }}" class="inline" id="ai-analyze-form">
+                                     @csrf
+                                     <button type="submit" id="ai-analyze-btn" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                                         <span id="btn-content" class="flex items-center">
+                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423L16.5 15.75l.394 1.183a2.25 2.25 0 001.423 1.423L19.5 18.75l-1.183.394a2.25 2.25 0 00-1.423 1.423z"></path>
+                                             </svg>
+                                             Push to AI for Review
+                                         </span>
+                                         <span id="btn-loading" class="hidden flex items-center">
+                                             <svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
+                                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                             </svg>
+                                             Analyzing...
+                                         </span>
+                                     </button>
+                                 </form>
+
+                                 <script>
+                                     document.getElementById('ai-analyze-form').addEventListener('submit', function(e) {
+                                         const btn = document.getElementById('ai-analyze-btn');
+                                         const btnContent = document.getElementById('btn-content');
+                                         const btnLoading = document.getElementById('btn-loading');
+                                         
+                                         // Show loading state
+                                         btnContent.classList.add('hidden');
+                                         btnLoading.classList.remove('hidden');
+                                         btn.disabled = true;
+                                     });
+                                 </script>
                             @endif
                         </div>
                     </div>

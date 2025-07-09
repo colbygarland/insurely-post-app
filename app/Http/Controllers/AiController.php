@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\DispatchCall;
 use App\Models\Conversation;
+use App\Utils\OpenAi;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -150,5 +151,16 @@ class AiController extends Controller
         } else {
             return response()->json(['message' => 'Job queued.']);
         }
+    }
+
+    public function pushToAiForReview(Conversation $conversation)
+    {
+        $aiResponse = OpenAi::analyzeTranscript($conversation->message);
+
+        // Store the combined text content as the analyze result
+        $conversation->analyze_result = $aiResponse;
+        $conversation->save();
+
+        return redirect()->route('ai.conversation.show', $conversation->id);
     }
 }
