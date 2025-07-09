@@ -27,7 +27,7 @@ class OpenAi
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
             'X-goog-api-key' => self::apiKey(),
-        ])->post(self::$baseUrl.'/'.$model.':generateContent', [
+        ])->timeout(300)->post(self::$baseUrl.'/'.$model.':generateContent', [
             'contents' => [
                 [
                     'parts' => [
