@@ -113,7 +113,7 @@
                                     AI Analysis
                                 </h3>
                                 <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 border-l-4 border-purple-400">
-                                    <div class="text-gray-700 leading-relaxed prose prose-sm max-w-none">{!! $conversation->analyze_result !!}</div>
+                                    <div class="text-gray-700 leading-relaxed prose prose-sm max-w-none">@markdown($conversation->analyze_result)</div>
                                 </div>
                             </div>
                         @endif
