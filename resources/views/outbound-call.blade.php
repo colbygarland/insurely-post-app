@@ -169,8 +169,8 @@
                             @foreach($conversations as $conversation) 
                                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                                     <th scope="row" class="px-6 py-4 font-medium underline text-blue-600 whitespace-nowrap dark:text-white"><a href="{{ route('ai.conversation.show', $conversation->id) }}">{{ $conversation->id }}</a></th>
-                                    <td class="px-6 py-4">{{ Str::words($conversation->message, 10, '...') }}</td>
-                                    <td class="px-6 py-4">{{ $conversation->created_at }}</td>
+                                    <td class="px-6 py-4">{!! Str::words($conversation->message, 10, '...')  !!}</td>
+                                    <td class="px-6 py-4">{{ Carbon\Carbon::parse($conversation->created_at)->setTimezone('America/Edmonton')->format('F j, Y g:ia') }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
