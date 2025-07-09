@@ -85,7 +85,7 @@
                             </h3>
                             <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-400">
                                 @if($conversation->message)
-                                    <pre class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ $conversation->message }}</pre>
+                                    <div class="text-gray-700 leading-relaxed prose prose-sm max-w-none">{!! $conversation->message !!}</div>
                                 @else
                                     <p class="text-gray-400 italic">No message content available</p>
                                 @endif
