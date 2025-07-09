@@ -152,9 +152,16 @@
             </div>
 
             <div class="bg-white shadow-sm sm:rounded-lg mt-16 mb-16 lg:mb-0 p-6">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
-                    Conversations History
-                </h2>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                        Conversations History
+                    </h2>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm text-gray-600">Show voicemail conversations:
+                            <input type="checkbox" id="showVoicemail" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        </label>
+                    </div>
+                </div>
 
                 <div class="mt-4 relative overflow-x-auto">
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -191,4 +198,50 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const showVoicemailCheckbox = document.getElementById('showVoicemail');
+            const conversationRows = document.querySelectorAll('tbody tr');
+            
+            function filterConversations() {
+                const showVoicemail = showVoicemailCheckbox.checked;
+                let visibleCount = 0;
+                
+                conversationRows.forEach(row => {
+                    const messageCell = row.querySelector('td:nth-child(2)');
+                    if (messageCell) {
+                        const messageText = messageCell.textContent.toLowerCase();
+                        const containsVoicemail = messageText.includes("didn't answer the call");
+                        
+                        if (containsVoicemail && !showVoicemail) {
+                            row.style.display = 'none';
+                        } else {
+                            row.style.display = '';
+                            visibleCount++;
+                        }
+                    }
+                });
+                
+                // Update pagination info text
+                const paginationInfo = document.querySelector('.text-sm.text-gray-500');
+                if (paginationInfo && !showVoicemail) {
+                    const originalText = paginationInfo.textContent;
+                    if (!originalText.includes('(filtered)')) {
+                        paginationInfo.textContent = `${originalText} (filtered - ${visibleCount} visible)`;
+                    }
+                } else if (paginationInfo && showVoicemail) {
+                    // Reset to original text
+                    const originalText = paginationInfo.textContent.replace(/ \(filtered[^)]*\)/, '');
+                    paginationInfo.textContent = originalText;
+                }
+            }
+            
+            // Hide voicemail conversations by default
+            filterConversations();
+            
+            // Add event listener for checkbox changes
+            showVoicemailCheckbox.addEventListener('change', filterConversations);
+        });
+    </script>
 </x-app-layout>
