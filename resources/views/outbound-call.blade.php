@@ -176,6 +176,18 @@
                         </tbody>
                     </table>
                 </div>
+                
+                <!-- Pagination Info -->
+                <div class="mt-4 flex justify-between items-center gap-4">
+                    <div class="text-sm text-gray-500">
+                        Showing {{ $conversations->firstItem() }} to {{ $conversations->lastItem() }} of {{ $conversations->total() }} results
+                    </div>
+                    
+                    <!-- Pagination Links -->
+                    <div class="mt-4">
+                        {{ $conversations->links() }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

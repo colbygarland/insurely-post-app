@@ -22,18 +22,7 @@ class AiController extends Controller
         $conversations = Conversation::orderBy('created_at', 'desc')->paginate($perPage);
 
         return view('outbound-call', [
-            'conversations' => $conversations->items(),
-            'pagination' => [
-                'current_page' => $conversations->currentPage(),
-                'last_page' => $conversations->lastPage(),
-                'per_page' => $conversations->perPage(),
-                'total' => $conversations->total(),
-                'from' => $conversations->firstItem(),
-                'to' => $conversations->lastItem(),
-                'has_more_pages' => $conversations->hasMorePages(),
-                'prev_page_url' => $conversations->previousPageUrl(),
-                'next_page_url' => $conversations->nextPageUrl(),
-            ],
+            'conversations' => $conversations,
         ]);
     }
 
