@@ -157,5 +157,15 @@ class AiController extends Controller
     {
         Log::info('ElevenLabs webhook received');
         Log::info($request->all());
+
+        try {
+            $summary = $request->data->analysis->transcript_summary;
+        } catch (Exception $e) {
+            Log::error('Error parsing ElevenLabs webhook: '.$e->getMessage());
+
+            return response()->json(['error' => 'Error parsing ElevenLabs webhook'], 500);
+        }
+
+        return response()->json(['summary' => $summary]);
     }
 }

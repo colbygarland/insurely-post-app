@@ -43,7 +43,7 @@
                                 </svg>
                                 Contact Information
                             </h3>
-                            <div class="grid md:grid-cols-3 gap-4">
+                            <div class="grid md:grid-cols-2 gap-4">
                                 <div class="flex items-center p-3 bg-white rounded-md border">
                                     <div class="flex-shrink-0">
                                         <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,6 +83,44 @@
                                         <p class="text-lg font-semibold text-gray-900">{{ $conversation->email }}</p>
                                     </div>
                                 </div>
+                                <div class="flex items-center p-3 bg-white rounded-md border">
+                                    <div class="flex-shrink-0">
+                                        <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-medium text-gray-500">ElevenLabs Conversation</p>
+                                        <p class="text-lg font-semibold text-gray-900">
+                                            @if($conversation->conversation_id)
+                                                                                               <a href="https://elevenlabs.io/app/conversational-ai/history/{{ $conversation->conversation_id }}" target="_blank" class="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                                                    View in ElevenLabs
+                                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                                    </svg>
+                                                </a>
+                                            @else
+                                                <span class="text-gray-400">Not provided</span>
+                                            @endif
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-gray-200 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                                <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+                                </svg>
+                                ElevenLabs Summary
+                            </h3>
+                            <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-purple-400">
+                                @if($summary)
+                                    <div class="text-gray-700 leading-relaxed prose prose-sm max-w-none">{!! $summary !!}</div>
+                                @else
+                                    <p class="text-gray-400 italic">No summary available</p>
+                                @endif
                             </div>
                         </div>
 

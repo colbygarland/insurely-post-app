@@ -55,8 +55,11 @@ class ConversationController extends Controller
 
     public function show(Conversation $conversation)
     {
+        $summary = $conversation->getSummary();
+
         return view('conversation', [
             'conversation' => $conversation,
+            'summary' => $summary,
         ]);
     }
 
