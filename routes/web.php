@@ -5,6 +5,7 @@ use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\LinkedInController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RingCentralController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Middleware\Verified;
@@ -49,6 +50,9 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::get('/ai/conversation/{conversation}', [ConversationController::class, 'show'])->name('ai.conversation.show');
     Route::get('/ai/conversation/{conversation}/destroy', [ConversationController::class, 'destroy'])->name('ai.conversation.destroy');
     Route::post('/ai/conversation/{conversation}/analyze', [AiController::class, 'pushToAiForReview'])->name('ai.conversation.analyze');
+
+    // Ring Central stuff
+    Route::get('/ringcentral', [RingCentralController::class, 'index'])->name('ringcentral.index');
 });
 
 require __DIR__.'/auth.php';

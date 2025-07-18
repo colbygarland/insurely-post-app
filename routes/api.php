@@ -25,6 +25,7 @@ Route::post('ai/process', [AiController::class, 'process'])->name('ai.process');
 Route::get('ai/current-datetime', function () {
     return \Carbon\Carbon::now();
 });
+Route::post('ai/elevenlabs-webhook', [AiController::class, 'elevenlabsWebhook']);
 
 // Conversation stuff
 Route::post('ai/conversation', [ConversationController::class, 'store']);

@@ -152,4 +152,10 @@ class AiController extends Controller
 
         return redirect()->route('ai.conversation.show', $conversation->id);
     }
+
+    public function elevenlabsWebhook(Request $request)
+    {
+        Log::info('ElevenLabs webhook received');
+        Log::info($request->all());
+    }
 }
