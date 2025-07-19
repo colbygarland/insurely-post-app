@@ -3,6 +3,7 @@
 use App\Http\Controllers\AiController;
 use App\Http\Controllers\CallLogController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LinkedInController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfileController;
@@ -16,7 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/unauthorized', [UsersController::class, 'unauthorized'])->name('unauthorized');
 
 Route::middleware(['auth', Verified::class])->group(function () {
-    Route::get('/', [PostsController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/posts', [PostsController::class, 'index'])->name('posts');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
