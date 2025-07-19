@@ -31,7 +31,7 @@
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 text-center">
                             <div class="text-3xl font-bold text-green-600 dark:text-green-400">{{ $stats['total_published_posts'] }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Published Posts</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Published LinkedIn Posts</div>
                         </div>
                     </div>
 
@@ -39,7 +39,7 @@
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 text-center">
                             <div class="text-3xl font-bold text-orange-600 dark:text-orange-400">{{ $stats['pending_posts'] }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Pending Posts</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Pending LinkedIn Posts</div>
                         </div>
                     </div>
 
@@ -59,11 +59,87 @@
                         </div>
                     </div>
 
+
+
                     <!-- Transcribed Calls -->
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 text-center">
                             <div class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{{ $stats['transcribed_calls'] }}</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">Transcribed Calls</div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Call Logs Distribution Chart -->
+            @if(Gate::allows('is-admin') && $stats['call_logs_per_person']->count() > 0)
+                <div class="mb-8">
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-8">
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Ring Central Call Distribution by Person This Month</h3>
+                                <div class="mt-2">
+                                    <div class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 mb-2">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $stats['current_month'] }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-col lg:flex-row items-center justify-center gap-8">
+                                <!-- Chart Container -->
+                                <div class="flex-shrink-0">
+                                    <div style="position: relative; height: 400px; width: 400px;">
+                                        <canvas id="callLogsChart"></canvas>
+                                    </div>
+                                </div>
+                                
+                                <!-- Stats Summary -->
+                                <div class="flex-1 max-w-md">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                            <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $stats['call_logs_per_person']->sum() }}</div>
+                                            <div class="text-sm text-gray-600 dark:text-gray-400">Calls</div>
+                                        </div>
+                                        <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                            <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $stats['call_logs_per_person']->count() }}</div>
+                                            <div class="text-sm text-gray-600 dark:text-gray-400">Active Members</div>
+                                        </div>
+                                        <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                            <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ $stats['call_logs_per_person']->count() > 0 ? number_format($stats['call_logs_per_person']->avg(), 1) : '0' }}</div>
+                                            <div class="text-sm text-gray-600 dark:text-gray-400">Avg Calls</div>
+                                        </div>
+                                        <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                            <div class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ $stats['call_logs_per_person']->count() > 0 ? $stats['call_logs_per_person']->max() : '0' }}</div>
+                                            <div class="text-sm text-gray-600 dark:text-gray-400">Highest Calls Per Person</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Top Performers -->
+                                    <div class="mt-6">
+                                        <h4 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Top Performers - {{ $stats['current_month'] }}</h4>
+                                        @if($stats['call_logs_per_person']->count() > 0)
+                                            <div class="space-y-2">
+                                                @foreach($stats['call_logs_per_person']->sortDesc()->take(3) as $name => $count)
+                                                    <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded">
+                                                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $name }}</span>
+                                                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ $count }} calls</span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <div class="text-center p-4 text-gray-500 dark:text-gray-400">
+                                                <svg class="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                <p class="text-sm">No calls recorded this month</p>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -222,4 +298,79 @@
             @endif
         </div>
     </div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Data from PHP -->
+    <script>
+        window.callLogsData = <?php echo json_encode($stats['call_logs_per_person']); ?>;
+    </script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the canvas element
+            const ctx = document.getElementById('callLogsChart').getContext('2d');
+            
+            // Get data from global variable
+            const callLogsData = window.callLogsData || {};
+            
+            // Convert to arrays for Chart.js
+            const labels = Object.keys(callLogsData);
+            const data = Object.values(callLogsData);
+            
+            // Generate colors for each slice
+            const colors = [
+                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384',
+                '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+            ];
+            
+            // Ensure we have enough colors
+            const backgroundColors = colors.slice(0, labels.length);
+            const borderColors = backgroundColors.map(color => color + '80'); // Add transparency
+            
+            // Create the pie chart
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                font: {
+                                    size: 12
+                                },
+                                color: document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#374151'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value} calls (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </x-app-layout>

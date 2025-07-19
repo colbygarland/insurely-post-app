@@ -26,6 +26,22 @@ class DashboardController extends Controller
         // Get recent Ring Central call logs
         $recentCallLogs = CallLog::getRecentCallLogs();
 
+        // Get count of call logs per person (from_name, cleaned) for current month
+        $callLogsPerPerson = CallLog::selectRaw('LOWER(TRIM(from_name)) as cleaned_name, COUNT(*) as count')
+            ->whereNotNull('from_name')
+            ->where('from_name', '!=', '')
+            ->whereMonth('start_time', now()->month)
+            ->whereYear('start_time', now()->year)
+            ->groupBy('cleaned_name')
+            ->orderByDesc('count')
+            ->get()
+            ->mapWithKeys(function ($row) {
+                // Clean the name using the model's cleanFromName method
+                $cleaned = CallLog::cleanFromName($row->cleaned_name);
+
+                return [$cleaned => $row->count];
+            });
+
         // Get some stats
         $stats = [
             'total_published_posts' => Post::where('published_at', '!=', null)->count(),
@@ -33,6 +49,11 @@ class DashboardController extends Controller
             'total_conversations' => Conversation::count(),
             'total_call_logs' => CallLog::count(),
             'transcribed_calls' => CallLog::whereNotNull('transcription')->count(),
+            'call_logs_per_person' => $callLogsPerPerson,
+            'current_month' => now()->format('F Y'), // e.g., "January 2025"
+            'current_month_call_logs' => CallLog::whereMonth('start_time', now()->month)
+                ->whereYear('start_time', now()->year)
+                ->count(),
         ];
 
         return view('index', compact(
