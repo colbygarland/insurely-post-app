@@ -50,7 +50,7 @@ class CallLog extends Model
 
         try {
             // Step 1: Download the audio file from RingCentral
-            $audioResponse = Http::timeout(30)->get($this->url.'?access_token='.$accessToken);
+            $audioResponse = Http::timeout(300)->get($this->url.'?access_token='.$accessToken);
 
             if (! $audioResponse->successful()) {
                 Log::error('Failed to download audio file from: '.$this->url);
