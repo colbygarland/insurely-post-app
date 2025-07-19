@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CallLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -83,6 +84,23 @@ class RingCentralController extends Controller
                     'startTime' => $record['startTime'],
                     'result' => $record['result'],
                 ];
+
+                CallLog::updateOrCreate([
+                    'ringcentral_id' => $record['id'],
+                ], [
+                    'session_id' => $record['sessionId'],
+                    'duration' => $record['duration'],
+                    'direction' => $record['direction'],
+                    'result' => $record['result'],
+                    'url' => $recordingUrl,
+                    'from_name' => $record['from']['name'] ?? null,
+                    'from_phone_number' => $record['from']['phoneNumber'] ?? null,
+                    'from_location' => $record['from']['location'] ?? null,
+                    'to' => $record['to']['phoneNumber'] ?? '',
+                    'start_time' => $record['startTime'],
+                    'party_id' => $record['partyId'],
+                    'telephony_session_id' => $record['telephonySessionId'],
+                ]);
             }
         }
 

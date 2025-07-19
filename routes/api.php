@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AiController;
+use App\Http\Controllers\CallLogController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\RingCentralController;
@@ -36,3 +37,4 @@ Route::get('ai/conversation', [ConversationController::class, 'list']);
 Route::post('ringcentral/webhook', [RingCentralController::class, 'webhook']);
 Route::get('ringcentral/create-webhook', [RingCentralController::class, 'createWebhook']);
 Route::get('ringcentral/call-log', [RingCentralController::class, 'getCallLog']);
+Route::get('ringcentral/call-log/list', [CallLogController::class, 'list']);
