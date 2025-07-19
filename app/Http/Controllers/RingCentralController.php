@@ -6,6 +6,7 @@ use App\Models\CallLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 class RingCentralController extends Controller
 {
@@ -14,7 +15,10 @@ class RingCentralController extends Controller
     public function index()
     {
         // Update the call logs
-        $this->getCallLog();
+        $success = $this->getCallLog();
+        if (! $success) {
+            Session::flash('errorMessage', 'Failed to get updated call log');
+        }
 
         $callLogs = CallLog::list();
 
@@ -23,10 +27,9 @@ class RingCentralController extends Controller
 
     public function show(CallLog $callLog)
     {
-        $accessToken = $this->getAccessToken();
-        $transcript = $callLog->getTranscript($accessToken);
+        $accessToken = CallLog::getRingCentralAccessToken();
 
-        return view('ring-central-details', compact('callLog', 'transcript', 'accessToken'));
+        return view('ring-central-details', compact('callLog', 'accessToken'));
     }
 
     public function webhook(Request $request)
@@ -45,7 +48,7 @@ class RingCentralController extends Controller
     {
         Log::debug('Creating webhook');
 
-        $accessToken = $this->getAccessToken();
+        $accessToken = CallLog::getRingCentralAccessToken();
 
         $response = Http::withHeaders(['Authorization' => 'Bearer '.$accessToken])->post('https://platform.ringcentral.com/restapi/v1.0/subscription', [
             'eventFilters' => ['/restapi/v1.0/account/'.self::ACCOUNT_ID.'/telephony/sessions'],
@@ -73,7 +76,7 @@ class RingCentralController extends Controller
 
     public function getCallLog()
     {
-        $accessToken = $this->getAccessToken();
+        $accessToken = CallLog::getRingCentralAccessToken();
         $queryParams = [
             'page' => 1,
             'perPage' => 100,
@@ -81,6 +84,11 @@ class RingCentralController extends Controller
         ];
 
         $response = Http::withHeaders(['Authorization' => 'Bearer '.$accessToken])->get('https://platform.ringcentral.com/restapi/v1.0/account/'.self::ACCOUNT_ID.'/call-log?', implode('&', $queryParams));
+        if ($response->status() != 200) {
+            Session::flash('errorMessage', 'Failed to get updated call log: '.$response->body());
+
+            return false;
+        }
         $records = $response->json()['records'];
 
         // records -> recording -> contentUri gives us the recording. need to append ?access_token=accessToken to get the recording
@@ -118,26 +126,5 @@ class RingCentralController extends Controller
         }
 
         return response()->json(['message' => 'Call log', 'access_token' => $accessToken, 'recordings' => $recordings, 'data' => $response->json()], 200);
-    }
-
-    private function getAccessToken()
-    {
-        $authTokenResponse = Http::asForm()
-            ->withHeaders([
-                'Authorization' => 'Basic '.base64_encode(env('RING_CENTRAL_CLIENT_ID').':'.env('RING_CENTRAL_CLIENT_SECRET')),
-            ])
-            ->post('https://platform.ringcentral.com/restapi/oauth/token', [
-                'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-                'assertion' => env('RING_CENTRAL_JWT'),
-            ]);
-
-        if ($authTokenResponse->status() != 200) {
-            Log::error('Failed to get auth token');
-            Log::error($authTokenResponse->body());
-
-            return response()->json(['error' => 'Failed to get auth token', 'data' => json_decode($authTokenResponse->body())], 400);
-        }
-
-        return $authTokenResponse->json()['access_token'];
     }
 }

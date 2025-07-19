@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AiController;
+use App\Http\Controllers\CallLogController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\LinkedInController;
 use App\Http\Controllers\PostsController;
@@ -54,6 +55,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
     // Ring Central stuff
     Route::get('/ringcentral', [RingCentralController::class, 'index'])->name('ringcentral.index');
     Route::get('/ringcentral/details/{callLog}', [RingCentralController::class, 'show'])->name('ringcentral.details');
+    Route::post('/calllog/{callLog}/transcript', [CallLogController::class, 'generateTranscript'])->name('calllog.transcript');
 });
 
 require __DIR__.'/auth.php';

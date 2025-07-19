@@ -24,6 +24,7 @@ class CallLog extends Model
         'start_time',
         'party_id',
         'telephony_session_id',
+        'transcription',
     ];
 
     public static function list()
@@ -67,7 +68,17 @@ class CallLog extends Model
                 ->post('https://generativelanguage.googleapis.com/upload/v1beta/files');
 
             if (! $uploadResponse->successful()) {
-                Log::error('Failed to upload file to Gemini: '.$uploadResponse->body());
+                $statusCode = $uploadResponse->status();
+                $responseBody = $uploadResponse->body();
+
+                // Handle rate limiting specifically
+                if ($statusCode === 429 || str_contains($responseBody, 'quota') || str_contains($responseBody, 'rate limit')) {
+                    Log::warning('Gemini API rate limited during file upload: '.$responseBody);
+
+                    return 'Rate Limited: Please try again in a few minutes. The Gemini API has temporary usage limits.';
+                }
+
+                Log::error('Failed to upload file to Gemini: '.$responseBody);
 
                 return 'Error: Failed to upload audio to Gemini';
             }
@@ -98,7 +109,17 @@ class CallLog extends Model
             ]);
 
             if (! $transcriptResponse->successful()) {
-                Log::error('Failed to generate transcript: '.$transcriptResponse->body());
+                $statusCode = $transcriptResponse->status();
+                $responseBody = $transcriptResponse->body();
+
+                // Handle rate limiting specifically
+                if ($statusCode === 429 || str_contains($responseBody, 'quota') || str_contains($responseBody, 'rate limit')) {
+                    Log::warning('Gemini API rate limited during transcript generation: '.$responseBody);
+
+                    return 'Rate Limited: Please try again in a few minutes. The Gemini API has temporary usage limits.';
+                }
+
+                Log::error('Failed to generate transcript: '.$responseBody);
 
                 return 'Error: Failed to generate transcript';
             }
@@ -118,5 +139,26 @@ class CallLog extends Model
 
             return 'Error: '.$e->getMessage();
         }
+    }
+
+    public static function getRingCentralAccessToken()
+    {
+        $authTokenResponse = Http::asForm()
+            ->withHeaders([
+                'Authorization' => 'Basic '.base64_encode(env('RING_CENTRAL_CLIENT_ID').':'.env('RING_CENTRAL_CLIENT_SECRET')),
+            ])
+            ->post('https://platform.ringcentral.com/restapi/oauth/token', [
+                'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                'assertion' => env('RING_CENTRAL_JWT'),
+            ]);
+
+        if ($authTokenResponse->status() != 200) {
+            Log::error('Failed to get auth token');
+            Log::error($authTokenResponse->body());
+
+            return response()->json(['error' => 'Failed to get auth token', 'data' => json_decode($authTokenResponse->body())], 400);
+        }
+
+        return $authTokenResponse->json()['access_token'];
     }
 }
