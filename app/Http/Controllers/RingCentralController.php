@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\CallLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -30,6 +32,13 @@ class RingCentralController extends Controller
 
     public function show(CallLog $callLog)
     {
+        // Check if non-admin user is trying to view someone else's call
+        if (! Gate::allows('is-admin') && $callLog->from_name !== Auth::user()->name) {
+            Session::flash('errorMessage', 'You can only view your own call logs.');
+
+            return redirect()->route('ringcentral.index');
+        }
+
         $accessToken = CallLog::getRingCentralAccessToken();
 
         return view('ring-central-details', compact('callLog', 'accessToken'));

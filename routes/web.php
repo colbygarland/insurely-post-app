@@ -18,14 +18,15 @@ Route::get('/unauthorized', [UsersController::class, 'unauthorized'])->name('una
 
 Route::middleware(['auth', Verified::class])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/posts', [PostsController::class, 'index'])->name('posts');
+    Route::get('/posts', [PostsController::class, 'index'])->name('posts')->middleware('can:is-admin');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/profile/revoke-linkedin-tokens', [LinkedInController::class, 'revokeTokens']);
-    Route::get('/users', [UsersController::class, 'list'])->name('users.list');
-    Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+    Route::get('/users', [UsersController::class, 'list'])->name('users.list')->middleware('can:is-admin');
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings')->middleware('can:is-admin');
     Route::get('/users/verify-user/{id}', [UsersController::class, 'verify']);
+    Route::get('/users/promote-to-admin/{id}', [UsersController::class, 'promoteToAdmin'])->name('users.promote-admin')->middleware('can:is-admin');
 
     // Linkedin related things
     Route::get('access-token', [LinkedInController::class, 'saveTokens']);
@@ -45,14 +46,14 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::get('wordpress/fetch_from_wordpress', [PostsController::class, 'fetchFromWordpress']);
 
     // Outbound agent stuff
-    Route::get('/ai/outbound-call', [AiController::class, 'index'])->name('ai.index');
-    Route::post('/ai/outbound-call', [AiController::class, 'outboundCall'])->name('ai.send');
-    Route::post('/ai/upload', [AiController::class, 'upload'])->name('ai.upload');
+    Route::get('/ai/outbound-call', [AiController::class, 'index'])->name('ai.index')->middleware('can:is-admin');
+    Route::post('/ai/outbound-call', [AiController::class, 'outboundCall'])->name('ai.send')->middleware('can:is-admin');
+    Route::post('/ai/upload', [AiController::class, 'upload'])->name('ai.upload')->middleware('can:is-admin');
 
     // Conversation stuff
-    Route::get('/ai/conversation/{conversation}', [ConversationController::class, 'show'])->name('ai.conversation.show');
-    Route::get('/ai/conversation/{conversation}/destroy', [ConversationController::class, 'destroy'])->name('ai.conversation.destroy');
-    Route::post('/ai/conversation/{conversation}/analyze', [AiController::class, 'pushToAiForReview'])->name('ai.conversation.analyze');
+    Route::get('/ai/conversation/{conversation}', [ConversationController::class, 'show'])->name('ai.conversation.show')->middleware('can:is-admin');
+    Route::get('/ai/conversation/{conversation}/destroy', [ConversationController::class, 'destroy'])->name('ai.conversation.destroy')->middleware('can:is-admin');
+    Route::post('/ai/conversation/{conversation}/analyze', [AiController::class, 'pushToAiForReview'])->name('ai.conversation.analyze')->middleware('can:is-admin');
 
     // Ring Central stuff
     Route::get('/ringcentral', [RingCentralController::class, 'index'])->name('ringcentral.index');

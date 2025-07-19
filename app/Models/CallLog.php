@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -31,6 +33,11 @@ class CallLog extends Model
     {
         $query = self::orderBy('start_time', 'desc');
 
+        // Apply user-based filtering for non-admin users
+        if (! Gate::allows('is-admin')) {
+            $query->where('from_name', Auth::user()->name);
+        }
+
         if ($fromName && $fromName !== 'all') {
             $query->where('from_name', 'LIKE', $fromName.'%');
         }
@@ -38,11 +45,31 @@ class CallLog extends Model
         return $query->paginate($perPage);
     }
 
+    public static function getRecentCallLogs()
+    {
+        if (Gate::allows('is-admin')) {
+            return self::orderBy('start_time', 'desc')
+                ->limit(5)
+                ->get();
+        }
+
+        return self::where('from_name', Auth::user()->name)
+            ->orderBy('start_time', 'desc')
+            ->limit(5)
+            ->get();
+    }
+
     public static function getDistinctFromNames()
     {
-        $allNames = self::whereNotNull('from_name')
-            ->where('from_name', '!=', '')
-            ->pluck('from_name');
+        $query = self::whereNotNull('from_name')
+            ->where('from_name', '!=', '');
+
+        // Apply user-based filtering for non-admin users
+        if (! Gate::allows('is-admin')) {
+            $query->where('from_name', Auth::user()->name);
+        }
+
+        $allNames = $query->pluck('from_name');
 
         // Clean names by removing phone numbers and get unique values
         $cleanedNames = $allNames->map(function ($name) {

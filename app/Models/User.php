@@ -59,11 +59,6 @@ class User extends Authenticatable
         $this->save();
     }
 
-    public function admin()
-    {
-        return in_array($this->email, ['colbygarland@gmail.com']);
-    }
-
     public function verified()
     {
         return $this->verified_at != null;

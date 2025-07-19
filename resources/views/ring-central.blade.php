@@ -26,19 +26,21 @@
                     <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                         Calls from Ring Central
                     </h2>
-                    <div class="flex items-center gap-2">
-                        <label class="text-sm text-gray-600 dark:text-gray-200 flex items-center gap-2">
-                            Filter by caller:
-                            <select id="fromNameFilter" class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                <option value="all" {{ $fromNameFilter === 'all' ? 'selected' : '' }}>All Callers</option>
-                                @foreach($fromNames as $fromName)
-                                    <option value="{{ $fromName }}" {{ $fromNameFilter === $fromName ? 'selected' : '' }}>
-                                        {{ $fromName ?: 'Unknown' }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </label>
-                    </div>
+                    @if(Gate::allows('is-admin'))
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm text-gray-600 dark:text-gray-200 flex items-center gap-2">
+                                Filter by caller:
+                                <select id="fromNameFilter" class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                    <option value="all" {{ $fromNameFilter === 'all' ? 'selected' : '' }}>All Callers</option>
+                                    @foreach($fromNames as $fromName)
+                                        <option value="{{ $fromName }}" {{ $fromNameFilter === $fromName ? 'selected' : '' }}>
+                                            {{ $fromName ?: 'Unknown' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </label>
+                        </div>
+                    @endif
                 </div>
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:text-gray-200">

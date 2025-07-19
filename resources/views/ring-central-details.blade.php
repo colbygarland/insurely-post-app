@@ -3,6 +3,14 @@
     Ring Central Details
   </x-slot>
     <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-4">
+            <a href="{{ route('ringcentral.index') }}" class="inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Call Logs
+            </a>
+        </div>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         @if(Session::has('successMessage'))
                 <div class="bg-green-200 text-green-900 inline-block rounded-lg py-2 px-4 mb-4">

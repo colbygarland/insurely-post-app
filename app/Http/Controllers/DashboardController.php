@@ -24,9 +24,7 @@ class DashboardController extends Controller
             ->get();
 
         // Get recent Ring Central call logs
-        $recentCallLogs = CallLog::orderBy('start_time', 'desc')
-            ->limit(5)
-            ->get();
+        $recentCallLogs = CallLog::getRecentCallLogs();
 
         // Get some stats
         $stats = [

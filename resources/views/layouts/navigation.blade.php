@@ -15,17 +15,21 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         Home
                     </x-nav-link>
-                    <x-nav-link :href="route('posts')" :active="request()->routeIs('posts')">
-                        {{ __('Posts') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('ai.index')" :active="request()->routeIs('ai.index')">
-                        {{ __('AI Outbound Call') }}
-                    </x-nav-link>
+                    @if(Gate::allows('is-admin'))
+                        <x-nav-link :href="route('posts')" :active="request()->routeIs('posts')">
+                            {{ __('Posts') }}
+                        </x-nav-link>
+                    @endif
+                    @if(Gate::allows('is-admin'))
+                        <x-nav-link :href="route('ai.index')" :active="request()->routeIs('ai.index')">
+                            {{ __('AI Outbound Call') }}
+                        </x-nav-link>
+                    @endif
                     <x-nav-link :href="route('ringcentral.index')" :active="request()->routeIs('ringcentral.index')">
                         {{ __('Ring Central') }}
                     </x-nav-link>
 
-                    @if(auth()->user()->admin())
+                    @if(Gate::allows('is-admin'))
                         <x-nav-link :href="route('users.list')" :active="request()->routeIs('users.list')">
                             {{ __('Users') }}
                         </x-nav-link>

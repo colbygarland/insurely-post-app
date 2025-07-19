@@ -29,7 +29,13 @@
                                 Email
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                Verified to Post
+                                Role
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Verified
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Actions
                             </th>
                         </tr>
                     </thead>
@@ -43,10 +49,24 @@
                               {{ $user->email }}
                             </td>
                             <td class="px-6 py-4">
+                              {{ $user->role }}
+                            </td>
+                            <td class="px-6 py-4">
                               @if($user->verified_at)
-                                <p>Verified at {{ $user->verified_at }}</p>
+                                <p>Verified at {{ Carbon\Carbon::parse($user->verified_at)->setTimezone('America/Edmonton')->format('M j, g:ia') }}</p>
                               @else  
-                                <a href="/users/verify-user/{{ $user->id }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Verify User</a>
+                                <a href="/users/verify-user/{{ $user->id }}" class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-500 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Verify User</a>
+                              @endif
+                            </td>
+                            <td class="px-6 py-4">
+                              @if($user->role !== 'admin')
+                                <a href="{{ route('users.promote-admin', $user->id) }}" 
+                                   class="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-blue-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 dark:hover:bg-blue-600 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                   onclick="return confirm('Are you sure you want to promote this user to admin?')">
+                                   Promote to Admin
+                                </a>
+                              @else
+                                <span class="text-green-600 dark:text-green-400 font-semibold text-xs uppercase">Admin</span>
                               @endif
                             </td>
                         </tr>
