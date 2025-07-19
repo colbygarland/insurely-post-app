@@ -18,7 +18,7 @@ class RingCentralController extends Controller
         Log::debug('RingCentral webhook received');
         Log::debug($request->all());
 
-        $validationToken = $request->header('HTTP_VALIDATION_TOKEN');
+        $validationToken = $request->header('validation-token');
 
         return response('', 200)->header('Validation-Token', $validationToken)->header('Content-Type', 'application/json');
     }
