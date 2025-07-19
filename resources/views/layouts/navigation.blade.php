@@ -12,19 +12,23 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         Home
                     </x-nav-link>
+
                     @if(Gate::allows('is-admin'))
                         <x-nav-link :href="route('posts')" :active="request()->routeIs('posts')">
                             {{ __('Posts') }}
                         </x-nav-link>
                     @endif
+
                     @if(Gate::allows('is-admin'))
                         <x-nav-link :href="route('ai.index')" :active="request()->routeIs('ai.index')">
                             {{ __('AI Outbound Call') }}
                         </x-nav-link>
                     @endif
+
                     <x-nav-link :href="route('ringcentral.index')" :active="request()->routeIs('ringcentral.index')">
                         {{ __('Ring Central') }}
                     </x-nav-link>
@@ -33,13 +37,14 @@
                         <x-nav-link :href="route('users.list')" :active="request()->routeIs('users.list')">
                             {{ __('Users') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('settings')" :active="request()->routeIs('settings')">
-                            {{ __('Settings') }}
-                        </x-nav-link>
+                    @endif
+
+                    @if(Gate::allows('is-admin'))
                         <x-nav-link href="/telescope">
                             {{ __('Telescope') }}
                         </x-nav-link>
                     @endif
+                    
                 </div>
             </div>
 

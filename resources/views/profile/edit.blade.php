@@ -34,11 +34,13 @@
                 </div>
             </div>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 dark:text-gray-200 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.tokens')
+            @if(Gate::allows('is-admin'))
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 dark:text-gray-200 shadow sm:rounded-lg">
+                    <div class="max-w-xl">
+                        @include('profile.partials.tokens')
+                    </div>
                 </div>
-            </div>
+            @endif
 
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 dark:text-gray-200 shadow sm:rounded-lg">
                 <div class="max-w-xl">
