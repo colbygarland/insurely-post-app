@@ -27,9 +27,24 @@ class CallLog extends Model
         'transcription',
     ];
 
-    public static function list()
+    public static function list($perPage = 25, $fromName = null)
     {
-        return self::orderBy('start_time', 'desc')->get();
+        $query = self::orderBy('start_time', 'desc');
+
+        if ($fromName && $fromName !== 'all') {
+            $query->where('from_name', $fromName);
+        }
+
+        return $query->paginate($perPage);
+    }
+
+    public static function getDistinctFromNames()
+    {
+        return self::whereNotNull('from_name')
+            ->where('from_name', '!=', '')
+            ->distinct()
+            ->orderBy('from_name')
+            ->pluck('from_name');
     }
 
     public function getTranscript($accessToken)

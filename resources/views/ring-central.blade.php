@@ -19,9 +19,24 @@
                 </div>
             @endif
             <div class="bg-white shadow-sm sm:rounded-lg mb-16 p-6">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
-                    Calls from Ring Central
-                </h2>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                        Calls from Ring Central
+                    </h2>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm text-gray-600 flex items-center gap-2">
+                            Filter by caller:
+                            <select id="fromNameFilter" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                <option value="all" {{ $fromNameFilter === 'all' ? 'selected' : '' }}>All Callers</option>
+                                @foreach($fromNames as $fromName)
+                                    <option value="{{ $fromName }}" {{ $fromNameFilter === $fromName ? 'selected' : '' }}>
+                                        {{ $fromName ?: 'Unknown' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </label>
+                    </div>
+                </div>
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -58,9 +73,43 @@
                         @endforeach
                     </tbody>
                 </table>
+
+                <!-- Pagination Info -->
+                <div class="mt-4 flex justify-between items-center gap-4">
+                    <div class="text-sm text-gray-500">
+                        Showing {{ $callLogs->firstItem() }} to {{ $callLogs->lastItem() }} of {{ $callLogs->total() }} results
+                    </div>
+                    
+                    <!-- Pagination Links -->
+                    <div class="mt-4">
+                        {{ $callLogs->appends(request()->query())->links() }}
+                    </div>
+                </div>
 </div>
           
          
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fromNameFilter = document.getElementById('fromNameFilter');
+            
+            fromNameFilter.addEventListener('change', function() {
+                const selectedValue = this.value;
+                const currentUrl = new URL(window.location.href);
+                
+                if (selectedValue === 'all') {
+                    currentUrl.searchParams.delete('from_name');
+                } else {
+                    currentUrl.searchParams.set('from_name', selectedValue);
+                }
+                
+                // Remove page parameter to start from page 1 when filtering
+                currentUrl.searchParams.delete('page');
+                
+                window.location.href = currentUrl.toString();
+            });
+        });
+    </script>
 </x-app-layout>

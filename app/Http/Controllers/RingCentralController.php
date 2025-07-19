@@ -12,7 +12,7 @@ class RingCentralController extends Controller
 {
     private const ACCOUNT_ID = '1254284024';
 
-    public function index()
+    public function index(Request $request)
     {
         // Update the call logs
         $success = $this->getCallLog();
@@ -20,9 +20,12 @@ class RingCentralController extends Controller
             Session::flash('errorMessage', 'Failed to get updated call log');
         }
 
-        $callLogs = CallLog::list();
+        $perPage = 25;
+        $fromNameFilter = $request->get('from_name', 'all');
+        $callLogs = CallLog::list($perPage, $fromNameFilter);
+        $fromNames = CallLog::getDistinctFromNames();
 
-        return view('ring-central', compact('callLogs'));
+        return view('ring-central', compact('callLogs', 'fromNames', 'fromNameFilter'));
     }
 
     public function show(CallLog $callLog)
