@@ -36,7 +36,7 @@ class RingCentralController extends Controller
     public function show(CallLog $callLog)
     {
         // Check if non-admin user is trying to view someone else's call
-        if (! Gate::allows('is-admin') && $callLog->from_name !== Auth::user()->name) {
+        if (! Gate::allows('is-admin') && ! $callLog->belongsToUser(Auth::user())) {
             Session::flash('errorMessage', 'You can only view your own call logs.');
 
             return redirect()->route('ringcentral.index');

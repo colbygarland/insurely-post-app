@@ -12,6 +12,16 @@ class CallLog extends Model
 {
     protected $table = 'call_log';
 
+    /**
+     * Call log entries that should be visible to all users (not tied to specific individuals)
+     */
+    protected static $sharedCallNames = [
+        'New Quotes',
+        'Other Inquiries',
+        'Overflow - Teamwork!',
+        'Existing Policies',
+    ];
+
     protected $fillable = [
         'ringcentral_id',
         'session_id',
@@ -29,13 +39,142 @@ class CallLog extends Model
         'transcription',
     ];
 
+    /**
+     * Apply user name filtering that handles both full names and "FirstName LastInitial" patterns,
+     * plus shared call entries that are visible to all users
+     */
+    public static function applyUserNameFilter($query)
+    {
+        $userName = Auth::user()->name;
+
+        $query->where(function ($mainQuery) use ($userName) {
+            // Add user-specific name matching
+            $mainQuery->where(function ($userQuery) use ($userName) {
+                // Split the name into parts
+                $nameParts = explode(' ', trim($userName));
+
+                if (count($nameParts) >= 2) {
+                    $firstName = $nameParts[0];
+                    $lastInitial = substr($nameParts[1], 0, 1);
+
+                    // Match either full name or "FirstName LastInitial" pattern
+                    $userQuery->where('from_name', 'LIKE', '%'.$userName.'%')
+                        ->orWhere('from_name', 'LIKE', '%'.$firstName.' '.$lastInitial.'%')
+                        ->orWhere('from_name', 'LIKE', '%'.$firstName.' '.$lastInitial.'.%');
+                } else {
+                    // Fallback to original exact match if name format is unexpected
+                    $userQuery->where('from_name', 'LIKE', '%'.$userName.'%');
+                }
+            });
+
+            // Add shared call names that everyone can see
+            foreach (self::$sharedCallNames as $sharedName) {
+                $mainQuery->orWhere('from_name', 'LIKE', '%'.$sharedName.'%');
+            }
+        });
+
+        return $query;
+    }
+
+    /**
+     * Check if this call log belongs to the given user using flexible name matching,
+     * or if it's a shared call that everyone can access
+     */
+    public function belongsToUser($user)
+    {
+        $fromName = $this->from_name;
+
+        // Check if this is a shared call first
+        if (self::isSharedCallName($fromName)) {
+            return true;
+        }
+
+        // Check user-specific name matching
+        $userName = $user->name;
+
+        // Direct match
+        if (stripos($fromName, $userName) !== false) {
+            return true;
+        }
+
+        // Split the user name into parts
+        $nameParts = explode(' ', trim($userName));
+
+        if (count($nameParts) >= 2) {
+            $firstName = $nameParts[0];
+            $lastInitial = substr($nameParts[1], 0, 1);
+
+            // Check for "FirstName LastInitial" patterns
+            $patterns = [
+                $firstName.' '.$lastInitial,
+                $firstName.' '.$lastInitial.'.',
+            ];
+
+            foreach ($patterns as $pattern) {
+                if (stripos($fromName, $pattern) !== false) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the list of shared call names that are visible to all users
+     */
+    public static function getSharedCallNames()
+    {
+        return self::$sharedCallNames;
+    }
+
+    /**
+     * Add a new shared call name that will be visible to all users
+     */
+    public static function addSharedCallName($name)
+    {
+        if (! in_array($name, self::$sharedCallNames)) {
+            self::$sharedCallNames[] = $name;
+        }
+    }
+
+    /**
+     * Remove a shared call name
+     */
+    public static function removeSharedCallName($name)
+    {
+        self::$sharedCallNames = array_filter(self::$sharedCallNames, function ($sharedName) use ($name) {
+            return $sharedName !== $name;
+        });
+    }
+
+    /**
+     * Check if a name (raw or cleaned) should be considered a shared call
+     */
+    public static function isSharedCallName($name)
+    {
+        $cleanedName = self::cleanFromName($name);
+
+        foreach (self::$sharedCallNames as $sharedName) {
+            // Check both raw and cleaned name against shared names
+            if (stripos($name, $sharedName) !== false ||
+                stripos($cleanedName, $sharedName) !== false ||
+                stripos($sharedName, $name) !== false ||
+                stripos($sharedName, $cleanedName) !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static function list($perPage = 25, $fromName = null, $startDate = null, $endDate = null)
     {
         $query = self::orderBy('start_time', 'desc');
 
         // Apply user-based filtering for non-admin users
         if (! Gate::allows('is-admin')) {
-            $query->where('from_name', Auth::user()->name);
+            self::applyUserNameFilter($query);
         }
 
         if ($fromName && $fromName !== 'all') {
@@ -72,10 +211,10 @@ class CallLog extends Model
                 ->get();
         }
 
-        return self::where('from_name', Auth::user()->name)
-            ->orderBy('start_time', 'desc')
-            ->limit(5)
-            ->get();
+        $query = self::orderBy('start_time', 'desc')->limit(5);
+        self::applyUserNameFilter($query);
+
+        return $query->get();
     }
 
     public static function getDistinctFromNames()
@@ -85,7 +224,7 @@ class CallLog extends Model
 
         // Apply user-based filtering for non-admin users
         if (! Gate::allows('is-admin')) {
-            $query->where('from_name', Auth::user()->name);
+            self::applyUserNameFilter($query);
         }
 
         $allNames = $query->pluck('from_name');
@@ -93,19 +232,30 @@ class CallLog extends Model
         // Clean names by removing phone numbers and get unique values
         $cleanedNames = $allNames->map(function ($name) {
             return self::cleanFromName($name);
-        })->unique()->sort()->values();
+        })->unique();
 
-        return $cleanedNames;
+        // Separate shared call names from the rest using the helper method
+        $shared = $cleanedNames->filter(function ($name) {
+            return self::isSharedCallName($name);
+        });
+
+        $nonShared = $cleanedNames->reject(function ($name) {
+            return self::isSharedCallName($name);
+        })->sort()->values();
+
+        // Merge non-shared (alphabetized) with shared (at the end)
+        $result = $nonShared->merge($shared->values());
+
+        return $result->values();
     }
 
     public static function cleanFromName($name)
     {
-        if (! $name) {
-            return $name;
-        }
-
         // Remove phone numbers from the end (patterns like +1234567890, (123) 456-7890, etc.)
         $cleaned = preg_replace('/\s*[\+\(]?[\d\s\-\(\)\.]{10,}$/', '', $name);
+
+        // Remove the English - prepended text
+        $cleaned = preg_replace('/^English - /', '', $cleaned);
 
         return trim($cleaned);
     }
