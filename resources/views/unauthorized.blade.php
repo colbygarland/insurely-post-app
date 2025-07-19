@@ -1,3 +1,3 @@
 <x-guest-layout>
-  You are unauthorized to use this application.
+  You are currently unauthorized to use this application. Please contact an admin to get access.
 </x-guest-layout>

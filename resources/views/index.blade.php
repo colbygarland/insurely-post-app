@@ -10,6 +10,20 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-6">
+                @php
+                    $hour = now()->setTimezone('America/Edmonton')->format('H');
+                    if ($hour < 12) {
+                        $greeting = 'Good morning';
+                    } elseif ($hour < 17) {
+                        $greeting = 'Good afternoon';
+                    } else {
+                        $greeting = 'Good evening';
+                    }
+                @endphp
+                {{ $greeting }}, {{ auth()->user()->name }}
+            </h2>
+
             <!-- Stats Overview Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                 <!-- Published Posts -->
