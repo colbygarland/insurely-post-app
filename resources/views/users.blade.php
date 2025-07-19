@@ -1,6 +1,9 @@
 <x-app-layout>
+  <x-slot name="title">
+    Users
+  </x-slot>
   <x-slot name="header">
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+      <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
           {{ __('Users') }}
       </h2>
   </x-slot>
@@ -13,8 +16,8 @@
           @if(Session::has('errorMessage'))
               <div class="bg-red-200 text-red-900 inline-block rounded-lg py-2 px-4 mb-4">{{ Session::get('errorMessage') }}</div>
           @endif
-          <div class="bg-white shadow-sm sm:rounded-lg mb-16 p-6">
-              <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">All Users</h2>
+          <div class="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-sm sm:rounded-lg mb-16 p-6">
+              <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-4">All Users</h2>
               <div class="relative overflow-x-auto">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

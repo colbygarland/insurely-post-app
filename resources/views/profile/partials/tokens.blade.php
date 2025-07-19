@@ -1,6 +1,6 @@
 <section>
   <header>
-    <h2 class="text-lg font-medium text-gray-900">
+    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-200 ">
       {{ __('LinkedIn Tokens') }}
     </h2>
     </header>

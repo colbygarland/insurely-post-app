@@ -1,6 +1,9 @@
 <x-app-layout>
+  <x-slot name="title">
+    AI Outbound Caller
+  </x-slot>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('AI Outbound Caller') }}
         </h2>
     </x-slot>
@@ -8,18 +11,18 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(Session::has('successMessage'))
-                <div class="bg-green-200 text-green-900 inline-block rounded-lg py-2 px-4 mb-4">
+                <div class="bg-green-200 text-green-900 dark:text-green-900 inline-block rounded-lg py-2 px-4 mb-4">
                     {{ Session::get('successMessage') }}
                 </div>
             @endif
 
             @if(Session::has('errorMessage'))
-                <div class="bg-red-200 text-red-900 inline-block rounded-lg py-2 px-4 mb-4">
+                <div class="bg-red-200 text-red-900 dark:text-red-900 inline-block rounded-lg py-2 px-4 mb-4">
                     {{ Session::get('errorMessage') }}
                 </div>
             @endif
 
-            <div class="p-6 pl-0 flex gap-4">
+            <div class="p-6 pl-0 flex gap-4 dark:text-gray-200">
                 <div class="">
                     <x-primary-button-link href="https://fly-metrics.net/d/fly-logs/fly-logs?orgId=1059613&var-app=insurely-outbound-caller-ai">
                         Historical Outbound Caller Logs
@@ -37,8 +40,8 @@
             </div>
 
             <div class="lg:grid lg:grid-cols-2 lg:gap-6">
-                <div class="bg-white shadow-sm sm:rounded-lg mb-16 lg:mb-0 p-6">
-                    <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
+                <div class="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-sm sm:rounded-lg mb-16 lg:mb-0 p-6">
+                    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-4">
                         Make an Outbound Call
                     </h2>
                     
@@ -91,8 +94,8 @@
                 </div>
 
                 <div class="">
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6 mb-16">
-                        <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
+                    <div class="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-sm sm:rounded-lg p-6 mb-16">
+                        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-4">
                             Upload a CSV file
                         </h2>
                         
@@ -121,8 +124,8 @@
                         </form>
                     </div>
 
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                        <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
+                    <div class="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-sm sm:rounded-lg p-6">
+                        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-4">
                             Process CSV file
                         </h2>
                         
@@ -151,13 +154,13 @@
                 </div>
             </div>
 
-            <div class="bg-white shadow-sm sm:rounded-lg mt-16 mb-16 lg:mb-0 p-6">
+            <div class="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-sm sm:rounded-lg mt-16 mb-16 lg:mb-0 p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                         Conversations History
                     </h2>
                     <div class="flex items-center gap-2">
-                        <label class="text-sm text-gray-600">Show voicemail conversations:
+                        <label class="text-sm text-gray-600 dark:text-gray-200">Show voicemail conversations:
                             <input type="checkbox" id="showVoicemail" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                         </label>
                     </div>
@@ -165,19 +168,23 @@
 
                 <div class="mt-4 relative overflow-x-auto">
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:text-gray-200">
                             <tr>
                                 <th scope="col" class="px-6 py-3">ID</th>
                                 <th scope="col" class="px-6 py-3">Message</th>
                                 <th scope="col" class="px-6 py-3">Created At</th>
+                                <th scope="col" class="px-6 py-3"></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($conversations as $conversation) 
-                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                    <th scope="row" class="px-6 py-4 font-medium underline text-blue-600 whitespace-nowrap dark:text-white"><a href="{{ route('ai.conversation.show', $conversation->id) }}">{{ $conversation->id }}</a></th>
+                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 dark:text-gray-200">
+                                    <th scope="row" class="px-6 py-4 font-medium text-blue-600 whitespace-nowrap dark:text-white">{{ $conversation->id }}</th>
                                     <td class="px-6 py-4">{!! Str::words($conversation->message, 10, '...')  !!}</td>
                                     <td class="px-6 py-4">{{ Carbon\Carbon::parse($conversation->created_at)->setTimezone('America/Edmonton')->format('F j, Y g:ia') }}</td>
+                                    <td class="px-6 py-4">
+                                        <a href="{{ route('ai.conversation.show', $conversation->id) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs">View Details</a>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
