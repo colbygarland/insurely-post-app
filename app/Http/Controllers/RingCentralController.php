@@ -22,6 +22,8 @@ class RingCentralController extends Controller
 
         $validationToken = $request->header('validation-token');
 
+        // TODO: this is where we will handle the webhook, maybe make a call to the API and get the transcript
+
         return response('', 200)->header('Validation-Token', $validationToken)->header('Content-Type', 'application/json');
     }
 
@@ -53,6 +55,38 @@ class RingCentralController extends Controller
         Log::debug($response);
 
         return response()->json(['message' => 'Webhook created', 'data' => $response], 200);
+    }
+
+    public function getCallLog()
+    {
+        $accessToken = $this->getAccessToken();
+        $queryParams = [
+            'page' => 1,
+            'perPage' => 100,
+            'recordingType' => 'Automatic',
+        ];
+
+        $response = Http::withHeaders(['Authorization' => 'Bearer '.$accessToken])->get('https://platform.ringcentral.com/restapi/v1.0/account/'.self::ACCOUNT_ID.'/call-log?', implode('&', $queryParams));
+        $records = $response->json()['records'];
+
+        // records -> recording -> contentUri gives us the recording. need to append ?access_token=accessToken to get the recording
+        $recordings = [];
+        foreach ($records as $record) {
+            if (isset($record['recording'])) {
+                $recording = $record['recording'];
+                $recordingUrl = $recording['contentUri'];
+                $recordings[] = [
+                    'url' => $recordingUrl,
+                    'id' => $record['id'],
+                    'from' => $record['from'],
+                    'to' => $record['to'],
+                    'startTime' => $record['startTime'],
+                    'result' => $record['result'],
+                ];
+            }
+        }
+
+        return response()->json(['message' => 'Call log', 'access_token' => $accessToken, 'recordings' => $recordings, 'data' => $response->json()], 200);
     }
 
     private function getAccessToken()

@@ -35,3 +35,4 @@ Route::get('ai/conversation', [ConversationController::class, 'list']);
 // Ring Central
 Route::post('ringcentral/webhook', [RingCentralController::class, 'webhook']);
 Route::get('ringcentral/create-webhook', [RingCentralController::class, 'createWebhook']);
+Route::get('ringcentral/call-log', [RingCentralController::class, 'getCallLog']);
