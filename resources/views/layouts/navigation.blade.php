@@ -13,9 +13,11 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
 
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        Home
-                    </x-nav-link>
+                    @if(Gate::allows('is-admin'))
+                        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                            Home
+                        </x-nav-link>
+                    @endif
 
                     @if(Gate::allows('is-admin'))
                         <x-nav-link :href="route('posts')" :active="request()->routeIs('posts')">

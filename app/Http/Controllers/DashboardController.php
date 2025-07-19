@@ -5,11 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\CallLog;
 use App\Models\Conversation;
 use App\Models\Post;
+use Illuminate\Support\Facades\Gate;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        // Redirect non-admin users to Ring Central page
+        if (! Gate::allows('is-admin')) {
+            return redirect()->route('ringcentral.index');
+        }
+
         // Get recent LinkedIn posts (published and pending)
         $recentPublishedPosts = Post::where('published_at', '!=', null)
             ->orderBy('published_at', 'desc')
