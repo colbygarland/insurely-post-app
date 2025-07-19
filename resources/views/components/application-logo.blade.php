@@ -1,1 +1,1 @@
-<img src="/logo.webp" alt="" class="h-6" />
+<img src="/insight.png" alt="Insight" class="h-6" />
