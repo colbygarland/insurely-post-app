@@ -61,4 +61,14 @@ class UsersController extends Controller
 
         return redirect('/users');
     }
+
+    public function destroy(Request $request, string $id)
+    {
+        $user = User::find($id);
+        $user->delete();
+
+        Session::flash('successMessage', 'User successfully deleted.');
+
+        return redirect('/users');
+    }
 }

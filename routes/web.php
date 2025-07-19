@@ -23,10 +23,13 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/profile/revoke-linkedin-tokens', [LinkedInController::class, 'revokeTokens']);
-    Route::get('/users', [UsersController::class, 'list'])->name('users.list')->middleware('can:is-admin');
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings')->middleware('can:is-admin');
-    Route::get('/users/verify-user/{id}', [UsersController::class, 'verify']);
+
+    // Users related things
+    Route::get('/users', [UsersController::class, 'list'])->name('users.list')->middleware('can:is-admin');
+    Route::get('/users/verify-user/{id}', [UsersController::class, 'verify'])->middleware('can:is-admin');
     Route::get('/users/promote-to-admin/{id}', [UsersController::class, 'promoteToAdmin'])->name('users.promote-admin')->middleware('can:is-admin');
+    Route::delete('/users/{id}', [UsersController::class, 'destroy'])->name('users.destroy')->middleware('can:is-admin');
 
     // Linkedin related things
     Route::get('access-token', [LinkedInController::class, 'saveTokens']);
