@@ -16,10 +16,11 @@ class CallLog extends Model
      * Call log entries that should be visible to all users (not tied to specific individuals)
      */
     protected static $sharedCallNames = [
-        'New Quotes',
-        'Other Inquiries',
-        'Overflow - Teamwork!',
-        'Existing Policies',
+        // Uncomment if we want to show these to the users
+        // 'New Quotes',
+        // 'Other Inquiries',
+        // 'Overflow - Teamwork!',
+        // 'Existing Policies',
     ];
 
     protected $fillable = [
