@@ -32,7 +32,7 @@
                                 Role
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                Verified
+                                Verified at
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Actions
@@ -49,11 +49,11 @@
                               {{ $user->email }}
                             </td>
                             <td class="px-6 py-4">
-                              {{ $user->role }}
+                              <span class="@if($user->role === 'admin') text-green-600 dark:text-green-400 @else text-blue-600 dark:text-blue-400 @endif font-semibold text-xs uppercase">{{ $user->role }}</span>
                             </td>
                             <td class="px-6 py-4">
                               @if($user->verified_at)
-                                <p>Verified at {{ Carbon\Carbon::parse($user->verified_at)->setTimezone('America/Edmonton')->format('M j, g:ia') }}</p>
+                                <p>{{ Carbon\Carbon::parse($user->verified_at)->setTimezone('America/Edmonton')->format('M j, g:ia') }}</p>
                               @else  
                                 <a href="/users/verify-user/{{ $user->id }}" class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-gray-500 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Verify User</a>
                               @endif
@@ -67,7 +67,7 @@
                                    Promote to Admin
                                 </a>
                               @else
-                                <span class="text-green-600 dark:text-green-400 font-semibold text-xs uppercase">Admin</span>
+                                <span class="text-gray-600 dark:text-gray-400 font-semibold text-xs uppercase">n/a</span>
                               @endif
                               @if($user->role !== 'admin')
                               <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">

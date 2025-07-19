@@ -51,9 +51,11 @@
                             <th scope="col" class="px-6 py-3">
                                 Duration
                             </th>
-                            <th scope="col" class="px-6 py-3">
-                                From
-                            </th>
+                            @if(Gate::allows('is-admin'))
+                                <th scope="col" class="px-6 py-3">
+                                    From
+                                </th>
+                            @endif
                             <th scope="col" class="px-6 py-3">
                                 To
                             </th>
@@ -74,9 +76,11 @@
                             <td class="px-6 py-4">
                             {{ gmdate('i:s', $callLog->duration) }}
                             </td>
-                            <td class="px-6 py-4">
-                                {{ App\Models\CallLog::cleanFromName($callLog->from_name) }}
-                            </td>
+                            @if(Gate::allows('is-admin'))
+                                <td class="px-6 py-4">
+                                    {{ App\Models\CallLog::cleanFromName($callLog->from_name) }}
+                                </td>
+                            @endif
                             <td class="px-6 py-4">
                                     {{ $callLog->to }}
                             </td>
