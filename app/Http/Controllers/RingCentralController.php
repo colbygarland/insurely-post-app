@@ -24,7 +24,10 @@ class RingCentralController extends Controller
 
         $perPage = 25;
         $fromNameFilter = $request->get('from_name', 'all');
-        $callLogs = CallLog::list($perPage, $fromNameFilter);
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
+
+        $callLogs = CallLog::list($perPage, $fromNameFilter, $startDate, $endDate);
         $fromNames = CallLog::getDistinctFromNames();
 
         return view('ring-central', compact('callLogs', 'fromNames', 'fromNameFilter'));

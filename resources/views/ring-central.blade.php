@@ -22,25 +22,51 @@
                 </div>
             @endif
             <div class="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-sm sm:rounded-lg mb-16 p-6">
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex flex-col gap-4 mb-4">
                     <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                         Calls from Ring Central
                     </h2>
-                    @if(Gate::allows('is-admin'))
+                    
+                    <!-- Filters -->
+                    <div class="flex flex-wrap items-center gap-4">
+                        <!-- Date Range Filter -->
                         <div class="flex items-center gap-2">
                             <label class="text-sm text-gray-600 dark:text-gray-200 flex items-center gap-2">
-                                Filter by caller:
-                                <select id="fromNameFilter" class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                                    <option value="all" {{ $fromNameFilter === 'all' ? 'selected' : '' }}>All Callers</option>
-                                    @foreach($fromNames as $fromName)
-                                        <option value="{{ $fromName }}" {{ $fromNameFilter === $fromName ? 'selected' : '' }}>
-                                            {{ $fromName ?: 'Unknown' }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                From:
+                                <input type="date" id="startDate" 
+                                       value="{{ request('start_date') }}"
+                                       class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            </label>
+                            <label class="text-sm text-gray-600 dark:text-gray-200 flex items-center gap-2">
+                                To:
+                                <input type="date" id="endDate" 
+                                       value="{{ request('end_date') }}"
+                                       class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             </label>
                         </div>
-                    @endif
+                        
+                        @if(Gate::allows('is-admin'))
+                            <!-- Caller Filter -->
+                            <div class="flex items-center gap-2">
+                                <label class="text-sm text-gray-600 dark:text-gray-200 flex items-center gap-2">
+                                    Filter by caller:
+                                    <select id="fromNameFilter" class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                        <option value="all" {{ $fromNameFilter === 'all' ? 'selected' : '' }}>All Callers</option>
+                                        @foreach($fromNames as $fromName)
+                                            <option value="{{ $fromName }}" {{ $fromNameFilter === $fromName ? 'selected' : '' }}>
+                                                {{ $fromName ?: 'Unknown' }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                            </div>
+                        @endif
+                        
+                        <!-- Clear Filters Button -->
+                        <button type="button" id="clearFilters" class="px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-200 rounded transition-colors">
+                            Clear Filters
+                        </button>
+                    </div>
                 </div>
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:text-gray-200">
@@ -107,8 +133,18 @@
                 <div class="mt-4 flex justify-between items-center gap-4">
                     <div class="text-sm text-gray-500">
                         Showing {{ $callLogs->firstItem() }} to {{ $callLogs->lastItem() }} of {{ $callLogs->total() }} results
-                        @if($fromNameFilter !== 'all')
-                            <span class="ml-2 text-indigo-600 font-medium">(filtered by: {{ $fromNameFilter }})</span>
+                        @if($fromNameFilter !== 'all' || request('start_date') || request('end_date'))
+                            <div class="mt-1 flex flex-wrap gap-2">
+                                @if($fromNameFilter !== 'all')
+                                    <span class="text-indigo-600 font-medium">Caller: {{ $fromNameFilter }}</span>
+                                @endif
+                                @if(request('start_date'))
+                                    <span class="text-indigo-600 font-medium">From: {{ Carbon\Carbon::parse(request('start_date'))->format('M j, Y') }}</span>
+                                @endif
+                                @if(request('end_date'))
+                                    <span class="text-indigo-600 font-medium">To: {{ Carbon\Carbon::parse(request('end_date'))->format('M j, Y') }}</span>
+                                @endif
+                            </div>
                         @endif
                     </div>
                     
@@ -126,22 +162,80 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const fromNameFilter = document.getElementById('fromNameFilter');
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            const clearFiltersBtn = document.getElementById('clearFilters');
             
-            fromNameFilter.addEventListener('change', function() {
-                const selectedValue = this.value;
+            function updateFilters() {
                 const currentUrl = new URL(window.location.href);
                 
-                if (selectedValue === 'all') {
-                    currentUrl.searchParams.delete('from_name');
+                // Handle caller filter
+                if (fromNameFilter) {
+                    const selectedValue = fromNameFilter.value;
+                    if (selectedValue === 'all') {
+                        currentUrl.searchParams.delete('from_name');
+                    } else {
+                        currentUrl.searchParams.set('from_name', selectedValue);
+                    }
+                }
+                
+                // Handle start date
+                const startDate = startDateInput.value;
+                if (startDate) {
+                    currentUrl.searchParams.set('start_date', startDate);
                 } else {
-                    currentUrl.searchParams.set('from_name', selectedValue);
+                    currentUrl.searchParams.delete('start_date');
+                }
+                
+                // Handle end date
+                const endDate = endDateInput.value;
+                if (endDate) {
+                    currentUrl.searchParams.set('end_date', endDate);
+                } else {
+                    currentUrl.searchParams.delete('end_date');
                 }
                 
                 // Remove page parameter to start from page 1 when filtering
                 currentUrl.searchParams.delete('page');
                 
                 window.location.href = currentUrl.toString();
+            }
+            
+            // Event listeners
+            if (fromNameFilter) {
+                fromNameFilter.addEventListener('change', updateFilters);
+            }
+            
+            startDateInput.addEventListener('change', updateFilters);
+            endDateInput.addEventListener('change', updateFilters);
+            
+            // Clear filters functionality
+            clearFiltersBtn.addEventListener('click', function() {
+                const currentUrl = new URL(window.location.href);
+                
+                // Remove all filter parameters
+                currentUrl.searchParams.delete('from_name');
+                currentUrl.searchParams.delete('start_date');
+                currentUrl.searchParams.delete('end_date');
+                currentUrl.searchParams.delete('page');
+                
+                window.location.href = currentUrl.toString();
             });
+            
+            // Validate date range
+            function validateDateRange() {
+                const startDate = startDateInput.value;
+                const endDate = endDateInput.value;
+                
+                if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+                    alert('Start date cannot be later than end date');
+                    return false;
+                }
+                return true;
+            }
+            
+            startDateInput.addEventListener('change', validateDateRange);
+            endDateInput.addEventListener('change', validateDateRange);
         });
     </script>
 </x-app-layout>

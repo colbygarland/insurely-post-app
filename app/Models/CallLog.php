@@ -29,7 +29,7 @@ class CallLog extends Model
         'transcription',
     ];
 
-    public static function list($perPage = 25, $fromName = null)
+    public static function list($perPage = 25, $fromName = null, $startDate = null, $endDate = null)
     {
         $query = self::orderBy('start_time', 'desc');
 
@@ -40,6 +40,25 @@ class CallLog extends Model
 
         if ($fromName && $fromName !== 'all') {
             $query->where('from_name', 'LIKE', $fromName.'%');
+        }
+
+        // Apply date filtering
+        if ($startDate) {
+            try {
+                $startDateTime = \Carbon\Carbon::parse($startDate)->startOfDay();
+                $query->where('start_time', '>=', $startDateTime);
+            } catch (\Exception $e) {
+                // Invalid date format, ignore filter
+            }
+        }
+
+        if ($endDate) {
+            try {
+                $endDateTime = \Carbon\Carbon::parse($endDate)->endOfDay();
+                $query->where('start_time', '<=', $endDateTime);
+            } catch (\Exception $e) {
+                // Invalid date format, ignore filter
+            }
         }
 
         return $query->paginate($perPage);
