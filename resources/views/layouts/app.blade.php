@@ -28,6 +28,13 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+            @if(config('app.env') === 'local')
+                <div class="bg-red-600 text-white text-center">
+                    <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
+                        <p>LOCAL ENVIRONMENT</p>
+                    </div>
+                </div>
+            @endif
             @include('layouts.navigation')
 
             <!-- Page Heading -->
