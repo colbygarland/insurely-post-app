@@ -13,7 +13,20 @@ class RingCentralController extends Controller
 
     public function index()
     {
-        return view('ring-central');
+        // Update the call logs
+        $this->getCallLog();
+
+        $callLogs = CallLog::list();
+
+        return view('ring-central', compact('callLogs'));
+    }
+
+    public function show(CallLog $callLog)
+    {
+        $transcript = $callLog->getTranscript();
+        $accessToken = $this->getAccessToken();
+
+        return view('ring-central-details', compact('callLog', 'transcript', 'accessToken'));
     }
 
     public function webhook(Request $request)

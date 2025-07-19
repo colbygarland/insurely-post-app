@@ -23,4 +23,15 @@ class CallLog extends Model
         'party_id',
         'telephony_session_id',
     ];
+
+    public static function list()
+    {
+        return self::orderBy('start_time', 'desc')->get();
+    }
+
+    public function getTranscript()
+    {
+        // TODO: get the transcript from the url
+        return 'transcript';
+    }
 }

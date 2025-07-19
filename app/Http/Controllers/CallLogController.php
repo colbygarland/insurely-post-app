@@ -8,7 +8,7 @@ class CallLogController extends Controller
 {
     public function list()
     {
-        $callLogs = CallLog::orderBy('start_time', 'desc')->get();
+        $callLogs = CallLog::list();
 
         return response()->json(['message' => 'Call logs', 'count' => $callLogs->count(), 'data' => $callLogs], 200);
     }

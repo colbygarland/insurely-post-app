@@ -20,7 +20,7 @@
             @endif
             <div class="bg-white shadow-sm sm:rounded-lg mb-16 p-6">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight mb-4">
-                    Transcripts from Ring Central
+                    Calls from Ring Central
                 </h2>
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -28,26 +28,34 @@
                             <th scope="col" class="px-6 py-3">
                                 Date
                             </th>
-                            <th scope="col" class="px-6 py-3">
-                                Employee
+                                <th scope="col" class="px-6 py-3">
+                                    From
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                Customer Phone Number
+                                To
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                
                             </th>
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach($callLogs as $callLog)
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                               {{ Carbon\Carbon::parse("2025-07-16 10:00:00")->setTimezone('America/Edmonton')->format('F j, Y g:ia')}}
+                               {{ Carbon\Carbon::parse($callLog->start_time)->setTimezone('America/Edmonton')->format('F j, Y g:ia')}}
                             </th>
                             <td class="px-6 py-4">
-                                John Doe
+                                {{ $callLog->from_name }}
                             </td>
                             <td class="px-6 py-4">
-                                (123) 456-7890
+                                    {{ $callLog->to }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <a href="{{ route('ringcentral.details', $callLog->id) }}" target="_blank" class="text-blue-500">View Details</a>
                             </td>
                         </tr>
+                        @endforeach
                     </tbody>
                 </table>
 </div>

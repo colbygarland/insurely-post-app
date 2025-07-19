@@ -53,6 +53,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
 
     // Ring Central stuff
     Route::get('/ringcentral', [RingCentralController::class, 'index'])->name('ringcentral.index');
+    Route::get('/ringcentral/details/{callLog}', [RingCentralController::class, 'show'])->name('ringcentral.details');
 });
 
 require __DIR__.'/auth.php';
