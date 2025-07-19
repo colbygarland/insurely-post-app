@@ -84,7 +84,7 @@ class RingCentralController extends Controller
             'recordingType' => 'Automatic',
         ];
 
-        $response = Http::withHeaders(['Authorization' => 'Bearer '.$accessToken])->get('https://platform.ringcentral.com/restapi/v1.0/account/'.self::ACCOUNT_ID.'/call-log?', implode('&', $queryParams));
+        $response = Http::withHeaders(['Authorization' => 'Bearer '.$accessToken])->get('https://platform.ringcentral.com/restapi/v1.0/account/'.self::ACCOUNT_ID.'/call-log', $queryParams);
         if ($response->status() != 200) {
             Session::flash('errorMessage', 'Failed to get updated call log: '.$response->body());
 
