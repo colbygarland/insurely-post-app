@@ -18,6 +18,7 @@ Route::get('/unauthorized', [UsersController::class, 'unauthorized'])->name('una
 
 Route::middleware(['auth', Verified::class])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/dashboard/chart-data', [DashboardController::class, 'getChartData'])->name('dashboard.chart-data');
     Route::get('/posts', [PostsController::class, 'index'])->name('posts')->middleware('can:is-admin');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

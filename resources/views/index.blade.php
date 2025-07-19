@@ -79,12 +79,15 @@
                             <div class="text-center mb-6">
                                 <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Ring Central Call Distribution by Person This Month</h3>
                                 <div class="mt-2">
-                                    <div class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 mb-2">
+                                    <button type="button" id="dateRangeButton" class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 mb-2 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors cursor-pointer">
                                         <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
                                         </svg>
-                                        {{ $stats['current_month'] }}
-                                    </div>
+                                        <span id="selectedDateRange">{{ $stats['current_month'] }}</span>
+                                        <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
                             
@@ -100,19 +103,19 @@
                                 <div class="flex-1 max-w-md">
                                     <div class="grid grid-cols-2 gap-4">
                                         <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                            <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $stats['call_logs_per_person']->sum() }}</div>
+                                            <div class="text-2xl font-bold text-blue-600 dark:text-blue-400" data-stat="total_calls">{{ $stats['call_logs_per_person']->sum() }}</div>
                                             <div class="text-sm text-gray-600 dark:text-gray-400">Calls</div>
                                         </div>
                                         <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                            <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $stats['call_logs_per_person']->count() }}</div>
+                                            <div class="text-2xl font-bold text-green-600 dark:text-green-400" data-stat="active_members">{{ $stats['call_logs_per_person']->count() }}</div>
                                             <div class="text-sm text-gray-600 dark:text-gray-400">Active Members</div>
                                         </div>
                                         <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                            <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ $stats['call_logs_per_person']->count() > 0 ? number_format($stats['call_logs_per_person']->avg(), 1) : '0' }}</div>
+                                            <div class="text-2xl font-bold text-purple-600 dark:text-purple-400" data-stat="avg_calls">{{ $stats['call_logs_per_person']->count() > 0 ? number_format($stats['call_logs_per_person']->avg(), 1) : '0' }}</div>
                                             <div class="text-sm text-gray-600 dark:text-gray-400">Avg Calls</div>
                                         </div>
                                         <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                            <div class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ $stats['call_logs_per_person']->count() > 0 ? $stats['call_logs_per_person']->max() : '0' }}</div>
+                                            <div class="text-2xl font-bold text-orange-600 dark:text-orange-400" data-stat="highest_calls">{{ $stats['call_logs_per_person']->count() > 0 ? $stats['call_logs_per_person']->max() : '0' }}</div>
                                             <div class="text-sm text-gray-600 dark:text-gray-400">Highest Calls Per Person</div>
                                         </div>
                                     </div>
@@ -121,7 +124,7 @@
                                     <div class="mt-6">
                                         <h4 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Top Performers - {{ $stats['current_month'] }}</h4>
                                         @if($stats['call_logs_per_person']->count() > 0)
-                                            <div class="space-y-2">
+                                            <div class="space-y-2 top-performers-list">
                                                 @foreach($stats['call_logs_per_person']->sortDesc()->take(3) as $name => $count)
                                                     <div class="flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded">
                                                         <span class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $name }}</span>
@@ -144,6 +147,55 @@
                     </div>
                 </div>
             @endif
+
+            <!-- Date Range Modal -->
+            <div id="dateRangeModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
+                <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
+                    <div class="mt-3">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Select Date Range</h3>
+                            <button type="button" id="closeModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <!-- Quick Presets -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quick Select</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button type="button" class="preset-btn px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600" data-preset="current-month">This Month</button>
+                                    <button type="button" class="preset-btn px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600" data-preset="last-month">Last Month</button>
+                                    <button type="button" class="preset-btn px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600" data-preset="last-3-months">Last 3 Months</button>
+                                    <button type="button" class="preset-btn px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600" data-preset="last-6-months">Last 6 Months</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Custom Date Range -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Custom Range</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">From</label>
+                                        <input type="date" id="startDate" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-300">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">To</label>
+                                        <input type="date" id="endDate" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-300">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end mt-6 space-x-3">
+                            <button type="button" id="cancelBtn" class="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">Cancel</button>
+                            <button type="button" id="applyBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md">Apply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Main Dashboard Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
@@ -308,30 +360,95 @@
     </script>
     
     <script>
+        let chart; // Global chart variable
+        
         document.addEventListener('DOMContentLoaded', function() {
-            // Get the canvas element
-            const ctx = document.getElementById('callLogsChart').getContext('2d');
+            // Initialize chart with current data
+            initializeChart();
             
-            // Get data from global variable
+            // Modal functionality
+            const modal = document.getElementById('dateRangeModal');
+            const dateRangeButton = document.getElementById('dateRangeButton');
+            const closeModal = document.getElementById('closeModal');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const applyBtn = document.getElementById('applyBtn');
+            const startDate = document.getElementById('startDate');
+            const endDate = document.getElementById('endDate');
+            
+            // Open modal
+            dateRangeButton.addEventListener('click', function() {
+                modal.classList.remove('hidden');
+                // Set current dates
+                const today = new Date();
+                endDate.value = today.toISOString().split('T')[0];
+                startDate.value = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+            });
+            
+            // Close modal events
+            [closeModal, cancelBtn].forEach(btn => {
+                btn.addEventListener('click', function() {
+                    modal.classList.add('hidden');
+                });
+            });
+            
+            // Close modal on backdrop click
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+            
+            // Preset buttons
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const preset = this.dataset.preset;
+                    const dates = getPresetDates(preset);
+                    startDate.value = dates.start;
+                    endDate.value = dates.end;
+                });
+            });
+            
+            // Apply button
+            applyBtn.addEventListener('click', function() {
+                const start = startDate.value;
+                const end = endDate.value;
+                
+                if (!start || !end) {
+                    alert('Please select both start and end dates');
+                    return;
+                }
+                
+                if (new Date(start) > new Date(end)) {
+                    alert('Start date cannot be later than end date');
+                    return;
+                }
+                
+                updateChartData(start, end);
+                modal.classList.add('hidden');
+            });
+        });
+        
+        function initializeChart() {
+            const ctx = document.getElementById('callLogsChart').getContext('2d');
             const callLogsData = window.callLogsData || {};
             
-            // Convert to arrays for Chart.js
+            chart = createChart(ctx, callLogsData);
+        }
+        
+        function createChart(ctx, callLogsData) {
             const labels = Object.keys(callLogsData);
             const data = Object.values(callLogsData);
             
-            // Generate colors for each slice
             const colors = [
                 '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
                 '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384',
                 '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
             ];
             
-            // Ensure we have enough colors
             const backgroundColors = colors.slice(0, labels.length);
-            const borderColors = backgroundColors.map(color => color + '80'); // Add transparency
+            const borderColors = backgroundColors.map(color => color + '80');
             
-            // Create the pie chart
-            new Chart(ctx, {
+            return new Chart(ctx, {
                 type: 'pie',
                 data: {
                     labels: labels,
@@ -371,6 +488,107 @@
                     }
                 }
             });
-        });
+        }
+        
+        function getPresetDates(preset) {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            
+            switch(preset) {
+                case 'current-month':
+                    return {
+                        start: new Date(year, month, 1).toISOString().split('T')[0],
+                        end: today.toISOString().split('T')[0]
+                    };
+                case 'last-month':
+                    const lastMonth = new Date(year, month - 1, 1);
+                    const lastMonthEnd = new Date(year, month, 0);
+                    return {
+                        start: lastMonth.toISOString().split('T')[0],
+                        end: lastMonthEnd.toISOString().split('T')[0]
+                    };
+                case 'last-3-months':
+                    return {
+                        start: new Date(year, month - 3, 1).toISOString().split('T')[0],
+                        end: today.toISOString().split('T')[0]
+                    };
+                case 'last-6-months':
+                    return {
+                        start: new Date(year, month - 6, 1).toISOString().split('T')[0],
+                        end: today.toISOString().split('T')[0]
+                    };
+                default:
+                    return {
+                        start: new Date(year, month, 1).toISOString().split('T')[0],
+                        end: today.toISOString().split('T')[0]
+                    };
+            }
+        }
+        
+        function updateChartData(startDate, endDate) {
+            // Show loading state
+            document.getElementById('selectedDateRange').textContent = 'Loading...';
+            
+            // Make AJAX request
+            fetch('/dashboard/chart-data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    start_date: startDate,
+                    end_date: endDate
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update chart
+                const labels = Object.keys(data.call_logs_per_person);
+                const chartData = Object.values(data.call_logs_per_person);
+                
+                chart.data.labels = labels;
+                chart.data.datasets[0].data = chartData;
+                chart.update();
+                
+                // Update stats
+                updateStats(data);
+                
+                // Update date range display
+                document.getElementById('selectedDateRange').textContent = data.date_range_label;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update chart data');
+                document.getElementById('selectedDateRange').textContent = 'Error';
+            });
+        }
+        
+        function updateStats(data) {
+            // Update the stats cards
+            const statsCards = document.querySelectorAll('[data-stat]');
+            statsCards.forEach(card => {
+                const statType = card.dataset.stat;
+                if (data.stats[statType] !== undefined) {
+                    card.textContent = data.stats[statType];
+                }
+            });
+            
+            // Update top performers
+            const topPerformersContainer = document.querySelector('.top-performers-list');
+            if (topPerformersContainer && data.top_performers) {
+                topPerformersContainer.innerHTML = '';
+                data.top_performers.forEach(performer => {
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-between items-center p-2 bg-gray-50 dark:bg-gray-700 rounded';
+                    div.innerHTML = `
+                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">${performer.name}</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">${performer.count} calls</span>
+                    `;
+                    topPerformersContainer.appendChild(div);
+                });
+            }
+        }
     </script>
 </x-app-layout>
