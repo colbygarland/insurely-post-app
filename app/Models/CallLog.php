@@ -32,7 +32,7 @@ class CallLog extends Model
         $query = self::orderBy('start_time', 'desc');
 
         if ($fromName && $fromName !== 'all') {
-            $query->where('from_name', $fromName);
+            $query->where('from_name', 'LIKE', $fromName.'%');
         }
 
         return $query->paginate($perPage);
@@ -40,11 +40,28 @@ class CallLog extends Model
 
     public static function getDistinctFromNames()
     {
-        return self::whereNotNull('from_name')
+        $allNames = self::whereNotNull('from_name')
             ->where('from_name', '!=', '')
-            ->distinct()
-            ->orderBy('from_name')
             ->pluck('from_name');
+
+        // Clean names by removing phone numbers and get unique values
+        $cleanedNames = $allNames->map(function ($name) {
+            return self::cleanFromName($name);
+        })->unique()->sort()->values();
+
+        return $cleanedNames;
+    }
+
+    public static function cleanFromName($name)
+    {
+        if (! $name) {
+            return $name;
+        }
+
+        // Remove phone numbers from the end (patterns like +1234567890, (123) 456-7890, etc.)
+        $cleaned = preg_replace('/\s*[\+\(]?[\d\s\-\(\)\.]{10,}$/', '', $name);
+
+        return trim($cleaned);
     }
 
     public function getTranscript($accessToken)

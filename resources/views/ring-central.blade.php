@@ -61,7 +61,7 @@
                                {{ Carbon\Carbon::parse($callLog->start_time)->setTimezone('America/Edmonton')->format('F j, Y g:ia')}}
                             </th>
                             <td class="px-6 py-4">
-                                {{ $callLog->from_name }}
+                                {{ App\Models\CallLog::cleanFromName($callLog->from_name) }}
                             </td>
                             <td class="px-6 py-4">
                                     {{ $callLog->to }}
@@ -78,6 +78,9 @@
                 <div class="mt-4 flex justify-between items-center gap-4">
                     <div class="text-sm text-gray-500">
                         Showing {{ $callLogs->firstItem() }} to {{ $callLogs->lastItem() }} of {{ $callLogs->total() }} results
+                        @if($fromNameFilter !== 'all')
+                            <span class="ml-2 text-indigo-600 font-medium">(filtered by: {{ $fromNameFilter }})</span>
+                        @endif
                     </div>
                     
                     <!-- Pagination Links -->
