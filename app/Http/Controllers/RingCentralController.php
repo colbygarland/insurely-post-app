@@ -23,8 +23,8 @@ class RingCentralController extends Controller
 
     public function show(CallLog $callLog)
     {
-        $transcript = $callLog->getTranscript();
         $accessToken = $this->getAccessToken();
+        $transcript = $callLog->getTranscript($accessToken);
 
         return view('ring-central-details', compact('callLog', 'transcript', 'accessToken'));
     }

@@ -115,7 +115,7 @@
                             </h3>
                             <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-green-400">
                                 @if($transcript)
-                                    <div class="text-gray-700 leading-relaxed prose prose-sm max-w-none">{!! $transcript !!}</div>
+                                    <div class="text-gray-700 leading-relaxed prose prose-sm max-w-none">{!! nl2br(e($transcript)) !!}</div>
                                 @else
                                     <p class="text-gray-400 italic">No transcript available</p>
                                 @endif
