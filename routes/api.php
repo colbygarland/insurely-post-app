@@ -3,6 +3,7 @@
 use App\Http\Controllers\AiController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\PostsController;
+use App\Http\Controllers\RingCentralController;
 use App\Http\Middleware\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,3 +31,7 @@ Route::post('ai/elevenlabs-webhook', [AiController::class, 'elevenlabsWebhook'])
 // Conversation stuff
 Route::post('ai/conversation', [ConversationController::class, 'store']);
 Route::get('ai/conversation', [ConversationController::class, 'list']);
+
+// Ring Central
+Route::post('ringcentral/webhook', [RingCentralController::class, 'webhook']);
+Route::get('ringcentral/create-webhook', [RingCentralController::class, 'createWebhook']);
