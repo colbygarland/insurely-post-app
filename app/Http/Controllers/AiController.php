@@ -20,7 +20,9 @@ class AiController extends Controller
     public function index()
     {
         $perPage = 25;
-        $conversations = Conversation::orderBy('created_at', 'desc')->paginate($perPage);
+        $conversations = Conversation::where('message', 'not like', '%didn\'t answer the call%')
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
 
         $analyzeTranscriptSettings = TranscriptionAnalysis::getLatest();
 

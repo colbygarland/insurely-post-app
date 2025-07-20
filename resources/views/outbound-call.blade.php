@@ -27,11 +27,11 @@
                     <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                         Conversations History
                     </h2>
-                    <div class="flex items-center gap-2">
+                    <!-- <div class="flex items-center gap-2">
                         <label class="text-sm text-gray-600 dark:text-gray-200">Show voicemail conversations:
                             <input type="checkbox" id="showVoicemail" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                         </label>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="mt-4 relative overflow-x-auto">
