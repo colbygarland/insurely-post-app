@@ -30,7 +30,66 @@ class RingCentralController extends Controller
         $callLogs = CallLog::list($perPage, $fromNameFilter, $startDate, $endDate);
         $fromNames = CallLog::getDistinctFromNames();
 
-        return view('ring-central', compact('callLogs', 'fromNames', 'fromNameFilter'));
+        // Calculate stats for the same filtered data
+        $statsQuery = CallLog::query();
+
+        // Apply the same filtering as the main list
+        if (! Gate::allows('is-admin')) {
+            CallLog::applyUserNameFilter($statsQuery);
+        }
+
+        if ($fromNameFilter && $fromNameFilter !== 'all') {
+            $statsQuery->where('from_name', 'LIKE', $fromNameFilter.'%');
+        }
+
+        // Apply date filtering
+        if ($startDate) {
+            try {
+                $startDateTime = \Carbon\Carbon::parse($startDate)->startOfDay();
+                $statsQuery->where('start_time', '>=', $startDateTime);
+            } catch (\Exception $e) {
+                // Invalid date format, ignore filter
+            }
+        }
+
+        if ($endDate) {
+            try {
+                $endDateTime = \Carbon\Carbon::parse($endDate)->endOfDay();
+                $statsQuery->where('start_time', '<=', $endDateTime);
+            } catch (\Exception $e) {
+                // Invalid date format, ignore filter
+            }
+        }
+
+        // Calculate stats
+        $totalCalls = $statsQuery->count();
+        $transcribedCalls = $statsQuery->whereNotNull('transcription')->count();
+
+        // For average duration, only include calls that actually connected and have duration > 0
+        $successfulCallsQuery = clone $statsQuery;
+        $successfulCalls = $successfulCallsQuery->where('result', 'Call connected')
+            ->where('duration', '>', 0)
+            ->get();
+
+        $totalSuccessfulDuration = $successfulCalls->sum('duration');
+        $successfulCallCount = $successfulCalls->count();
+        $avgDuration = $successfulCallCount > 0 ? $totalSuccessfulDuration / $successfulCallCount : 0;
+
+        // Calculate total transcription cost
+        $callsWithTranscription = $statsQuery->whereNotNull('transcription')->get();
+        $totalTranscriptionCost = $callsWithTranscription->sum('transcriptionCost');
+
+        // Format average duration for display
+        $avgDurationFormatted = $this->formatDuration($avgDuration);
+
+        $stats = [
+            'total_calls' => $totalCalls,
+            'transcribed_calls' => $transcribedCalls,
+            'avg_duration' => $avgDurationFormatted,
+            'total_transcription_cost' => round($totalTranscriptionCost, 4), // Round to 4 decimal places for display
+        ];
+
+        return view('ring-central', compact('callLogs', 'fromNames', 'fromNameFilter', 'stats'));
     }
 
     public function show(CallLog $callLog)
@@ -139,5 +198,28 @@ class RingCentralController extends Controller
         }
 
         return response()->json(['message' => 'Call log', 'access_token' => $accessToken, 'recordings' => $recordings, 'data' => $response->json()], 200);
+    }
+
+    /**
+     * Format duration from seconds to human readable format
+     *
+     * @param  int  $seconds
+     * @return string
+     */
+    private function formatDuration($seconds)
+    {
+        if ($seconds < 60) {
+            return $seconds.'s';
+        } elseif ($seconds < 3600) {
+            $minutes = floor($seconds / 60);
+            $remainingSeconds = $seconds % 60;
+
+            return $minutes.'m '.$remainingSeconds.'s';
+        } else {
+            $hours = floor($seconds / 3600);
+            $minutes = floor(($seconds % 3600) / 60);
+
+            return $hours.'h '.$minutes.'m';
+        }
     }
 }
