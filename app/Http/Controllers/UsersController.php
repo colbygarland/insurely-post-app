@@ -71,4 +71,26 @@ class UsersController extends Controller
 
         return redirect('/users');
     }
+
+    public function generatePasswordResetLink(Request $request, string $id)
+    {
+        $user = User::find($id);
+
+        if (! $user) {
+            return response()->json(['error' => 'User not found.'], 404);
+        }
+
+        // Generate a password reset token manually
+        $token = app('auth.password.broker')->createToken($user);
+
+        // Build the reset URL (using the same pattern as in AppServiceProvider)
+        $resetUrl = url("/reset-password/{$token}?email=".urlencode($user->email));
+
+        return response()->json([
+            'success' => true,
+            'reset_url' => $resetUrl,
+            'user_email' => $user->email,
+            'user_name' => $user->name,
+        ]);
+    }
 }

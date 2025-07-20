@@ -30,6 +30,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::get('/users', [UsersController::class, 'list'])->name('users.list')->middleware('can:is-admin');
     Route::get('/users/verify-user/{id}', [UsersController::class, 'verify'])->middleware('can:is-admin');
     Route::get('/users/promote-to-admin/{id}', [UsersController::class, 'promoteToAdmin'])->name('users.promote-admin')->middleware('can:is-admin');
+    Route::post('/users/generate-password-reset/{id}', [UsersController::class, 'generatePasswordResetLink'])->name('users.generate-password-reset')->middleware('can:is-admin');
     Route::delete('/users/{id}', [UsersController::class, 'destroy'])->name('users.destroy')->middleware('can:is-admin');
 
     // Linkedin related things
