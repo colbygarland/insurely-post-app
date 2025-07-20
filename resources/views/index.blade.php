@@ -27,22 +27,6 @@
             <!-- Stats Overview Cards -->
             @if(Gate::allows('is-admin'))
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-                    <!-- Published Posts -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-center">
-                            <div class="text-3xl font-bold text-green-600 dark:text-green-400">{{ $stats['total_published_posts'] }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Published LinkedIn Posts</div>
-                        </div>
-                    </div>
-
-                    <!-- Pending Posts -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-center">
-                            <div class="text-3xl font-bold text-orange-600 dark:text-orange-400">{{ $stats['pending_posts'] }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Pending LinkedIn Posts</div>
-                        </div>
-                    </div>
-
                     <!-- AI Conversations -->
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 text-center">
@@ -55,17 +39,31 @@
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 text-center">
                             <div class="text-3xl font-bold text-purple-600 dark:text-purple-400">{{ $stats['total_call_logs'] }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Total Calls</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Total RC Calls</div>
                         </div>
                     </div>
-
-
 
                     <!-- Transcribed Calls -->
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 text-center">
                             <div class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{{ $stats['transcribed_calls'] }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Transcribed Calls</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Transcribed RC Calls</div>
+                        </div>
+                    </div>
+
+                     <!-- Published Posts -->
+                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6 text-center">
+                            <div class="text-3xl font-bold text-green-600 dark:text-green-400">{{ $stats['total_published_posts'] }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Published LinkedIn Posts</div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Posts -->
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6 text-center">
+                            <div class="text-3xl font-bold text-orange-600 dark:text-orange-400">{{ $stats['pending_posts'] }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Pending LinkedIn Posts</div>
                         </div>
                     </div>
                 </div>
