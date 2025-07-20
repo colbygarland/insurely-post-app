@@ -40,13 +40,15 @@ class CallLog extends Model
         'transcription',
     ];
 
+    protected $appends = ['transcriptionCost'];
+
     /**
      * Apply user name filtering that handles both full names and "FirstName LastInitial" patterns,
      * plus shared call entries that are visible to all users
      */
     public static function applyUserNameFilter($query)
     {
-        $userName = Auth::user()->name;
+        $userName = Auth::user()->name ?? null;
 
         $query->where(function ($mainQuery) use ($userName) {
             // Add user-specific name matching
@@ -358,6 +360,14 @@ class CallLog extends Model
             // Extract the transcript text from the response
             $transcript = $transcriptData['candidates'][0]['content']['parts'][0]['text'] ?? 'No transcript generated';
 
+            // Extract the usage data from the response
+            $usageData = $transcriptData['usageMetadata'] ?? null;
+            if ($usageData) {
+                $this->usage_prompt_token_count = $usageData['promptTokenCount'];
+                $this->usage_candidates_token_count = $usageData['candidatesTokenCount'];
+                $this->usage_total_token_count = $usageData['totalTokenCount'];
+            }
+
             $this->transcription = trim($transcript);
             $this->save();
 
@@ -389,5 +399,42 @@ class CallLog extends Model
         }
 
         return $authTokenResponse->json()['access_token'];
+    }
+
+    /**
+     * Calculate the total transcription cost based on Gemini 2.5-Flash pricing
+     * Uses blended rate since we only track total tokens
+     *
+     * @return float Total cost in USD
+     */
+    public function getTotalPrice()
+    {
+        // Handle null case
+        $totalTokens = $this->usage_total_token_count ?? 0;
+
+        // If no tokens recorded, return 0
+        if ($totalTokens === 0) {
+            return 0.0;
+        }
+
+        // For audio transcription, use blended rate between input ($1.00) and output ($0.60)
+        // Assuming roughly 80% input tokens (audio) and 20% output tokens (text)
+        $blendedCostPer1M = (0.8 * 1.00) + (0.2 * 0.60); // = $0.92 per 1M tokens
+
+        // Calculate total cost
+        $totalCost = ($totalTokens / 1_000_000) * $blendedCostPer1M;
+
+        // Return total cost rounded to 6 decimal places for precision
+        return round($totalCost, 6);
+    }
+
+    /**
+     * Accessor for transcriptionCost attribute
+     *
+     * @return float
+     */
+    public function getTranscriptionCostAttribute()
+    {
+        return $this->getTotalPrice();
     }
 }
