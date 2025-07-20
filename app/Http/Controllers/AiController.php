@@ -20,7 +20,7 @@ class AiController extends Controller
     public function index()
     {
         $perPage = 25;
-        $conversations = Conversation::where('message', 'not like', '%didn\'t answer the call%')
+        $conversations = Conversation::excludeVoicemail()
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
 

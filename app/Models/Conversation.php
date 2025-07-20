@@ -36,4 +36,9 @@ class Conversation extends Model
             return null;
         }
     }
+
+    public function scopeExcludeVoicemail($query)
+    {
+        return $query->where('message', 'not like', '%didn\'t answer the call%');
+    }
 }

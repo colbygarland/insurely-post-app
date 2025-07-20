@@ -26,7 +26,8 @@ class DashboardController extends Controller
         $pendingPosts = Post::postsToBeSent();
 
         // Get recent AI conversations
-        $recentConversations = Conversation::orderBy('created_at', 'desc')
+        $recentConversations = Conversation::excludeVoicemail()
+            ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
 
