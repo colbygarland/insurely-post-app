@@ -388,6 +388,25 @@
             // Initialize tooltip functionality
             initializeTooltip();
             
+            // Watch for dark mode changes
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        // Dark mode changed, update chart colors
+                        updateChartColors();
+                        if (chart) {
+                            chart.update();
+                        }
+                    }
+                });
+            });
+            
+            // Start observing the document element for class changes
+            observer.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ['class']
+            });
+            
             // Modal functionality
             const modal = document.getElementById('dateRangeModal');
             const dateRangeButton = document.getElementById('dateRangeButton');
@@ -461,14 +480,50 @@
             const labels = Object.keys(callLogsData);
             const data = Object.values(callLogsData);
             
+            // Comprehensive unique color palette
             const colors = [
                 '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-                '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384',
-                '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+                '#FF9F40', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
+                '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE',
+                '#85C1E9', '#F8C471', '#82E0AA', '#F1948A', '#AED6F1',
+                '#A9DFBF', '#F9E79F', '#D7BDE2', '#A3E4D7', '#FADBD8',
+                '#D5DBDB', '#FCF3CF', '#EBDEF0', '#D1F2EB', '#FDF2E9',
+                '#E8F8F5', '#FEF9E7', '#F4F6F7', '#E74C3C', '#3498DB',
+                '#2ECC71', '#F39C12', '#9B59B6', '#1ABC9C', '#E67E22',
+                '#34495E', '#16A085', '#27AE60', '#2980B9', '#8E44AD',
+                '#F1C40F', '#E74C3C', '#95A5A6', '#D35400', '#C0392B'
             ];
             
-            const backgroundColors = colors.slice(0, labels.length);
-            const borderColors = backgroundColors.map(color => color + '80');
+            // Generate additional colors if needed
+            function generateColor(index) {
+                const hue = (index * 137.508) % 360; // Golden angle approximation
+                return `hsl(${hue}, 70%, 60%)`;
+            }
+            
+            // Ensure we have enough unique colors
+            const neededColors = labels.length;
+            const availableColors = [...colors];
+            
+            // Add generated colors if we need more
+            for (let i = colors.length; i < neededColors; i++) {
+                availableColors.push(generateColor(i));
+            }
+            
+            const backgroundColors = availableColors.slice(0, labels.length);
+            const borderColors = backgroundColors.map(color => {
+                if (color.startsWith('#')) {
+                    return color + '80';
+                } else {
+                    // For HSL colors, convert to HSLA with opacity
+                    return color.replace('hsl(', 'hsla(').replace(')', ', 0.8)');
+                }
+            });
+            
+            // Get current dark mode colors
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const textColor = isDarkMode ? '#F3F4F6' : '#374151';
+            const tooltipBg = isDarkMode ? '#374151' : '#FFFFFF';
+            const tooltipBorder = isDarkMode ? '#4B5563' : '#E5E7EB';
             
             return new Chart(ctx, {
                 type: 'pie',
@@ -493,10 +548,17 @@
                                 font: {
                                     size: 12
                                 },
-                                color: document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#374151'
+                                color: textColor
                             }
                         },
                         tooltip: {
+                            backgroundColor: tooltipBg,
+                            titleColor: textColor,
+                            bodyColor: textColor,
+                            borderColor: tooltipBorder,
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
                             callbacks: {
                                 label: function(context) {
                                     const label = context.label || '';
@@ -572,6 +634,10 @@
                 
                 chart.data.labels = labels;
                 chart.data.datasets[0].data = chartData;
+                
+                // Update colors for new data
+                updateChartColors();
+                
                 chart.update();
                 
                 // Update stats
@@ -585,6 +651,66 @@
                 alert('Failed to update chart data');
                 document.getElementById('selectedDateRange').textContent = 'Error';
             });
+        }
+        
+        function updateChartColors() {
+            if (!chart) return;
+            
+            // Get current dark mode state
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const textColor = isDarkMode ? '#F3F4F6' : '#374151';
+            const tooltipBg = isDarkMode ? '#374151' : '#FFFFFF';
+            const tooltipBorder = isDarkMode ? '#4B5563' : '#E5E7EB';
+            
+            // Update legend colors
+            chart.options.plugins.legend.labels.color = textColor;
+            
+            // Update tooltip colors
+            chart.options.plugins.tooltip.backgroundColor = tooltipBg;
+            chart.options.plugins.tooltip.titleColor = textColor;
+            chart.options.plugins.tooltip.bodyColor = textColor;
+            chart.options.plugins.tooltip.borderColor = tooltipBorder;
+            
+            // Update dataset colors if needed
+            const labels = chart.data.labels;
+            if (labels && labels.length > 0) {
+                const colors = [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                    '#FF9F40', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
+                    '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE',
+                    '#85C1E9', '#F8C471', '#82E0AA', '#F1948A', '#AED6F1',
+                    '#A9DFBF', '#F9E79F', '#D7BDE2', '#A3E4D7', '#FADBD8',
+                    '#D5DBDB', '#FCF3CF', '#EBDEF0', '#D1F2EB', '#FDF2E9',
+                    '#E8F8F5', '#FEF9E7', '#F4F6F7', '#E74C3C', '#3498DB',
+                    '#2ECC71', '#F39C12', '#9B59B6', '#1ABC9C', '#E67E22',
+                    '#34495E', '#16A085', '#27AE60', '#2980B9', '#8E44AD',
+                    '#F1C40F', '#E74C3C', '#95A5A6', '#D35400', '#C0392B'
+                ];
+                
+                function generateColor(index) {
+                    const hue = (index * 137.508) % 360;
+                    return `hsl(${hue}, 70%, 60%)`;
+                }
+                
+                const neededColors = labels.length;
+                const availableColors = [...colors];
+                
+                for (let i = colors.length; i < neededColors; i++) {
+                    availableColors.push(generateColor(i));
+                }
+                
+                const backgroundColors = availableColors.slice(0, labels.length);
+                const borderColors = backgroundColors.map(color => {
+                    if (color.startsWith('#')) {
+                        return color + '80';
+                    } else {
+                        return color.replace('hsl(', 'hsla(').replace(')', ', 0.8)');
+                    }
+                });
+                
+                chart.data.datasets[0].backgroundColor = backgroundColors;
+                chart.data.datasets[0].borderColor = borderColors;
+            }
         }
         
         function updateStats(data) {
