@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use App\Models\TranscriptionAnalysis;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -64,14 +65,15 @@ class OpenAi
     // Method specifically for analyzing transcripts
     public static function analyzeTranscript($transcript, $analysisType = 'agent_performance')
     {
+        $settings = TranscriptionAnalysis::getLatest();
         $prompts = [
-            'agent_performance' => "Please analyze the following transcript between an AI agent (denoted by [Agent]) and a human (denoted by [User]). Focus on evaluating the AI agent's performance, including:\n\n- Communication effectiveness\n- Response quality and relevance\n- Problem-solving approach\n- Professionalism and tone\n- Areas for improvement\n- Overall call success\n\nTranscript:\n{$transcript}",
-            'general' => "Please analyze the following transcript and provide insights about the key topics, sentiment, and main points discussed:\n\n{$transcript}",
-            'sentiment' => "Please analyze the sentiment of the following transcript, identifying positive, negative, and neutral elements:\n\n{$transcript}",
-            'summary' => "Please provide a concise summary of the following transcript, highlighting the main points and key takeaways:\n\n{$transcript}",
-            'keywords' => "Please extract the key topics, themes, and important keywords from the following transcript:\n\n{$transcript}",
-            'action_items' => "Please identify any action items, decisions, or follow-up tasks mentioned in the following transcript:\n\n{$transcript}",
-            'agent_insights' => "Please analyze the AI agent's responses in the following transcript (marked as [Agent]) and provide insights on:\n\n- Response accuracy and helpfulness\n- Communication style and clarity\n- Understanding of user needs\n- Technical competence\n- Suggestions for improvement\n\nTranscript:\n{$transcript}",
+            'agent_performance' => $settings->agent_performance."\n\nTranscript:\n{$transcript}",
+            'general' => $settings->general."\n\nTranscript:\n{$transcript}",
+            'sentiment' => $settings->sentiment."\n\nTranscript:\n{$transcript}",
+            'summary' => $settings->summary."\n\nTranscript:\n{$transcript}",
+            'keywords' => $settings->keywords."\n\nTranscript:\n{$transcript}",
+            'action_items' => $settings->action_items."\n\nTranscript:\n{$transcript}",
+            'agent_insights' => $settings->agent_insights."\n\nTranscript:\n{$transcript}",
         ];
 
         $prompt = $prompts[$analysisType] ?? $prompts['agent_performance'];

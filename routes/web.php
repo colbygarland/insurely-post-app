@@ -53,7 +53,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::get('/ai/outbound-call', [AiController::class, 'index'])->name('ai.index')->middleware('can:is-admin');
     Route::post('/ai/outbound-call', [AiController::class, 'outboundCall'])->name('ai.send')->middleware('can:is-admin');
     Route::post('/ai/upload', [AiController::class, 'upload'])->name('ai.upload')->middleware('can:is-admin');
-
+    Route::post('/ai/analyze-transcripts-settings', [AiController::class, 'analyzeTranscriptsSettings'])->name('ai.analyze-transcripts-settings')->middleware('can:is-admin');
     // Conversation stuff
     Route::get('/ai/conversation/{conversation}', [ConversationController::class, 'show'])->name('ai.conversation.show')->middleware('can:is-admin');
     Route::get('/ai/conversation/{conversation}/destroy', [ConversationController::class, 'destroy'])->name('ai.conversation.destroy')->middleware('can:is-admin');

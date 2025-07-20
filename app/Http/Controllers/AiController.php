@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\DispatchCall;
 use App\Models\Conversation;
+use App\Models\TranscriptionAnalysis;
 use App\Utils\OpenAi;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,8 +22,11 @@ class AiController extends Controller
         $perPage = 25;
         $conversations = Conversation::orderBy('created_at', 'desc')->paginate($perPage);
 
+        $analyzeTranscriptSettings = TranscriptionAnalysis::getLatest();
+
         return view('outbound-call', [
             'conversations' => $conversations,
+            'analyzeTranscriptSettings' => $analyzeTranscriptSettings,
         ]);
     }
 
@@ -167,5 +171,30 @@ class AiController extends Controller
         }
 
         return response()->json(['summary' => $summary]);
+    }
+
+    public function analyzeTranscriptsSettings(Request $request)
+    {
+        $agentPerformance = $request->agent_performance;
+        $general = $request->general;
+        $sentiment = $request->sentiment;
+        $summary = $request->summary;
+        $keywords = $request->keywords;
+        $actionItems = $request->action_items;
+        $agentInsights = $request->agent_insights;
+
+        TranscriptionAnalysis::create([
+            'agent_performance' => $agentPerformance,
+            'general' => $general,
+            'sentiment' => $sentiment,
+            'summary' => $summary,
+            'keywords' => $keywords,
+            'action_items' => $actionItems,
+            'agent_insights' => $agentInsights,
+        ]);
+
+        Session::flash('successMessage', 'Transcript analysis settings saved successfully');
+
+        return redirect()->route('ai.index');
     }
 }

@@ -202,6 +202,63 @@
                         </form>
                     </div>
                 </div>
+
+                <div class="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-sm sm:rounded-lg mb-16 lg:mb-0 p-6">
+                    <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-4">
+                        Analyze Transcripts Settings
+                    </h2>
+                    
+                    <form method="post" action="{{ route('ai.analyze-transcripts-settings') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
+                        @csrf
+                        @method('post')
+
+                        <div>
+                            <x-input-label for="agent_performance" :value="__('Agent Performance')" />
+                            <x-text-area id="agent_performance" name="agent_performance" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->agent_performance }}"></x-text-area>
+                            <x-input-error class="mt-2" :messages="$errors->get('agent_performance')" />
+                        </div>
+
+                        <div>
+                            <x-input-label for="general" :value="__('General')" />
+                            <x-text-area id="general" name="general" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->general }}"></x-text-area>
+                            <x-input-error class="mt-2" :messages="$errors->get('general')" />
+                        </div>
+
+                        <div>
+                            <x-input-label for="sentiment" :value="__('Sentiment')" />
+                            <x-text-area id="sentiment" name="sentiment" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->sentiment }}"></x-text-area>
+                            <x-input-error class="mt-2" :messages="$errors->get('sentiment')" />
+                        </div>
+
+                        <div>
+                            <x-input-label for="summary" :value="__('Summary')" />
+                            <x-text-area id="summary" name="summary" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->summary }}"></x-text-area>
+                            <x-input-error class="mt-2" :messages="$errors->get('summary')" />
+                        </div>
+
+                        <div>
+                            <x-input-label for="keywords" :value="__('Keywords')" />
+                            <x-text-area id="keywords" name="keywords" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->keywords }}"></x-text-area>
+                            <x-input-error class="mt-2" :messages="$errors->get('keywords')" />
+                        </div>
+
+                        <div>
+                            <x-input-label for="action_items" :value="__('Action Items')" />
+                            <x-text-area id="action_items" name="action_items" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->action_items }}"></x-text-area>
+                            <x-input-error class="mt-2" :messages="$errors->get('action_items')" />
+                        </div>
+
+                        <div>
+                            <x-input-label for="agent_insights" :value="__('Agent Insights')" />
+                            <x-text-area id="agent_insights" name="agent_insights" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->agent_insights }}"></x-text-area>
+                            <x-input-error class="mt-2" :messages="$errors->get('agent_insights')" />
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <x-primary-button>Save Settings</x-primary-button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
