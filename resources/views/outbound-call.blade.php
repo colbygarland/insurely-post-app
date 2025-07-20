@@ -36,22 +36,32 @@
 
                 <div class="mt-4 relative overflow-x-auto">
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead class="text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:text-gray-200">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:text-gray-200">
                             <tr>
-                                <th scope="col" class="px-6 py-3">ID</th>
-                                <th scope="col" class="px-6 py-3">Message</th>
-                                <th scope="col" class="px-6 py-3">Created At</th>
-                                <th scope="col" class="px-6 py-3"></th>
+                                <th scope="col" class="px-6 py-3">
+                                    Date
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    To
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Message
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($conversations as $conversation) 
-                                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 dark:text-gray-200">
-                                    <th scope="row" class="px-6 py-4 font-medium text-blue-600 whitespace-nowrap dark:text-white">{{ $conversation->id }}</th>
+                                <tr class="{{ $loop->even ? 'bg-gray-50' : 'bg-white' }} border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {{ Carbon\Carbon::parse($conversation->created_at)->setTimezone('America/Edmonton')->format('F j, Y g:ia') }}
+                                    </th>
+                                    <td class="px-6 py-4">{{ $conversation->phone }}</td>
                                     <td class="px-6 py-4">{!! Str::words($conversation->message, 10, '...')  !!}</td>
-                                    <td class="px-6 py-4">{{ Carbon\Carbon::parse($conversation->created_at)->setTimezone('America/Edmonton')->format('F j, Y g:ia') }}</td>
                                     <td class="px-6 py-4">
-                                        <a href="{{ route('ai.conversation.show', $conversation->id) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs">View Details</a>
+                                        <a href="{{ route('ai.conversation.show', $conversation->id) }}" class="text-blue-500 font-bold">View Details</a>
                                     </td>
                                 </tr>
                             @endforeach
