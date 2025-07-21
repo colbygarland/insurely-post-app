@@ -151,7 +151,7 @@ class RingCentralController extends Controller
         $accessToken = CallLog::getRingCentralAccessToken();
         $queryParams = [
             'page' => 1,
-            'perPage' => 100,
+            'perPage' => 500,
             'recordingType' => 'Automatic',
         ];
 
