@@ -77,12 +77,12 @@
                                 <div class="flex items-center p-3 bg-white dark:bg-gray-700 rounded-md border dark:border-gray-600">
                                     <div class="flex-shrink-0">
                                         <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
                                     </div>
                                     <div class="ml-3">
-                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-200">Result</p>
-                                        <p class="text-lg font-semibold text-gray-900 dark:text-gray-200">{{ $callLog->result }}</p>
+                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-200">Call Date</p>
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-gray-200">{{ Carbon\Carbon::parse($callLog->start_time)->setTimezone('America/Edmonton')->format('F j, Y g:ia') }}</p>
                                     </div>
                                 </div>
                                                                
