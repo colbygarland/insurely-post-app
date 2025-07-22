@@ -82,7 +82,7 @@
                     </div>
 
                     <!-- Transcription Cost -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
                         <div class="p-6">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
