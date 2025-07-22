@@ -2,7 +2,7 @@
   <x-slot name="title">
     Conversation Details
   </x-slot>
-    <div class="py-12">
+    <div class="py-12 mt-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(Session::has('successMessage'))
                 <x-alert type="success" :message="Session::get('successMessage')" />

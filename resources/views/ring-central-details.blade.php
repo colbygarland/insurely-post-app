@@ -2,7 +2,7 @@
   <x-slot name="title">
     Ring Central Details
   </x-slot>
-    <div class="py-12">
+    <div class="py-12 mt-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-4">
             <a onclick="window.history.back()" class="inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:underline">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
