@@ -36,7 +36,7 @@ class RingCentralController extends Controller
     public function index(Request $request)
     {
         // Update the call logs
-        $success = $this->getCallLog();
+        $success = self::getCallLog();
         if (! $success) {
             Session::flash('errorMessage', 'Failed to get updated call log');
         }
@@ -165,7 +165,7 @@ class RingCentralController extends Controller
         return response()->json(['message' => 'Webhook created', 'data' => $response], 200);
     }
 
-    public function getCallLog()
+    public static function getCallLog()
     {
         $accessToken = CallLog::getRingCentralAccessToken();
         $queryParams = [
