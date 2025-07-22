@@ -286,7 +286,7 @@
                                                     @endif
                                                 </td>
                                                 <td class="px-2 py-2">
-                                                    <a href="{{ route('ringcentral.details', $callLog->id) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs">View</a>
+                                                    <a href="{{ route('ringcentral.details', array_merge(['callLog' => $callLog->id], request()->query())) }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs">View</a>
                                                 </td>
                                             </tr>
                                         @endforeach

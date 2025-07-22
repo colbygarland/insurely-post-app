@@ -4,7 +4,7 @@
   </x-slot>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-4">
-            <a href="{{ route('ringcentral.index') }}" class="inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:underline">
+            <a onclick="window.history.back()" class="inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:underline">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
@@ -12,16 +12,11 @@
             </a>
         </div>
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        @if(Session::has('successMessage'))
-                <div class="bg-green-200 text-green-900 inline-block rounded-lg py-2 px-4 mb-4">
-                    {{ Session::get('successMessage') }}
-                </div>
+            @if(Session::has('successMessage'))
+                <x-alert type="success" :message="Session::get('successMessage')" />
             @endif
-
             @if(Session::has('errorMessage'))
-                <div class="bg-red-200 text-red-900 inline-block rounded-lg py-2 px-4 mb-4">
-                    {{ Session::get('errorMessage') }}
-                </div>
+                <x-alert type="error" :message="Session::get('errorMessage')" />
             @endif
             <!-- Main Conversation Card -->
             <div class="bg-white dark:bg-gray-800 dark:text-gray-200 overflow-hidden shadow-xl sm:rounded-lg">

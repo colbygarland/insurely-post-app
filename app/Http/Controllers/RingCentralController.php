@@ -12,7 +12,26 @@ use Illuminate\Support\Facades\Session;
 
 class RingCentralController extends Controller
 {
+    // The admin account id
     private const ACCOUNT_ID = '1254284024';
+
+    private const STAFF_ACCOUNT_IDS = [
+        'Adriana Paul' => '1742506024',
+        'Christine Boyd' => '1372741024',
+        'Erin E' => '1305758024',
+        'Kade Bowie' => '418710025',
+        'Karen Gilkyson' => '507489025',
+        'Kiarra Blanchard' => '1670212024',
+        'Lexi Adam' => '1670211024',
+        // 'Lisa K' => '1305759024',
+        'Marissa Loeppky' => '1742507024',
+        'Meriska Kuntz' => '1649096024',
+        'Sara Zwaagstra' => '1372739024',
+        'Savanna Lafferty' => '1620828024',
+        'Tori Fraser' => '446566025',
+    ];
+
+    private const RING_CENTRAL_URL = 'https://platform.ringcentral.com/restapi/v1.0/';
 
     public function index(Request $request)
     {
@@ -122,7 +141,7 @@ class RingCentralController extends Controller
 
         $accessToken = CallLog::getRingCentralAccessToken();
 
-        $response = Http::withHeaders(['Authorization' => 'Bearer '.$accessToken])->post('https://platform.ringcentral.com/restapi/v1.0/subscription', [
+        $response = Http::withHeaders(['Authorization' => 'Bearer '.$accessToken])->post(self::RING_CENTRAL_URL.'subscription', [
             'eventFilters' => ['/restapi/v1.0/account/'.self::ACCOUNT_ID.'/telephony/sessions'],
             'deliveryMode' => [
                 'transportType' => 'WebHook',
@@ -155,7 +174,7 @@ class RingCentralController extends Controller
             'recordingType' => 'Automatic',
         ];
 
-        $response = Http::withHeaders(['Authorization' => 'Bearer '.$accessToken])->get('https://platform.ringcentral.com/restapi/v1.0/account/'.self::ACCOUNT_ID.'/call-log', $queryParams);
+        $response = Http::withHeaders(['Authorization' => 'Bearer '.$accessToken])->get(self::RING_CENTRAL_URL.'account/'.self::ACCOUNT_ID.'/call-log', $queryParams);
         if ($response->status() != 200) {
             Session::flash('errorMessage', 'Failed to get updated call log: '.$response->body());
 
@@ -198,6 +217,20 @@ class RingCentralController extends Controller
         }
 
         return response()->json(['message' => 'Call log', 'access_token' => $accessToken, 'recordings' => $recordings, 'data' => $response->json()], 200);
+    }
+
+    public function getExtension(Request $request)
+    {
+        $extension = $request->get('extension');
+        $accessToken = CallLog::getRingCentralAccessToken();
+        $response = Http::withHeaders(['Authorization' => 'Bearer '.$accessToken])
+            ->get(self::RING_CENTRAL_URL.'account/'.self::ACCOUNT_ID.'/extension/'.$extension);
+
+        if ($response->status() != 200) {
+            return response()->json(['error' => 'Failed to get extension', 'data' => $response->json()], 400);
+        }
+
+        return response()->json(['message' => 'Extension', 'data' => $response->json()], 200);
     }
 
     /**

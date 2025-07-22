@@ -4,17 +4,13 @@
   </x-slot>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        @if(Session::has('successMessage'))
-                <div class="bg-green-200 text-green-900 inline-block rounded-lg py-2 px-4 mb-4">
-                    {{ Session::get('successMessage') }}
-                </div>
+            @if(Session::has('successMessage'))
+                <x-alert type="success" :message="Session::get('successMessage')" />
             @endif
-
             @if(Session::has('errorMessage'))
-                <div class="bg-red-200 text-red-900 inline-block rounded-lg py-2 px-4 mb-4">
-                    {{ Session::get('errorMessage') }}
-                </div>
+                <x-alert type="error" :message="Session::get('errorMessage')" />
             @endif
+            
             <!-- Main Conversation Card -->
             <div class="bg-white dark:bg-gray-800 dark:text-gray-200 overflow-hidden shadow-xl sm:rounded-lg">
                 <!-- Header Section -->
