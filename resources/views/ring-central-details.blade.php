@@ -110,6 +110,31 @@
                             </div>
                         </div>
 
+                        <!-- Summary Section -->
+                        @if($callLog->summary)
+                            <div class="bg-white dark:bg-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg p-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200 flex items-center">
+                                        <svg class="w-5 h-5 text-gray-600 dark:text-gray-200 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        Call Summary
+                                    </h3>
+                                    <button type="button" 
+                                            id="copySummaryBtn"
+                                            class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span id="copySummaryBtnText">Copy</span>
+                                    </button>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-gray-600 dark:text-gray-200 rounded-lg p-4 border-l-4 border-purple-400">
+                                    <div id="summaryContent" class="text-gray-700 dark:text-gray-200 leading-relaxed prose prose-sm max-w-none">{!! nl2br(e($callLog->summary)) !!}</div>
+                                </div>
+                            </div>
+                        @endif
+
                         <!-- Transcript Section -->
                         @if($callLog->transcription)
                             <div class="bg-white dark:bg-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg p-6">
@@ -174,10 +199,17 @@
                             <!-- Copy to Clipboard Script -->
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
+                                    // Transcript
                                     const copyBtn = document.getElementById('copyTranscriptBtn');
                                     const copyBtnText = document.getElementById('copyBtnText');
                                     const transcriptContent = document.getElementById('transcriptContent');
+
+                                    // Summary
+                                    const copySummaryBtn = document.getElementById('copySummaryBtn');
+                                    const copySummaryBtnText = document.getElementById('copySummaryBtnText');
+                                    const summaryContent = document.getElementById('summaryContent');
                                     
+                                    // Transcript
                                     if (copyBtn && transcriptContent) {
                                         copyBtn.addEventListener('click', async function() {
                                             try {
@@ -225,6 +257,33 @@
                                                 }
                                                 
                                                 document.body.removeChild(textarea);
+                                            }
+                                        });
+                                    }
+
+                                    // Summary
+                                    if (copySummaryBtn && summaryContent) {
+                                        copySummaryBtn.addEventListener('click', async function() {
+                                            try {
+                                                // Get the raw summary text (strip HTML and convert line breaks)
+                                                const summaryText = summaryContent.innerText || summaryContent.textContent;
+                                                
+                                                // Copy to clipboard
+                                                await navigator.clipboard.writeText(summaryText);
+                                                
+                                                // Update button to show success
+                                                const originalText = copySummaryBtnText.textContent;
+                                                copySummaryBtnText.textContent = 'Copied!';
+                                                copySummaryBtn.classList.add('text-green-600', 'dark:text-green-400');
+                                                
+                                                // Reset button after 2 seconds
+                                                setTimeout(() => {
+                                                    copySummaryBtnText.textContent = originalText;
+                                                    copySummaryBtn.classList.remove('text-green-600', 'dark:text-green-400');
+                                                }, 2000);
+                                            } catch (err) {
+                                                // Fallback for older browsers
+                                                console.error('Failed to copy summary: ', err);
                                             }
                                         });
                                     }

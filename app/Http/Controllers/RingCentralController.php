@@ -41,7 +41,7 @@ class RingCentralController extends Controller
             Session::flash('errorMessage', 'Failed to get updated call log');
         }
 
-        $perPage = 25;
+        $perPage = 50;
         $fromNameFilter = $request->get('from_name', 'all');
         $startDate = $request->get('start_date');
         $endDate = $request->get('end_date');
@@ -119,8 +119,12 @@ class RingCentralController extends Controller
 
             return redirect()->route('ringcentral.index');
         }
+        Log::debug('Call log: '.$callLog->id);
 
         $accessToken = CallLog::getRingCentralAccessToken();
+
+        // Generate the summary if it doesn't exist
+        $callLog->getSummary($accessToken);
 
         return view('ring-central-details', compact('callLog', 'accessToken'));
     }
