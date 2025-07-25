@@ -264,22 +264,10 @@ class CallLog extends Model
         return trim($cleaned);
     }
 
-    public function getTranscript($accessToken)
+    public function uploadAudioToGemini()
     {
-        if ($this->transcription) {
-            return $this->transcription;
-        }
-
-        if (! $this->url) {
-            return null;
-        }
-
         $apiKey = env('GEMINI_API_KEY');
-        if (! $apiKey) {
-            Log::error('GEMINI_API_KEY not configured');
-
-            return 'Error: API key not configured';
-        }
+        $accessToken = self::getRingCentralAccessToken();
 
         try {
             // Step 1: Download the audio file from RingCentral
@@ -317,6 +305,42 @@ class CallLog extends Model
 
             $uploadedFile = $uploadResponse->json();
             $fileUri = $uploadedFile['file']['uri'];
+
+            $this->upload_uri = $fileUri;
+            $this->save();
+
+            return $fileUri;
+        } catch (\Exception $e) {
+            Log::error('Error downloading audio file: '.$e->getMessage());
+
+            return 'Error: '.$e->getMessage();
+        }
+    }
+
+    public function getTranscript()
+    {
+        if ($this->transcription) {
+            return $this->transcription;
+        }
+
+        if (! $this->url) {
+            return null;
+        }
+
+        $apiKey = env('GEMINI_API_KEY');
+        if (! $apiKey) {
+            Log::error('GEMINI_API_KEY not configured');
+
+            return 'Error: API key not configured';
+        }
+
+        try {
+            $fileUri = $this->upload_uri;
+
+            // TODO: remove this next check
+            if (! $fileUri) {
+                $fileUri = $this->uploadAudioToGemini();
+            }
 
             // Step 3: Generate transcript using the uploaded file
             $transcriptResponse = Http::withHeaders([

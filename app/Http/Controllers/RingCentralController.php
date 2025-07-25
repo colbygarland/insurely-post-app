@@ -123,8 +123,8 @@ class RingCentralController extends Controller
 
         $accessToken = CallLog::getRingCentralAccessToken();
 
-        // Generate the summary if it doesn't exist
-        $callLog->getSummary();
+        // Initiate the upload to Gemini
+        $callLog->uploadAudioToGemini();
 
         return view('ring-central-details', compact('callLog', 'accessToken'));
     }

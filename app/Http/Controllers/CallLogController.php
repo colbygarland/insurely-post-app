@@ -17,19 +17,14 @@ class CallLogController extends Controller
     public function generateTranscript(CallLog $callLog)
     {
         try {
-            $accessToken = CallLog::getRingCentralAccessToken();
-
-            if (is_a($accessToken, 'Illuminate\Http\JsonResponse')) {
-                return back()->with('errorMessage', 'Failed to authenticate with RingCentral');
-            }
-
-            $transcript = $callLog->getTranscript($accessToken);
+            $transcript = $callLog->getTranscript();
+            $callLog->getSummary();
 
             if (str_starts_with($transcript, 'Error:')) {
                 return back()->with('errorMessage', $transcript);
             }
 
-            return back()->with('successMessage', 'Transcript generated successfully!');
+            return back()->with('successMessage', 'Transcript and summary generated successfully!');
 
         } catch (\Exception $e) {
             Log::error('Error generating transcript: '.$e->getMessage());
