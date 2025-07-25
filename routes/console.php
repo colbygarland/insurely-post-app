@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RingCentralController;
 use App\Models\Post;
 use App\Utils\LinkedInApi;
 use Illuminate\Support\Facades\Artisan;
@@ -34,3 +35,7 @@ Schedule::call(function () {
         Artisan::call('queue:work', ['--once' => true]);
     }
 })->everyMinute();
+
+Schedule::call(function () {
+    RingCentralController::getCallLog();
+})->everyFifteenMinutes();

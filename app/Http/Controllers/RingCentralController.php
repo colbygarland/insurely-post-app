@@ -43,8 +43,8 @@ class RingCentralController extends Controller
 
         $perPage = 50;
         $fromNameFilter = $request->get('from_name', 'all');
-        $startDate = $request->get('start_date');
-        $endDate = $request->get('end_date');
+        $startDate = $request->get('start_date', now()->startOfWeek()->format('Y-m-d'));
+        $endDate = $request->get('end_date', now()->format('Y-m-d'));
 
         $callLogs = CallLog::list($perPage, $fromNameFilter, $startDate, $endDate);
         $fromNames = CallLog::getDistinctFromNames();
@@ -108,7 +108,7 @@ class RingCentralController extends Controller
             'total_transcription_cost' => round($totalTranscriptionCost, 4), // Round to 4 decimal places for display
         ];
 
-        return view('ring-central', compact('callLogs', 'fromNames', 'fromNameFilter', 'stats'));
+        return view('ring-central', compact('callLogs', 'fromNames', 'fromNameFilter', 'stats', 'startDate', 'endDate'));
     }
 
     public function show(CallLog $callLog)

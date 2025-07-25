@@ -131,14 +131,14 @@
                                 From:
                                 <input type="date" 
                                        id="startDate" 
-                                       value="{{ request('start_date') }}"
+                                       value="{{ $startDate }}"
                                        class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             </label>
                             <label class="text-sm text-gray-600 dark:text-gray-200 flex items-center gap-2">
                                 To:
                                 <input type="date" 
                                        id="endDate" 
-                                       value="{{ request('end_date') }}"
+                                       value="{{ $endDate }}"
                                        class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             </label>
                         </div>
@@ -235,12 +235,12 @@
                                 @endif
                                 @if(request('start_date'))
                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
-                                        From: {{ Carbon\Carbon::parse(request('start_date'))->format('M j, Y') }}
+                                        From: {{ Carbon\Carbon::parse($startDate)->format('M j, Y') }}
                                     </span>
                                 @endif
                                 @if(request('end_date'))
                                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
-                                        To: {{ Carbon\Carbon::parse(request('end_date'))->format('M j, Y') }}
+                                        To: {{ Carbon\Carbon::parse($endDate)->format('M j, Y') }}
                                     </span>
                                 @endif
                             </div>
