@@ -266,6 +266,10 @@ class CallLog extends Model
 
     public function uploadAudioToGemini()
     {
+        if ($this->upload_uri) {
+            return;
+        }
+
         $apiKey = env('GEMINI_API_KEY');
         $accessToken = self::getRingCentralAccessToken();
 
