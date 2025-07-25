@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\CallLog;
+use App\Models\SummaryPrompt;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class CallLogController extends Controller
@@ -31,5 +33,16 @@ class CallLogController extends Controller
 
             return back()->with('errorMessage', 'An error occurred while generating the transcript');
         }
+    }
+
+    public function updateSummaryPrompt(Request $request)
+    {
+        $request->validate([
+            'summary_prompt' => 'required|string|max:1000',
+        ]);
+
+        SummaryPrompt::create(['prompt' => $request->summary_prompt]);
+
+        return back()->with('successMessage', 'Summary prompt updated successfully!');
     }
 }

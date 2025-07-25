@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CallLog;
+use App\Models\SummaryPrompt;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -108,7 +109,9 @@ class RingCentralController extends Controller
             'total_transcription_cost' => round($totalTranscriptionCost, 4), // Round to 4 decimal places for display
         ];
 
-        return view('ring-central', compact('callLogs', 'fromNames', 'fromNameFilter', 'stats', 'startDate', 'endDate'));
+        $summaryPrompt = SummaryPrompt::getLatest()->prompt;
+
+        return view('ring-central', compact('callLogs', 'fromNames', 'fromNameFilter', 'stats', 'startDate', 'endDate', 'summaryPrompt'));
     }
 
     public function show(CallLog $callLog)

@@ -117,7 +117,7 @@
             @endif
 
             <!-- Call Logs Section -->
-            <div class="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-sm sm:rounded-lg p-6">
+            <div class="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-sm sm:rounded-lg p-6 mb-8">
                 <div class="flex flex-col gap-4 mb-6">
                     <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                         Calls from Ring Central
@@ -253,6 +253,28 @@
                     </div>
                 </div>
             </div>
+
+            @if(Gate::allows('is-admin'))
+                <!-- Prompt Settings -->
+                <div class="bg-white dark:bg-gray-800 dark:text-gray-200 overflow-hidden shadow-xl sm:rounded-lg mb-8">
+                    <div class="p-6">
+                        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                            Prompt Settings
+                        </h2>
+                        <div class="mt-4">
+                            <form action="{{ route('calllog.update-summary-prompt') }}" method="POST">
+                                @csrf
+                                <div class="mb-4">
+                                    <x-input-label for="summary_prompt" :value="__('Summary Prompt')" />
+                                    <x-text-area id="summary_prompt" name="summary_prompt" type="text" class="mt-1 block w-full min-h-32" required autofocus value="{{ $summaryPrompt }}"></x-text-area>
+                                    <x-input-error class="mt-2" :messages="$errors->get('summary_prompt')" />
+                                </div>
+                                <x-primary-button>Update Prompt</x-primary-button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 

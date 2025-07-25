@@ -23,7 +23,7 @@
             @endif
             
             <!-- Main Conversation Card -->
-            <div class="bg-white dark:bg-gray-800 dark:text-gray-200 overflow-hidden shadow-xl sm:rounded-lg">
+            <div class="bg-white dark:bg-gray-800 dark:text-gray-200 overflow-hidden shadow-xl sm:rounded-lg mb-8">
                 <!-- Header Section -->
                 <div class="bg-gradient-to-r bg-primary px-6 py-8">
                     <div class="flex items-center">
