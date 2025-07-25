@@ -401,12 +401,8 @@ class CallLog extends Model
      *
      * @return string|null
      */
-    public function generateSummary()
+    private function generateSummary()
     {
-        if (! $this->transcription) {
-            return null;
-        }
-
         $apiKey = env('GEMINI_API_KEY');
         if (! $apiKey) {
             Log::error('GEMINI_API_KEY not configured');

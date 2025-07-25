@@ -37,11 +37,4 @@ class CallLogController extends Controller
             return back()->with('errorMessage', 'An error occurred while generating the transcript');
         }
     }
-
-    public function generateSummary(CallLog $callLog)
-    {
-        $summary = $callLog->getSummary();
-
-        return response()->json(['message' => 'Summary generated successfully!', 'data' => $summary], 200);
-    }
 }

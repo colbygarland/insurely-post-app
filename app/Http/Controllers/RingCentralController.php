@@ -124,7 +124,7 @@ class RingCentralController extends Controller
         $accessToken = CallLog::getRingCentralAccessToken();
 
         // Generate the summary if it doesn't exist
-        $callLog->getSummary($accessToken);
+        $callLog->getSummary();
 
         return view('ring-central-details', compact('callLog', 'accessToken'));
     }
