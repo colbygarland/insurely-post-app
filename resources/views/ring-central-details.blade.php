@@ -1,7 +1,8 @@
 <x-app-layout>
-  <x-slot name="title">
-    Ring Central Details
-  </x-slot>
+    <x-slot name="title">
+        Ring Central Details
+    </x-slot>
+    
     <div class="py-12 mt-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-4">
             <a onclick="window.history.back()" class="inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:underline">
@@ -11,13 +12,16 @@
                 Back to Call Logs
             </a>
         </div>
+        
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             @if(Session::has('successMessage'))
                 <x-alert type="success" :message="Session::get('successMessage')" />
             @endif
+            
             @if(Session::has('errorMessage'))
                 <x-alert type="error" :message="Session::get('errorMessage')" />
             @endif
+            
             <!-- Main Conversation Card -->
             <div class="bg-white dark:bg-gray-800 dark:text-gray-200 overflow-hidden shadow-xl sm:rounded-lg">
                 <!-- Header Section -->
@@ -85,11 +89,11 @@
                                         <p class="text-lg font-semibold text-gray-900 dark:text-gray-200">{{ Carbon\Carbon::parse($callLog->start_time)->setTimezone('America/Edmonton')->format('F j, Y g:ia') }}</p>
                                     </div>
                                 </div>
-                                                               
-                             </div>
-                         </div>
+                            </div>
+                        </div>
 
-                         <div class="bg-white dark:bg-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg p-6">
+                        <!-- Call Audio Section -->
+                        <div class="bg-white dark:bg-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg p-6">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200 mb-4 flex items-center">
                                 <svg class="w-5 h-5 text-gray-600 dark:text-gray-200 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -97,7 +101,7 @@
                                 Call Audio
                             </h3>
                             <div class="bg-gray-50 dark:bg-gray-600 dark:text-gray-200 rounded-lg p-4 border-l-4 border-teal-500">
-                                @if($callLog->url)  
+                                @if($callLog->url)
                                     <div class="text-gray-700 dark:text-gray-200 leading-relaxed prose prose-sm max-w-none">
                                         <audio controls>
                                             <source src="{{ $callLog->url }}?access_token={{ $accessToken }}" type="audio/mpeg">
@@ -290,11 +294,7 @@
                                 });
                             </script>
                         </div>
-
-                        
-
-                     
-                     </div>
+                    </div>
                 </div>
             </div>
         </div>
