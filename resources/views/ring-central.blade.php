@@ -266,7 +266,7 @@
                                 @csrf
                                 <div class="mb-4">
                                     <x-input-label for="summary_prompt" :value="__('Summary Prompt')" />
-                                    <x-text-area id="summary_prompt" name="summary_prompt" type="text" class="mt-1 block w-full min-h-32" required autofocus value="{{ $summaryPrompt }}"></x-text-area>
+                                    <x-text-area id="summary_prompt" name="summary_prompt" type="text" class="mt-1 block w-full min-h-32" required value="{{ $summaryPrompt }}"></x-text-area>
                                     <x-input-error class="mt-2" :messages="$errors->get('summary_prompt')" />
                                 </div>
                                 <x-primary-button>Update Prompt</x-primary-button>

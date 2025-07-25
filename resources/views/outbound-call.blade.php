@@ -106,19 +106,19 @@
 
                         <div>
                             <x-input-label for="firstName" :value="__('First Name')" />
-                            <x-text-input id="firstName" name="firstName" type="text" class="mt-1 block w-full" required autofocus />
+                            <x-text-input id="firstName" name="firstName" type="text" class="mt-1 block w-full" required />
                             <x-input-error class="mt-2" :messages="$errors->get('firstName')" />
                         </div>
 
                         <div>
                             <x-input-label for="lastName" :value="__('Last Name')" />
-                            <x-text-input id="lastName" name="lastName" type="text" class="mt-1 block w-full" required autofocus />
+                            <x-text-input id="lastName" name="lastName" type="text" class="mt-1 block w-full" required />
                             <x-input-error class="mt-2" :messages="$errors->get('lastName')" />
                         </div>
 
                         <div>
                             <x-input-label for="number" :value="__('Phone Number')" />
-                            <x-text-input id="number" name="number" type="text" class="mt-1 block w-full" required autofocus />
+                            <x-text-input id="number" name="number" type="text" class="mt-1 block w-full" required />
                             <x-input-error class="mt-2" :messages="$errors->get('number')" />
                         </div>
 
@@ -130,13 +130,13 @@
 
                         <div>
                             <x-input-label for="timezone" :value="__('Timezone')" />
-                            <x-text-input id="timezone" name="timezone" type="text" class="mt-1 block w-full" value="America/Edmonton" required autofocus />
+                            <x-text-input id="timezone" name="timezone" type="text" class="mt-1 block w-full" value="America/Edmonton" required />
                             <x-input-error class="mt-2" :messages="$errors->get('timezone')" />
                         </div>
 
                         <div>
                             <x-input-label for="callType" :value="__('Call Type (outbound or rental)')" />
-                            <x-text-input id="callType" name="callType" type="text" class="mt-1 block w-full" value="rental" required autofocus />
+                            <x-text-input id="callType" name="callType" type="text" class="mt-1 block w-full" value="rental" required />
                             <x-input-error class="mt-2" :messages="$errors->get('callType')" />
                         </div>
 
@@ -167,7 +167,7 @@
 
                             <div>
                                 <x-input-label for="file" :value="__('CSV File')" />
-                                <x-text-input id="file" name="file" type="file" class="mt-1 block w-full" required autofocus />
+                                <x-text-input id="file" name="file" type="file" class="mt-1 block w-full" required />
                                 <x-input-error class="mt-2" :messages="$errors->get('file')" />
                             </div>
 
@@ -195,7 +195,7 @@
 
                             <div>
                                 <x-input-label for="minutes" :value="__('Minutes to process')" />
-                                <x-text-input id="minutes" name="minutes" type="number" value="60" class="mt-1 block w-full" required autofocus />
+                                <x-text-input id="minutes" name="minutes" type="number" value="60" class="mt-1 block w-full" required  />
                                 <x-input-error class="mt-2" :messages="$errors->get('minutes')" />
                             </div>
 
@@ -219,43 +219,43 @@
 
                         <div>
                             <x-input-label for="agent_performance" :value="__('Agent Performance')" />
-                            <x-text-area id="agent_performance" name="agent_performance" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->agent_performance }}"></x-text-area>
+                            <x-text-area id="agent_performance" name="agent_performance" type="text" class="mt-1 block w-full" required value="{{ $analyzeTranscriptSettings->agent_performance }}"></x-text-area>
                             <x-input-error class="mt-2" :messages="$errors->get('agent_performance')" />
                         </div>
 
                         <div>
                             <x-input-label for="general" :value="__('General')" />
-                            <x-text-area id="general" name="general" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->general }}"></x-text-area>
+                            <x-text-area id="general" name="general" type="text" class="mt-1 block w-full" required value="{{ $analyzeTranscriptSettings->general }}"></x-text-area>
                             <x-input-error class="mt-2" :messages="$errors->get('general')" />
                         </div>
 
                         <div>
                             <x-input-label for="sentiment" :value="__('Sentiment')" />
-                            <x-text-area id="sentiment" name="sentiment" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->sentiment }}"></x-text-area>
+                            <x-text-area id="sentiment" name="sentiment" type="text" class="mt-1 block w-full" required value="{{ $analyzeTranscriptSettings->sentiment }}"></x-text-area>
                             <x-input-error class="mt-2" :messages="$errors->get('sentiment')" />
                         </div>
 
                         <div>
                             <x-input-label for="summary" :value="__('Summary')" />
-                            <x-text-area id="summary" name="summary" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->summary }}"></x-text-area>
+                            <x-text-area id="summary" name="summary" type="text" class="mt-1 block w-full" required value="{{ $analyzeTranscriptSettings->summary }}"></x-text-area>
                             <x-input-error class="mt-2" :messages="$errors->get('summary')" />
                         </div>
 
                         <div>
                             <x-input-label for="keywords" :value="__('Keywords')" />
-                            <x-text-area id="keywords" name="keywords" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->keywords }}"></x-text-area>
+                            <x-text-area id="keywords" name="keywords" type="text" class="mt-1 block w-full" required value="{{ $analyzeTranscriptSettings->keywords }}"></x-text-area>
                             <x-input-error class="mt-2" :messages="$errors->get('keywords')" />
                         </div>
 
                         <div>
                             <x-input-label for="action_items" :value="__('Action Items')" />
-                            <x-text-area id="action_items" name="action_items" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->action_items }}"></x-text-area>
+                            <x-text-area id="action_items" name="action_items" type="text" class="mt-1 block w-full" required value="{{ $analyzeTranscriptSettings->action_items }}"></x-text-area>
                             <x-input-error class="mt-2" :messages="$errors->get('action_items')" />
                         </div>
 
                         <div>
                             <x-input-label for="agent_insights" :value="__('Agent Insights')" />
-                            <x-text-area id="agent_insights" name="agent_insights" type="text" class="mt-1 block w-full" required autofocus value="{{ $analyzeTranscriptSettings->agent_insights }}"></x-text-area>
+                            <x-text-area id="agent_insights" name="agent_insights" type="text" class="mt-1 block w-full" required value="{{ $analyzeTranscriptSettings->agent_insights }}"></x-text-area>
                             <x-input-error class="mt-2" :messages="$errors->get('agent_insights')" />
                         </div>
 
