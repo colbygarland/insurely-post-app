@@ -355,7 +355,7 @@ class CallLog extends Model
                     [
                         'parts' => [
                             [
-                                'text' => 'Please provide a transcript of this audio recording with speaker separation. Format the output so each speaker gets their own line, like:\n\nSpeaker 1: [what they said]\nSpeaker 2: [what they said]\n\nIf you can identify the speakers by name, use their names instead of Speaker 1/Speaker 2. Return only the transcript text without any additional formatting or commentary.',
+                                'text' => 'Please provide a transcript of this audio recording with speaker separation. Format the output so each speaker gets their own line, like:\n\nSpeaker 1: [what they said]\nSpeaker 2: [what they said]\n\nIf you can identify the speakers by name, use their names instead of Speaker 1/Speaker 2. If you encounter a speaker that is giving a credit card number, do not include it in the transcript. Return only the transcript text without any additional formatting or commentary.',
                             ],
                             [
                                 'file_data' => [
