@@ -142,7 +142,7 @@ class RingCentralController extends Controller
         return response('', 200)->header('Validation-Token', $validationToken)->header('Content-Type', 'application/json');
     }
 
-    public function createWebhook()
+    public static function createWebhook()
     {
         Log::debug('Creating webhook');
 
