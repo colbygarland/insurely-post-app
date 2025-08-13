@@ -142,14 +142,19 @@ class RingCentralController extends Controller
         return response('', 200)->header('Validation-Token', $validationToken)->header('Content-Type', 'application/json');
     }
 
-    public static function createWebhook()
+    public function createWebhook()
     {
         Log::debug('Creating webhook');
 
         $accessToken = CallLog::getRingCentralAccessToken();
 
         $response = Http::withHeaders(['Authorization' => 'Bearer '.$accessToken])->post(self::RING_CENTRAL_URL.'subscription', [
-            'eventFilters' => ['/restapi/v1.0/account/'.self::ACCOUNT_ID.'/telephony/sessions'],
+            'eventFilters' => [
+                '/restapi/v1.0/account/~/extension/~/presence?detailedTelephonyState=true&sipData=true',
+                '/restapi/v1.0/account/~/extension/~/message-store',
+                '/restapi/v1.0/account/~/extension/~/presence/line',
+                '/restapi/v1.0/account/~/extension',
+            ],
             'deliveryMode' => [
                 'transportType' => 'WebHook',
                 'address' => 'https://linkedin.insurely.ca/api/ringcentral/webhook',

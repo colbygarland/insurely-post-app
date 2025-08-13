@@ -40,6 +40,6 @@ Schedule::call(function () {
     RingCentralController::getCallLog();
 })->everyFifteenMinutes();
 
-Schedule::call(function () {
-    RingCentralController::createWebhook();
-})->everyTwoHours();
+// Schedule::call(function () {
+//     RingCentralController::createWebhook();
+// })->everyTwoHours();
