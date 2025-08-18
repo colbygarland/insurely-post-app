@@ -37,6 +37,44 @@ class CallLogController extends Controller
         }
     }
 
+    public function generateTranscriptOnly(CallLog $callLog)
+    {
+        try {
+            $transcript = $callLog->getTranscript();
+
+            if (str_starts_with($transcript, 'Error:')) {
+                return back()->with('errorMessage', $transcript);
+            }
+
+            return back()->with('successMessage', 'Transcript generated successfully!');
+
+        } catch (\Exception $e) {
+            Log::error('Error generating transcript: '.$e->getMessage());
+
+            return back()->with('errorMessage', 'An error occurred while generating the transcript');
+        }
+    }
+
+    public function generateSummaryAndAnalysis(CallLog $callLog)
+    {
+        try {
+            // Check if transcript exists first
+            if (! $callLog->transcription) {
+                return back()->with('errorMessage', 'Transcript must be generated first before creating summary and analysis.');
+            }
+
+            $callLog->getSummary();
+            $callLog->getAnalysis();
+
+            return back()->with('successMessage', 'Summary and analysis generated successfully!');
+
+        } catch (\Exception $e) {
+            Log::error('Error generating summary and analysis: '.$e->getMessage());
+
+            return back()->with('errorMessage', 'An error occurred while generating the summary and analysis');
+        }
+    }
+
     public function updateSummaryPrompt(Request $request)
     {
         $request->validate([

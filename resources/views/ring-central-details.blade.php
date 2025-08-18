@@ -23,7 +23,7 @@
             @endif
             
             <!-- Main Conversation Card -->
-            <div class="bg-white dark:bg-gray-800 dark:text-gray-200 overflow-hidden shadow-xl sm:rounded-lg mb-8">
+            <div class="bg-white dark:bg-gray-800 dark:text-gray-200 shadow-xl sm:rounded-lg mb-8">
                 <!-- Header Section -->
                 <div class="bg-gradient-to-r bg-primary px-6 py-8">
                     <div class="flex items-center">
@@ -184,38 +184,81 @@
                         <!-- Action Buttons -->
                         <div class="flex justify-end space-x-3 pt-4">
                             @if($callLog->url && !$callLog->transcription)
-                                <form method="POST" action="{{ route('calllog.transcript', $callLog->id) }}" class="inline" id="transcript-form">
+                                <form method="POST" action="{{ route('calllog.transcript-only', $callLog->id) }}" class="inline" id="transcript-form">
                                     @csrf
                                     <button type="submit" id="transcript-btn" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                                         <span id="transcript-btn-content" class="flex items-center">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
-                                            Get Transcript
+                                            Generate Transcript
                                         </span>
                                         <span id="transcript-btn-loading" class="hidden flex items-center">
                                             <svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
                                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                             </svg>
-                                            Generating Transcript...
+                                            Generating...
                                         </span>
                                     </button>
                                 </form>
-
-                                <script>
-                                    document.getElementById('transcript-form').addEventListener('submit', function(e) {
-                                        const btn = document.getElementById('transcript-btn');
-                                        const btnContent = document.getElementById('transcript-btn-content');
-                                        const btnLoading = document.getElementById('transcript-btn-loading');
-                                        
-                                        // Show loading state
-                                        btnContent.classList.add('hidden');
-                                        btnLoading.classList.remove('hidden');
-                                        btn.disabled = true;
-                                    });
-                                </script>
                             @endif
+
+                            @if($callLog->transcription && (!$callLog->summary || !$callLog->analysis))
+                                <form method="POST" action="{{ route('calllog.summary-analysis', $callLog->id) }}" class="inline" id="summary-analysis-form">
+                                    @csrf
+                                    <button type="submit" id="summary-analysis-btn" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <span id="summary-analysis-btn-content" class="flex items-center">
+                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                                            </svg>
+                                            Generate Summary + Analysis
+                                        </span>
+                                        <span id="summary-analysis-btn-loading" class="hidden flex items-center">
+                                            <svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Generating...
+                                        </span>
+                                    </button>
+                                </form>
+                            @endif
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    // Handle transcript form submission
+                                    const transcriptForm = document.getElementById('transcript-form');
+                                    if (transcriptForm) {
+                                        transcriptForm.addEventListener('submit', function(e) {
+                                            const btn = document.getElementById('transcript-btn');
+                                            const btnContent = document.getElementById('transcript-btn-content');
+                                            const btnLoading = document.getElementById('transcript-btn-loading');
+                                            
+                                            // Show loading state
+                                            btnContent.classList.add('hidden');
+                                            btnLoading.classList.remove('hidden');
+                                            btn.disabled = true;
+                                        });
+                                    }
+
+                                    // Handle summary+analysis form submission
+                                    const summaryAnalysisForm = document.getElementById('summary-analysis-form');
+                                    if (summaryAnalysisForm) {
+                                        summaryAnalysisForm.addEventListener('submit', function(e) {
+                                            const btn = document.getElementById('summary-analysis-btn');
+                                            const btnContent = document.getElementById('summary-analysis-btn-content');
+                                            const btnLoading = document.getElementById('summary-analysis-btn-loading');
+                                            
+                                            // Show loading state
+                                            btnContent.classList.add('hidden');
+                                            btnLoading.classList.remove('hidden');
+                                            btn.disabled = true;
+                                        });
+                                    }
+                                });
+                            </script>
+                        </div>
 
                             <!-- Copy to Clipboard Script -->
                             <script>
