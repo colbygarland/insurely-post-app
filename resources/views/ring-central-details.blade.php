@@ -175,9 +175,71 @@
                                         Call Analysis
                                     </h3>
                                 </div>
-                                <div class="bg-gray-50 dark:bg-gray-600 dark:text-gray-200 rounded-lg p-4 border-l-4 border-teal-400">
-                                    <div class="text-gray-700 dark:text-gray-200 leading-relaxed prose prose-sm max-w-none">{!! nl2br(e($callLog->analysis)) !!}</div>
+                                <div class="bg-gray-50 dark:bg-gray-600 dark:text-gray-200 rounded-lg p-6 border-l-4 border-teal-400">
+                                    <div class="text-gray-700 dark:text-gray-200 leading-relaxed analysis-content">
+                                        @php
+                                            $formatted = $callLog->analysis;
+                                            
+                                            // Split into lines to process each one
+                                            $lines = explode("\n", $formatted);
+                                            $processedLines = [];
+                                            
+                                            foreach ($lines as $line) {
+                                                $line = trim($line);
+                                                
+                                                // Check for horizontal rules first
+                                                if ($line === '---') {
+                                                    $processedLines[] = '<hr class="my-6 border-gray-300 dark:border-gray-500">';
+                                                }
+                                                // Check for bullet points with scoring details
+                                                elseif (preg_match('/^\* \*\*(.*?)\*\*: (.*)$/', $line, $matches)) {
+                                                    $processedLines[] = '<div class="ml-4 mb-2"><span class="font-semibold text-gray-800 dark:text-gray-100">' . $matches[1] . ':</span> <span class="text-gray-700 dark:text-gray-200">' . $matches[2] . '</span></div>';
+                                                }
+                                                // Check for regular bullet points
+                                                elseif (preg_match('/^\* (.*)$/', $line, $matches)) {
+                                                    $processedLines[] = '<div class="ml-4 mb-2 flex items-start"><span class="text-teal-500 mr-2 mt-1">•</span><span class="text-gray-700 dark:text-gray-200">' . $matches[1] . '</span></div>';
+                                                }
+                                                // Regular text line
+                                                else {
+                                                    // Apply bold formatting to regular text
+                                                    $line = preg_replace('/\*\*(.*?)\*\*/', '<span class="font-bold text-gray-800 dark:text-gray-100">$1</span>', $line);
+                                                    $processedLines[] = '<div>' . $line . '</div>';
+                                                }
+                                            }
+                                            
+                                            $formatted = implode('', $processedLines);
+                                        @endphp
+                                        
+                                        {!! $formatted !!}
+                                    </div>
                                 </div>
+
+                                <style>
+                                    .analysis-content {
+                                        line-height: 1.7;
+                                    }
+                                    .analysis-content h1, .analysis-content h2, .analysis-content h3 {
+                                        font-weight: 600;
+                                        margin-bottom: 0.75rem;
+                                        margin-top: 1.5rem;
+                                    }
+                                    .analysis-content h1 {
+                                        font-size: 1.25rem;
+                                    }
+                                    .analysis-content h2 {
+                                        font-size: 1.125rem;
+                                    }
+                                    .analysis-content h3 {
+                                        font-size: 1rem;
+                                    }
+                                    .analysis-content ul {
+                                        margin: 0.75rem 0;
+                                        padding-left: 1rem;
+                                    }
+                                    .analysis-content li {
+                                        margin-bottom: 0.5rem;
+                                    }
+                                </style>
                             </div>
                         @endif
 
