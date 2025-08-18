@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AnalyzePrompt;
 use App\Models\CallLog;
 use App\Models\SummaryPrompt;
 use Illuminate\Http\Request;
@@ -21,12 +22,13 @@ class CallLogController extends Controller
         try {
             $transcript = $callLog->getTranscript();
             $callLog->getSummary();
+            $callLog->getAnalysis();
 
             if (str_starts_with($transcript, 'Error:')) {
                 return back()->with('errorMessage', $transcript);
             }
 
-            return back()->with('successMessage', 'Transcript and summary generated successfully!');
+            return back()->with('successMessage', 'Transcript, summary, and analysis generated successfully!');
 
         } catch (\Exception $e) {
             Log::error('Error generating transcript: '.$e->getMessage());
@@ -44,5 +46,16 @@ class CallLogController extends Controller
         SummaryPrompt::create(['prompt' => $request->summary_prompt]);
 
         return back()->with('successMessage', 'Summary prompt updated successfully!');
+    }
+
+    public function updateAnalyzePrompt(Request $request)
+    {
+        $request->validate([
+            'analyze_prompt' => 'required|string|max:5000',
+        ]);
+
+        AnalyzePrompt::create(['prompt' => $request->analyze_prompt]);
+
+        return back()->with('successMessage', 'Analyze prompt updated successfully!');
     }
 }

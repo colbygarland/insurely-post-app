@@ -65,6 +65,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::get('/ringcentral/details/{callLog}', [RingCentralController::class, 'show'])->name('ringcentral.details');
     Route::post('/calllog/{callLog}/transcript', [CallLogController::class, 'generateTranscript'])->name('calllog.transcript');
     Route::post('/calllog/update-summary-prompt', [CallLogController::class, 'updateSummaryPrompt'])->name('calllog.update-summary-prompt')->middleware('can:is-admin');
+    Route::post('/calllog/update-analyze-prompt', [CallLogController::class, 'updateAnalyzePrompt'])->name('calllog.update-analyze-prompt')->middleware('can:is-admin');
 });
 
 require __DIR__.'/auth.php';

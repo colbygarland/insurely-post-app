@@ -274,6 +274,26 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Prompt Settings for analyze -->
+                <div class="bg-white dark:bg-gray-800 dark:text-gray-200 overflow-hidden shadow-xl sm:rounded-lg mb-8">
+                    <div class="p-6">
+                        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                            Analyze Call Prompt Settings
+                        </h2>
+                        <div class="mt-4">
+                            <form action="{{ route('calllog.update-analyze-prompt') }}" method="POST">
+                                @csrf
+                                <div class="mb-4">
+                                    <x-input-label for="analyze_prompt" :value="__('Analyze Prompt')" />
+                                    <x-text-area id="analyze_prompt" name="analyze_prompt" type="text" class="mt-1 block w-full min-h-32" required value="{{ $analyzePrompt }}"></x-text-area>
+                                    <x-input-error class="mt-2" :messages="$errors->get('analyze_prompt')" />
+                                </div>
+                                <x-primary-button>Update Prompt</x-primary-button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             @endif
         </div>
     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AnalyzePrompt;
 use App\Models\CallLog;
 use App\Models\SummaryPrompt;
 use Illuminate\Http\Request;
@@ -44,8 +45,8 @@ class RingCentralController extends Controller
 
         $perPage = 50;
         $fromNameFilter = $request->get('from_name', 'all');
-        $startDate = $request->get('start_date', now()->startOfWeek()->format('Y-m-d'));
-        $endDate = $request->get('end_date', now()->format('Y-m-d'));
+        $startDate = $request->get('start_date', now()->startOfWeek(\Carbon\Carbon::MONDAY)->format('Y-m-d'));
+        $endDate = $request->get('end_date', now()->tomorrow()->format('Y-m-d'));
 
         $callLogs = CallLog::list($perPage, $fromNameFilter, $startDate, $endDate);
         $fromNames = CallLog::getDistinctFromNames();
@@ -110,8 +111,9 @@ class RingCentralController extends Controller
         ];
 
         $summaryPrompt = SummaryPrompt::getLatest()->prompt;
+        $analyzePrompt = AnalyzePrompt::getLatest()->prompt;
 
-        return view('ring-central', compact('callLogs', 'fromNames', 'fromNameFilter', 'stats', 'startDate', 'endDate', 'summaryPrompt'));
+        return view('ring-central', compact('callLogs', 'fromNames', 'fromNameFilter', 'stats', 'startDate', 'endDate', 'summaryPrompt', 'analyzePrompt'));
     }
 
     public function show(CallLog $callLog)

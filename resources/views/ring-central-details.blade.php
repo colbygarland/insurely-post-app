@@ -164,6 +164,23 @@
                             </div>
                         @endif
 
+                        <!-- Analysis Section -->
+                        @if($callLog->analysis)
+                            <div class="bg-white dark:bg-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg p-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-200 flex items-center">
+                                        <svg class="w-5 h-5 text-gray-600 dark:text-gray-200 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        Call Analysis
+                                    </h3>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-gray-600 dark:text-gray-200 rounded-lg p-4 border-l-4 border-teal-400">
+                                    <div class="text-gray-700 dark:text-gray-200 leading-relaxed prose prose-sm max-w-none">{!! nl2br(e($callLog->analysis)) !!}</div>
+                                </div>
+                            </div>
+                        @endif
+
                         <!-- Action Buttons -->
                         <div class="flex justify-end space-x-3 pt-4">
                             @if($callLog->url && !$callLog->transcription)

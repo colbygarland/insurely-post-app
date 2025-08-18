@@ -424,6 +424,91 @@ class CallLog extends Model
         return null;
     }
 
+    public function getAnalysis()
+    {
+        // Return existing summary if available
+        if ($this->analysis) {
+            return $this->analysis;
+        }
+
+        // If no analysis but we have a transcript, generate one
+        if ($this->transcription) {
+            return $this->generateAnalysis();
+        }
+
+        return null;
+    }
+
+    private function generateAnalysis()
+    {
+        $apiKey = env('GEMINI_API_KEY');
+        if (! $apiKey) {
+            Log::error('GEMINI_API_KEY not configured');
+
+            return 'Error: API key not configured';
+        }
+
+        try {
+            $analysisResponse = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'X-Goog-Api-Key' => $apiKey,
+            ])->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', [
+                'contents' => [
+                    [
+                        'parts' => [
+                            [
+                                'text' => AnalyzePrompt::getLatest()->prompt.'\n\n'.$this->transcription,
+                            ],
+                        ],
+                    ],
+                ],
+                'generationConfig' => [
+                    'temperature' => 0.3,
+                    'topP' => 0.8,
+                    'maxOutputTokens' => 100_000,
+                ],
+            ]);
+
+            if (! $analysisResponse->successful()) {
+                $statusCode = $analysisResponse->status();
+                $responseBody = $analysisResponse->body();
+
+                // Handle rate limiting specifically
+                if ($statusCode === 429 || str_contains($responseBody, 'quota') || str_contains($responseBody, 'rate limit')) {
+                    Log::warning('Gemini API rate limited during analysis generation: '.$responseBody);
+
+                    return 'Rate Limited: Please try again in a few minutes. The Gemini API has temporary usage limits.';
+                }
+
+                Log::error('Failed to generate analysis: '.$responseBody);
+
+                return 'Error: Failed to generate analysis';
+            }
+
+            $analysisData = $analysisResponse->json();
+
+            // Extract the analysis text from the response
+            $analysis = $analysisData['candidates'][0]['content']['parts'][0]['text'] ?? null;
+
+            if (! $analysis) {
+                Log::error('No analysis generated for call log: '.$this->id);
+
+                return null;
+            }
+
+            // Save the generated summary to the database
+            $this->analysis = $this->cleanInput($analysis);
+            $this->save();
+
+            return $this->analysis;
+
+        } catch (\Exception $e) {
+            Log::error('Error generating analysis: '.$e->getMessage());
+
+            return 'Error: '.$e->getMessage();
+        }
+    }
+
     /**
      * Generate a summary of the transcript using Gemini AI
      *
@@ -560,13 +645,13 @@ class CallLog extends Model
     private function cleanInput($input)
     {
         // Check for Insurely misspellings
-        $misspellings = [
-            'Ensurely', 'Ensherly',
-        ];
+        // $misspellings = [
+        //     'Ensurely', 'Ensherly',
+        // ];
 
-        foreach ($misspellings as $misspelling => $correct) {
-            $input = str_replace($misspelling, $correct, $input);
-        }
+        // foreach ($misspellings as $misspelling => $correct) {
+        //     $input = str_replace($misspelling, $correct, $input);
+        // }
 
         return trim($input);
     }
