@@ -141,6 +141,8 @@ class RingCentralController extends Controller
 
         $validationToken = $request->header('validation-token');
 
+        CallLogController::autoGenerateTranscripts();
+
         return response('', 200)->header('Validation-Token', $validationToken)->header('Content-Type', 'application/json');
     }
 
@@ -161,7 +163,7 @@ class RingCentralController extends Controller
                 'transportType' => 'WebHook',
                 'address' => 'https://linkedin.insurely.ca/api/ringcentral/webhook',
             ],
-            // 'expiresIn' => 315360000, // 10 years
+            'expiresIn' => 315360000, // 10 years
         ]);
 
         if ($response->status() != 200) {

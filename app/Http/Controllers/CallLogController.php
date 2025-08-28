@@ -39,6 +39,8 @@ class CallLogController extends Controller
 
     public static function autoGenerateTranscripts()
     {
+        Log::info('Running auto generate transcripts, starting at: '.now()->format('Y-m-d H:i:s'));
+
         $unTranscribedCalls = CallLog::whereNull('transcription')
             ->orWhereNull('summary')
             ->orWhereNull('analysis')
@@ -62,6 +64,8 @@ class CallLogController extends Controller
         foreach ($unTranscribedCalls as $callLog) {
             $callLog->getAnalysis();
         }
+
+        Log::info('Running auto generate transcripts, ending at: '.now()->format('Y-m-d H:i:s'));
 
         return true;
     }
