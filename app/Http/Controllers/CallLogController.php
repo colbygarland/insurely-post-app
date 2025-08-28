@@ -42,6 +42,7 @@ class CallLogController extends Controller
         $unTranscribedCalls = CallLog::whereNull('transcription')
             ->orWhereNull('summary')
             ->orWhereNull('analysis')
+            ->where('duration', '<', 900) // 15 minutes maxx time
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
