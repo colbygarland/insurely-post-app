@@ -41,7 +41,7 @@ class CallLogController extends Controller
     {
         $unTranscribedCalls = CallLog::whereNull('transcription')
             ->orderBy('created_at', 'desc')
-            ->limit(20)
+            ->limit(10)
             ->get();
 
         // Generate the transcripts
