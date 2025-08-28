@@ -37,6 +37,28 @@ class CallLogController extends Controller
         }
     }
 
+    public static function autoGenerateTranscripts()
+    {
+        $unTranscribedCalls = CallLog::whereNull('transcription')->limit(5)->get();
+
+        // Generate the transcripts
+        foreach ($unTranscribedCalls as $callLog) {
+            $callLog->getTranscript();
+        }
+
+        // Generate the summaries
+        foreach ($unTranscribedCalls as $callLog) {
+            $callLog->getSummary();
+        }
+
+        // Generate the analyses
+        foreach ($unTranscribedCalls as $callLog) {
+            $callLog->getAnalysis();
+        }
+
+        return true;
+    }
+
     public function generateTranscriptOnly(CallLog $callLog)
     {
         try {

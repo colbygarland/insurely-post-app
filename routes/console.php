@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CallLogController;
 use App\Http\Controllers\RingCentralController;
 use App\Models\Post;
 use App\Utils\LinkedInApi;
@@ -38,7 +39,11 @@ Schedule::call(function () {
 
 Schedule::call(function () {
     RingCentralController::getCallLog();
-})->everyFifteenMinutes();
+
+    // Auto generate the transcripts, summaries, and analyses
+    CallLogController::autoGenerateTranscripts();
+
+})->everyFiveMinutes();
 
 // Schedule::call(function () {
 //     RingCentralController::createWebhook();
