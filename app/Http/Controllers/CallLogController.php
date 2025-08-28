@@ -43,6 +43,7 @@ class CallLogController extends Controller
             ->orWhereNull('summary')
             ->orWhereNull('analysis')
             ->where('duration', '<', 900) // 15 minutes maxx time
+            ->where('created_at', '>=', '2025-08-25T17:55:42.000000Z') // after this date generate the transcripts
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
