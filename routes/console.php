@@ -38,11 +38,13 @@ Schedule::call(function () {
 })->everyMinute();
 
 Schedule::call(function () {
+    Log::info('Running auto generate transcripts, starting at: '.now()->format('Y-m-d H:i:s'));
     RingCentralController::getCallLog();
 
     // Auto generate the transcripts, summaries, and analyses
     CallLogController::autoGenerateTranscripts();
 
+    Log::info('Running auto generate transcripts, ending at: '.now()->format('Y-m-d H:i:s'));
 })->everyFiveMinutes();
 
 // Schedule::call(function () {
