@@ -39,7 +39,10 @@ class CallLogController extends Controller
 
     public static function autoGenerateTranscripts()
     {
-        $unTranscribedCalls = CallLog::whereNull('transcription')->limit(5)->get();
+        $unTranscribedCalls = CallLog::whereNull('transcription')
+            ->orderBy('created_at', 'desc')
+            ->limit(20)
+            ->get();
 
         // Generate the transcripts
         foreach ($unTranscribedCalls as $callLog) {
