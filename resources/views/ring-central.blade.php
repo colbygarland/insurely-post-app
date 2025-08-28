@@ -179,7 +179,7 @@
                                 <th scope="col" class="px-6 py-3">Duration</th>
                                 <th scope="col" class="px-6 py-3">From</th>
                                 <th scope="col" class="px-6 py-3">To</th>
-                                <th scope="col" class="px-6 py-3">Transcript Generated</th>
+                                <th scope="col" class="px-6 py-3">AI Analysis Generated</th>
                                 <th scope="col" class="px-6 py-3">Actions</th>
                             </tr>
                         </thead>
@@ -199,15 +199,40 @@
                                         {{ $callLog->to }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        @if($callLog->transcription)
-                                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                            </svg>
-                                        @else
-                                            <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                                            </svg>
-                                        @endif
+                                        <div class="flex items-center gap-2">
+                                            @if($callLog->transcription)
+                                                <div class="relative group">
+                                                    <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4z"/>
+                                                        <path d="M5.5 9.643a.75.75 0 00-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5h-1.5v-1.546A6.001 6.001 0 0016 10v-.357a.75.75 0 00-1.5 0V10a4.5 4.5 0 01-9 0v-.357z"/>
+                                                    </svg>
+                                                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                        Transcribed
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            @if($callLog->summary)
+                                                <div class="relative group">
+                                                    <svg class="w-5 h-5 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                        Summarized
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            @if($callLog->analysis)
+                                                <div class="relative group">
+                                                    <svg class="w-5 h-5 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
+                                                        <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
+                                                    </svg>
+                                                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                        Analyzed
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <a href="{{ route('ringcentral.details', array_merge(['callLog' => $callLog->id], request()->query())) }}" 
