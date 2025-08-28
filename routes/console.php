@@ -45,7 +45,7 @@ Schedule::call(function () {
     CallLogController::autoGenerateTranscripts();
 
     Log::info('Running auto generate transcripts, ending at: '.now()->format('Y-m-d H:i:s'));
-})->everyFiveMinutes();
+})->everyMinute();
 
 // Schedule::call(function () {
 //     RingCentralController::createWebhook();
