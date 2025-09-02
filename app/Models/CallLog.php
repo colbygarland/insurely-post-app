@@ -392,9 +392,9 @@ class CallLog extends Model
             // Extract the usage data from the response
             $usageData = $transcriptData['usageMetadata'] ?? null;
             if ($usageData) {
-                $this->usage_prompt_token_count = $usageData['promptTokenCount'];
-                $this->usage_candidates_token_count = $usageData['candidatesTokenCount'];
-                $this->usage_total_token_count = $usageData['totalTokenCount'];
+                $this->usage_prompt_token_count = $usageData['promptTokenCount'] ?? 0;
+                $this->usage_candidates_token_count = $usageData['candidatesTokenCount'] ?? 0;
+                $this->usage_total_token_count = $usageData['totalTokenCount'] ?? 0;
             }
 
             $this->transcription = $this->cleanInput($transcript);
