@@ -42,7 +42,7 @@ Schedule::call(function () {
     RingCentralController::getCallLog();
 
     // Auto generate the transcripts, summaries, and analyses
-    // CallLogController::autoGenerateTranscripts();
+    CallLogController::autoGenerateTranscripts();
 })->everyMinute();
 
 // Schedule::call(function () {
