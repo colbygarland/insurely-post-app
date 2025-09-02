@@ -39,8 +39,6 @@ class CallLogController extends Controller
 
     public static function autoGenerateTranscripts()
     {
-        Log::info('Running auto generate transcripts, starting at: '.now()->format('Y-m-d H:i:s'));
-
         $unTranscribedCalls = CallLog::whereNull('transcription')
             ->orWhereNull('summary')
             ->orWhereNull('analysis')
@@ -49,6 +47,9 @@ class CallLogController extends Controller
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
+
+        $callLogIds = $unTranscribedCalls->pluck('id')->toArray();
+        Log::debug('[autoGenerateTranscripts] Starting at: '.now()->format('Y-m-d H:i:s').'. Call Log IDs: '.implode(', ', $callLogIds));
 
         // Generate the transcripts
         foreach ($unTranscribedCalls as $callLog) {
@@ -65,7 +66,7 @@ class CallLogController extends Controller
             $callLog->getAnalysis();
         }
 
-        Log::info('Running auto generate transcripts, ending at: '.now()->format('Y-m-d H:i:s'));
+        Log::debug('[autoGenerateTranscripts] ending at: '.now()->format('Y-m-d H:i:s').'. Call Log IDs: '.implode(', ', $callLogIds));
 
         return true;
     }
