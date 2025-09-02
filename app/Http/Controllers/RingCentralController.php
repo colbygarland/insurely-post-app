@@ -94,7 +94,7 @@ class RingCentralController extends Controller
 
         $totalSuccessfulDuration = $successfulCalls->sum('duration');
         $successfulCallCount = $successfulCalls->count();
-        $avgDuration = $successfulCallCount > 0 ? $totalSuccessfulDuration / $successfulCallCount : 0;
+        $avgDuration = $successfulCallCount > 0 ? (float) ($totalSuccessfulDuration / $successfulCallCount) : 0.0;
 
         // Calculate total transcription cost
         $callsWithTranscription = $statsQuery->whereNotNull('transcription')->get();
@@ -251,22 +251,21 @@ class RingCentralController extends Controller
 
     /**
      * Format duration from seconds to human readable format
-     *
-     * @param  int  $seconds
-     * @return string
      */
-    private function formatDuration($seconds)
+    private function formatDuration(float|int $seconds): string
     {
+        $seconds = (int) round($seconds);
+
         if ($seconds < 60) {
             return $seconds.'s';
         } elseif ($seconds < 3600) {
-            $minutes = floor($seconds / 60);
+            $minutes = (int) floor($seconds / 60);
             $remainingSeconds = $seconds % 60;
 
             return $minutes.'m '.$remainingSeconds.'s';
         } else {
-            $hours = floor($seconds / 3600);
-            $minutes = floor(($seconds % 3600) / 60);
+            $hours = (int) floor($seconds / 3600);
+            $minutes = (int) floor(($seconds % 3600) / 60);
 
             return $hours.'h '.$minutes.'m';
         }
