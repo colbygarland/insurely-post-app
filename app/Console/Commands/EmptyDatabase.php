@@ -38,11 +38,8 @@ class EmptyDatabase extends Command
         foreach ($tables as $tableObject) {
             $tableName = array_values((array) $tableObject)[0];
 
-            // Exclude system/framework tables
-            if (! in_array($tableName, ['migrations', 'failed_jobs', 'jobs'])) {
-                DB::table($tableName)->truncate();
-                $this->comment("Table '{$tableName}' truncated.");
-            }
+            DB::table($tableName)->truncate();
+            $this->comment("Table '{$tableName}' truncated.");
         }
 
         Schema::enableForeignKeyConstraints();
