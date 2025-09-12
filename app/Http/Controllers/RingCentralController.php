@@ -36,12 +36,6 @@ class RingCentralController extends Controller
 
     public function index(Request $request)
     {
-        // Update the call logs
-        $success = self::getCallLog();
-        if (! $success) {
-            Session::flash('errorMessage', 'Failed to get updated call log');
-        }
-
         $perPage = 50;
         $fromNameFilter = $request->get('from_name', 'all');
         $startDate = $request->get('start_date', now()->startOfWeek(\Carbon\Carbon::MONDAY)->format('Y-m-d'));
