@@ -68,17 +68,27 @@ class CallLog extends Model
         $query->where(function ($mainQuery) use ($userName) {
             // Add user-specific name matching
             $mainQuery->where(function ($userQuery) use ($userName) {
-                // Split the name into parts
+                // Split the name into parts and strip middle names
                 $nameParts = explode(' ', trim($userName));
 
                 if (count($nameParts) >= 2) {
                     $firstName = $nameParts[0];
-                    $lastInitial = substr($nameParts[1], 0, 1);
+                    $lastName = end($nameParts); // Get the last part as surname
+                    $lastInitial = substr($lastName, 0, 1);
 
-                    // Match either full name or "FirstName LastInitial" pattern
-                    $userQuery->where('from_name', 'LIKE', '%'.$userName.'%')
-                        ->orWhere('from_name', 'LIKE', '%'.$firstName.' '.$lastInitial.'%')
-                        ->orWhere('from_name', 'LIKE', '%'.$firstName.' '.$lastInitial.'.%');
+                    // Create a version without middle names (First + Last only)
+                    $nameWithoutMiddle = $firstName.' '.$lastName;
+
+                    // Match patterns with middle name handling
+                    $userQuery->where('from_name', 'LIKE', '%'.$userName.'%') // Exact full name
+                        ->orWhere('from_name', 'LIKE', '%'.$nameWithoutMiddle.'%') // Without middle names
+                        ->orWhere('from_name', 'LIKE', '%'.$firstName.' '.$lastInitial.'%') // FirstName LastInitial
+                        ->orWhere('from_name', 'LIKE', '%'.$firstName.' '.$lastInitial.'.%') // FirstName LastInitial.
+                        ->orWhere(function ($subQuery) use ($firstName, $lastName) {
+                            // Allow both first and last name to match anywhere (handles middle names in from_name)
+                            $subQuery->where('from_name', 'LIKE', '%'.$firstName.'%')
+                                ->where('from_name', 'LIKE', '%'.$lastName.'%');
+                        });
                 } else {
                     // Fallback to original exact match if name format is unexpected
                     $userQuery->where('from_name', 'LIKE', '%'.$userName.'%');
@@ -110,14 +120,16 @@ class CallLog extends Model
         // Check user-specific name matching
         $userName = $user->name;
 
+        Log::debug('Checking if call log belongs to user: '.$fromName.' '.$userName);
+
         // Direct match
         if (stripos($fromName, $userName) !== false) {
             return true;
         }
 
         // Check the mapping
-        if (isset(self::$nameMapping[$fromName])) {
-            $fromName = self::$nameMapping[$fromName];
+        if (isset(self::$nameMapping[$userName])) {
+            $fromName = self::$nameMapping[$userName];
             if (stripos($fromName, $userName) !== false) {
                 return true;
             }
