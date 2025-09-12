@@ -206,6 +206,8 @@ class RingCentralController extends Controller
                     'result' => $record['result'],
                 ];
 
+                Log::debug('Record: '.json_encode($record));
+
                 CallLog::updateOrCreate([
                     'ringcentral_id' => $record['id'],
                 ], [
