@@ -23,6 +23,20 @@ class CallLog extends Model
         // 'Existing Policies',
     ];
 
+    private static $nameMapping = [
+        'Adriana Paul' => 'Adrie Paul',
+        'Christine Boyd' => 'Christine Boyd',
+        'Erin E' => 'Erin E',
+        'Karen Gilkyson' => 'Karen Scarlett Gilkyson',
+        'Kiarra Blanchard' => 'Kiarra Rayne Blanchard',
+        'Lexi Adam' => 'Lexi Adam',
+        'Marissa Loeppky' => 'Marissa Loeppky',
+        'Meriska Kuntz' => 'Meriska Anne Kuntz',
+        'Sara Zwaagstra' => 'Sara Z',
+        'Savanna Lafferty' => 'Savanna Lafferty',
+        'Justyce Papirny' => 'Justyce Papirny',
+    ];
+
     protected $fillable = [
         'ringcentral_id',
         'session_id',
@@ -99,6 +113,14 @@ class CallLog extends Model
         // Direct match
         if (stripos($fromName, $userName) !== false) {
             return true;
+        }
+
+        // Check the mapping
+        if (isset(self::$nameMapping[$fromName])) {
+            $fromName = self::$nameMapping[$fromName];
+            if (stripos($fromName, $userName) !== false) {
+                return true;
+            }
         }
 
         // Split the user name into parts

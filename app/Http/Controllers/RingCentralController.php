@@ -21,7 +21,6 @@ class RingCentralController extends Controller
         'Adriana Paul' => '1742506024',
         'Christine Boyd' => '1372741024',
         'Erin E' => '1305758024',
-        'Kade Bowie' => '418710025',
         'Karen Gilkyson' => '507489025',
         'Kiarra Blanchard' => '1670212024',
         'Lexi Adam' => '1670211024',
