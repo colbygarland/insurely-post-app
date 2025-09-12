@@ -41,9 +41,12 @@
                         </x-nav-link>
                     @endif
 
-                    @if(Gate::allows('is-admin'))
-                        <x-nav-link href="/telescope">
+                    @if(auth()->user()->email == 'colbygarland@gmail.com')
+                        <x-nav-link target="_blank" href="/telescope">
                             {{ __('Telescope') }}
+                        </x-nav-link>
+                        <x-nav-link target="_blank" href="https://nightwatch.laravel.com/us/environments/9fdca7d5-9d2a-44ee-b5f4-f9cb844bb09b/dashboard?period=24h">
+                            {{ __('Nightwatch') }}
                         </x-nav-link>
                     @endif
                     
