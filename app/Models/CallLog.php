@@ -122,60 +122,6 @@ class CallLog extends Model
     }
 
     /**
-     * Check if this call log belongs to the given user using flexible name matching,
-     * or if it's a shared call that everyone can access
-     */
-    public function belongsToUser($user)
-    {
-        $fromName = $this->from_name;
-
-        // Check if this is a shared call first
-        if (self::isSharedCallName($fromName)) {
-            return true;
-        }
-
-        // Check user-specific name matching
-        $userName = $user->name;
-
-        Log::debug('Checking if call log belongs to user: '.$fromName.' '.$userName);
-
-        // Direct match
-        if (stripos($fromName, $userName) !== false) {
-            return true;
-        }
-
-        // Check the mapping
-        if (isset(self::$nameMapping[$userName])) {
-            $fromName = self::$nameMapping[$userName];
-            if (stripos($fromName, $userName) !== false) {
-                return true;
-            }
-        }
-
-        // Split the user name into parts
-        $nameParts = explode(' ', trim($userName));
-
-        if (count($nameParts) >= 2) {
-            $firstName = $nameParts[0];
-            $lastInitial = substr($nameParts[1], 0, 1);
-
-            // Check for "FirstName LastInitial" patterns
-            $patterns = [
-                $firstName.' '.$lastInitial,
-                $firstName.' '.$lastInitial.'.',
-            ];
-
-            foreach ($patterns as $pattern) {
-                if (stripos($fromName, $pattern) !== false) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Get the list of shared call names that are visible to all users
      */
     public static function getSharedCallNames()
