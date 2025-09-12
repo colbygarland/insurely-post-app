@@ -401,6 +401,15 @@ class CallLog extends Model
                     return 'Rate Limited: Please try again in a few minutes. The Gemini API has temporary usage limits.';
                 }
 
+                // Handle permission to access the file
+                if (str_contains($responseBody, 'You do not have permission to access')) {
+                    Log::error('Failed to generate transcript: resetting the file uri '.$responseBody);
+                    $this->file_uri = null;
+                    $this->save();
+
+                    return 'Error: You do not have permission to access the file';
+                }
+
                 Log::error('Failed to generate transcript: '.$responseBody);
 
                 return 'Error: Failed to generate transcript';
