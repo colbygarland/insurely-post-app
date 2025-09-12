@@ -379,7 +379,7 @@ class CallLog extends Model
                 // Handle permission to access the file
                 if (str_contains($responseBody, 'You do not have permission to access')) {
                     Log::error('Failed to generate transcript: resetting the file uri '.$responseBody);
-                    $this->file_uri = null;
+                    $this->upload_uri = null;
                     $this->save();
 
                     return 'Error: You do not have permission to access the file';
