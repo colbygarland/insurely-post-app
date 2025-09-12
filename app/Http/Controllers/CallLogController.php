@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Log;
 
 class CallLogController extends Controller
 {
+    public static $minimumDuration = 90; // 1.5 minutes
+
+    public static $maximumDuration = 1500; // 25 minutes
+
     public function list()
     {
         $callLogs = CallLog::list();
@@ -44,8 +48,8 @@ class CallLogController extends Controller
                 ->orWhereNull('summary')
                 ->orWhereNull('analysis');
         })
-            ->where('duration', '<', 900) // 15 minutes max time
-            ->where('duration', '>', 90) // 1.5 minutes min time
+            ->where('duration', '<', self::$maximumDuration)
+            ->where('duration', '>', self::$minimumDuration)
             ->where('created_at', '>=', '2025-08-25T17:55:42.000000Z') // after this date generate the transcripts
             ->orderBy('created_at', 'desc')
             ->limit(10)
