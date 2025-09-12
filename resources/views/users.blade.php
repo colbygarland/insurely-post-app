@@ -97,6 +97,15 @@
                                       </svg>
                                       Reset Password
                                     </button>
+
+                                    <a href="{{ route('users.login-as-user', $user->id) }}"
+                                            class="group flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 text-left"
+                                            >
+                                      <svg class="mr-3 h-5 w-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                                      </svg>
+                                      Login as User
+                                    </a>
                                     
                                     @if($user->role !== 'admin')
                                     <a href="{{ route('users.promote-admin', $user->id) }}" 

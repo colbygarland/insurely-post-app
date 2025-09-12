@@ -6,6 +6,8 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class UsersController extends Controller
@@ -92,5 +94,18 @@ class UsersController extends Controller
             'user_email' => $user->email,
             'user_name' => $user->name,
         ]);
+    }
+
+    public function loginAsUser(Request $request, string $id)
+    {
+        if (! Gate::allows('is-admin')) {
+            return redirect('/');
+        }
+
+        Log::debug('Logging in as user: '.$id);
+        $user = User::find($id);
+        Auth::login($user);
+
+        return redirect('/');
     }
 }
