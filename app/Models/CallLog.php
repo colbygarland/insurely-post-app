@@ -79,6 +79,12 @@ class CallLog extends Model
                     // Create a version without middle names (First + Last only)
                     $nameWithoutMiddle = $firstName.' '.$lastName;
 
+                    // Special case for Adrianna/Adrie
+                    $alternateFirstName = null;
+                    if (strtolower($firstName) === 'adrie') {
+                        $alternateFirstName = 'Adriana';
+                    }
+
                     // Match patterns with middle name handling
                     $userQuery->where('from_name', 'LIKE', '%'.$userName.'%') // Exact full name
                         ->orWhere('from_name', 'LIKE', '%'.$nameWithoutMiddle.'%') // Without middle names
@@ -89,6 +95,17 @@ class CallLog extends Model
                             $subQuery->where('from_name', 'LIKE', '%'.$firstName.'%')
                                 ->where('from_name', 'LIKE', '%'.$lastName.'%');
                         });
+
+                    // Add special case patterns for Adrianna/Adrie
+                    if ($alternateFirstName) {
+                        $userQuery->orWhere('from_name', 'LIKE', '%'.$alternateFirstName.' '.$lastName.'%') // Adrie LastName
+                            ->orWhere('from_name', 'LIKE', '%'.$alternateFirstName.' '.$lastInitial.'%') // Adrie LastInitial
+                            ->orWhere('from_name', 'LIKE', '%'.$alternateFirstName.' '.$lastInitial.'.%') // Adrie LastInitial.
+                            ->orWhere(function ($subQuery) use ($alternateFirstName, $lastName) {
+                                $subQuery->where('from_name', 'LIKE', '%'.$alternateFirstName.'%')
+                                    ->where('from_name', 'LIKE', '%'.$lastName.'%');
+                            });
+                    }
                 } else {
                     // Fallback to original exact match if name format is unexpected
                     $userQuery->where('from_name', 'LIKE', '%'.$userName.'%');
