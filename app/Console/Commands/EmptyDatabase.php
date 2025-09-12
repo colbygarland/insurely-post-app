@@ -29,13 +29,19 @@ class EmptyDatabase extends Command
     {
         Schema::disableForeignKeyConstraints();
 
-        $tables = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
+        // Get all tables from the database
+        $tables = DB::select('SHOW TABLES');
+
+        // Loop through the tables and truncate them
         $this->info('Truncating tables...');
 
-        foreach ($tables as $table) {
-            if ($table !== 'migrations') {
-                DB::table($table)->truncate();
-                $this->comment("Table '{$table}' truncated.");
+        foreach ($tables as $tableObject) {
+            $tableName = array_values((array) $tableObject)[0];
+
+            // Exclude system/framework tables
+            if (! in_array($tableName, ['migrations', 'failed_jobs', 'jobs'])) {
+                DB::table($tableName)->truncate();
+                $this->comment("Table '{$tableName}' truncated.");
             }
         }
 
