@@ -369,7 +369,7 @@ class CallLog extends Model
             }
 
             // Step 3: Generate transcript using the uploaded file
-            $transcriptResponse = Http::withHeaders([
+            $transcriptResponse = Http::timeout(300)->withHeaders([
                 'Content-Type' => 'application/json',
                 'X-Goog-Api-Key' => $apiKey,
             ])->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', [
@@ -480,7 +480,7 @@ class CallLog extends Model
         }
 
         try {
-            $analysisResponse = Http::withHeaders([
+            $analysisResponse = Http::timeout(300)->withHeaders([
                 'Content-Type' => 'application/json',
                 'X-Goog-Api-Key' => $apiKey,
             ])->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', [
@@ -555,7 +555,7 @@ class CallLog extends Model
         }
 
         try {
-            $summaryResponse = Http::withHeaders([
+            $summaryResponse = Http::timeout(300)->withHeaders([
                 'Content-Type' => 'application/json',
                 'X-Goog-Api-Key' => $apiKey,
             ])->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', [
