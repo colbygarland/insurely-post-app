@@ -24,15 +24,15 @@ class CallLog extends Model
     ];
 
     private static $nameMapping = [
-        'Adriana Paul' => 'Adrie Paul',
+        'Adrie Paul' => 'Adrianna Paul',
         'Christine Boyd' => 'Christine Boyd',
         'Erin E' => 'Erin E',
-        'Karen Gilkyson' => 'Karen Scarlett Gilkyson',
-        'Kiarra Blanchard' => 'Kiarra Rayne Blanchard',
+        'Karen Scarlett Gilkyson' => 'Karen Gilkyson',
+        'Kiarra Rayne Blanchard' => 'Kiarra Blanchard',
         'Lexi Adam' => 'Lexi Adam',
         'Marissa Loeppky' => 'Marissa Loeppky',
-        'Meriska Kuntz' => 'Meriska Anne Kuntz',
-        'Sara Zwaagstra' => 'Sara Z',
+        'Meriska Anne Kuntz' => 'Meriska Kuntz',
+        'Sara Z' => 'Sara Zwaagstra',
         'Savanna Lafferty' => 'Savanna Lafferty',
         'Justyce Papirny' => 'Justyce Papirny',
     ];
