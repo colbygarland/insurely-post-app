@@ -1,11 +1,8 @@
 <?php
 
-use App\Http\Controllers\CallLogController;
-use App\Http\Controllers\RingCentralController;
 use App\Models\Post;
 use App\Utils\LinkedInApi;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('telescope:prune --hours=48')->daily();
@@ -37,13 +34,7 @@ Schedule::call(function () {
 //     }
 // })->everyMinute();
 
-Schedule::call(function () {
-    Log::debug('Getting call log and generating transcripts.');
-    RingCentralController::getCallLog();
-
-    // Auto generate the transcripts, summaries, and analyses
-    CallLogController::autoGenerateTranscripts();
-})->everyMinute();
+Schedule::command('app:auto-generate-transcripts')->everyMinute();
 
 // Schedule::call(function () {
 //     RingCentralController::createWebhook();
