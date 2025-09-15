@@ -2,7 +2,6 @@
 
 use App\Models\Post;
 use App\Utils\LinkedInApi;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('telescope:prune --hours=48')->daily();
@@ -25,17 +24,4 @@ Schedule::call(function () {
     // This needs to run at 8:30am MST
 })->dailyAt('15:30');
 
-// Schedule::call(function () {
-//     $run = env('RUN_QUEUE_SCHEDULER');
-
-//     if ($run) {
-//         Log::info('Running queue scheduler');
-//         Artisan::call('queue:work', ['--once' => true]);
-//     }
-// })->everyMinute();
-
-Schedule::command('app:auto-generate-transcripts')->everyMinute();
-
-// Schedule::call(function () {
-//     RingCentralController::createWebhook();
-// })->everyTwoHours();
+Schedule::command('app:auto-generate-transcripts')->everyTwoMinutes();
