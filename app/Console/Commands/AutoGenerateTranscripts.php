@@ -28,9 +28,11 @@ class AutoGenerateTranscripts extends Command
      */
     public function handle()
     {
+        echo "AutoGenerateTranscripts - Getting call log\n";
         Log::debug('AutoGenerateTranscripts - Getting call log');
         RingCentralController::getCallLog();
         Log::debug('AutoGenerateTranscripts - Generating transcripts');
+        echo 'AutoGenerateTranscripts - Generating transcripts';
         CallLogController::autoGenerateTranscripts();
 
         return 0;
