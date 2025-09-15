@@ -43,69 +43,28 @@ class CallLogController extends Controller
 
     public static function autoGenerateTranscripts()
     {
-        // Process records in smaller chunks to reduce memory usage
-        $chunkSize = 3; // Reduced from 10 to 3 for better memory management
-        $processedCount = 0;
-        $maxRecords = 10; // Total limit
+        $unTranscribedCalls = CallLog::where(function ($query) {
+            $query->whereNull('transcription')
+                ->orWhereNull('summary')
+                ->orWhereNull('analysis');
+        })
+            ->where('duration', '<', self::$maximumDuration)
+            ->where('duration', '>', self::$minimumDuration)
+            ->where('created_at', '>=', '2025-08-25T17:55:42.000000Z') // after this date generate the transcripts
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
 
-        Log::debug('[autoGenerateTranscripts] Starting at: '.now()->format('Y-m-d H:i:s'));
+        $callLogIds = $unTranscribedCalls->pluck('id')->toArray();
+        Log::debug('[autoGenerateTranscripts] Starting at: '.now()->format('Y-m-d H:i:s').'. Call Log IDs: '.implode(', ', $callLogIds));
 
-        do {
-            // Get a small chunk of records using chunked iteration
-            $unTranscribedCalls = CallLog::where(function ($query) {
-                $query->whereNull('transcription')
-                    ->orWhereNull('summary')
-                    ->orWhereNull('analysis');
-            })
-                ->where('duration', '<', self::$maximumDuration)
-                ->where('duration', '>', self::$minimumDuration)
-                ->where('created_at', '>=', '2025-08-25T17:55:42.000000Z')
-                ->orderBy('created_at', 'desc')
-                ->limit($chunkSize)
-                ->get();
+        foreach ($unTranscribedCalls as $callLog) {
+            $callLog->getTranscript();
+            $callLog->getSummary();
+            $callLog->getAnalysis();
+        }
 
-            if ($unTranscribedCalls->isEmpty()) {
-                break; // No more records to process
-            }
-
-            $callLogIds = $unTranscribedCalls->pluck('id')->toArray();
-            Log::debug('[autoGenerateTranscripts] Processing chunk: '.implode(', ', $callLogIds));
-
-            // Process each record individually with memory cleanup
-            foreach ($unTranscribedCalls as $callLog) {
-                try {
-                    // Process transcript, summary, and analysis
-                    $callLog->getTranscript();
-                    $callLog->getSummary();
-                    $callLog->getAnalysis();
-
-                    $processedCount++;
-                    Log::debug('[autoGenerateTranscripts] Processed call log ID: '.$callLog->id);
-
-                } catch (\Exception $e) {
-                    Log::error('[autoGenerateTranscripts] Error processing call log ID '.$callLog->id.': '.$e->getMessage());
-                    // Continue processing other records even if one fails
-                }
-
-                // Explicit memory cleanup after each record
-                unset($callLog);
-            }
-
-            // Clear the collection and force garbage collection
-            $unTranscribedCalls = null;
-            unset($unTranscribedCalls);
-
-            // Force garbage collection to free memory
-            if (function_exists('gc_collect_cycles')) {
-                gc_collect_cycles();
-            }
-
-            // Add a small delay to prevent overwhelming the API
-            sleep(1);
-
-        } while ($processedCount < $maxRecords);
-
-        Log::debug('[autoGenerateTranscripts] Completed at: '.now()->format('Y-m-d H:i:s').'. Total processed: '.$processedCount);
+        Log::debug('[autoGenerateTranscripts] ending at: '.now()->format('Y-m-d H:i:s').'. Call Log IDs: '.implode(', ', $callLogIds));
 
         return true;
     }
@@ -146,68 +105,6 @@ class CallLogController extends Controller
 
             return back()->with('errorMessage', 'An error occurred while generating the summary and analysis');
         }
-    }
-
-    /**
-     * Ultra memory-efficient version that processes one record at a time directly from database
-     * Use this if you're still experiencing memory issues with the chunked version
-     */
-    public static function autoGenerateTranscriptsMemoryOptimized()
-    {
-        $processedCount = 0;
-        $maxRecords = 10;
-
-        Log::debug('[autoGenerateTranscriptsMemoryOptimized] Starting at: '.now()->format('Y-m-d H:i:s'));
-
-        // Process records one at a time using cursor pagination
-        $query = CallLog::where(function ($query) {
-            $query->whereNull('transcription')
-                ->orWhereNull('summary')
-                ->orWhereNull('analysis');
-        })
-            ->where('duration', '<', self::$maximumDuration)
-            ->where('duration', '>', self::$minimumDuration)
-            ->where('created_at', '>=', '2025-08-25T17:55:42.000000Z')
-            ->orderBy('created_at', 'desc');
-
-        // Use cursor to process records without loading them all into memory
-        $query->chunk(1, function ($callLogs) use (&$processedCount, $maxRecords) {
-            if ($processedCount >= $maxRecords) {
-                return false; // Stop processing
-            }
-
-            $callLog = $callLogs->first();
-
-            try {
-                Log::debug('[autoGenerateTranscriptsMemoryOptimized] Processing call log ID: '.$callLog->id);
-
-                $callLog->getTranscript();
-                $callLog->getSummary();
-                $callLog->getAnalysis();
-
-                $processedCount++;
-
-            } catch (\Exception $e) {
-                Log::error('[autoGenerateTranscriptsMemoryOptimized] Error processing call log ID '.$callLog->id.': '.$e->getMessage());
-            }
-
-            // Explicit cleanup
-            unset($callLog, $callLogs);
-
-            // Force garbage collection after each record
-            if (function_exists('gc_collect_cycles')) {
-                gc_collect_cycles();
-            }
-
-            // Small delay to prevent API rate limiting
-            sleep(1);
-
-            return $processedCount < $maxRecords; // Continue if under limit
-        });
-
-        Log::debug('[autoGenerateTranscriptsMemoryOptimized] Completed at: '.now()->format('Y-m-d H:i:s').'. Total processed: '.$processedCount);
-
-        return true;
     }
 
     public function updateSummaryPrompt(Request $request)

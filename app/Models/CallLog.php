@@ -471,7 +471,7 @@ class CallLog extends Model
                 'generationConfig' => [
                     'temperature' => 0.3,
                     'topP' => 0.8,
-                    'maxOutputTokens' => 8_000, // Reduced from 100k to 8k to prevent excessive memory usage
+                    'maxOutputTokens' => 100_000,
                 ],
             ]);
 
@@ -546,7 +546,7 @@ class CallLog extends Model
                 'generationConfig' => [
                     'temperature' => 0.3,
                     'topP' => 0.8,
-                    'maxOutputTokens' => 8_000, // Reduced from 100k to 8k to prevent excessive memory usage
+                    'maxOutputTokens' => 100_000,
                 ],
             ]);
 
