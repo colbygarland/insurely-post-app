@@ -58,18 +58,9 @@ class CallLogController extends Controller
         $callLogIds = $unTranscribedCalls->pluck('id')->toArray();
         Log::debug('[autoGenerateTranscripts] Starting at: '.now()->format('Y-m-d H:i:s').'. Call Log IDs: '.implode(', ', $callLogIds));
 
-        // Generate the transcripts
         foreach ($unTranscribedCalls as $callLog) {
             $callLog->getTranscript();
-        }
-
-        // Generate the summaries
-        foreach ($unTranscribedCalls as $callLog) {
             $callLog->getSummary();
-        }
-
-        // Generate the analyses
-        foreach ($unTranscribedCalls as $callLog) {
             $callLog->getAnalysis();
         }
 
