@@ -9,7 +9,7 @@ class GoogleAdsController extends Controller
 {
     public function webhook(Request $request)
     {
-        Log::info('Google Ads webhook received');
+        Log::info('[GoogleAdsController] Google Ads webhook received');
         Log::info($request->all());
 
         $webhookKey = env('GOOGLE_ADS_WEBHOOK_KEY');
@@ -17,6 +17,8 @@ class GoogleAdsController extends Controller
         if ($request->input('google_key') !== $webhookKey) {
             return response()->json(['message' => 'Invalid webhook key'], 401);
         }
+
+        Log::debug('[GoogleAdsController] Webhook key is valid');
 
         // TODO: send the data to the Hubspot integration
         /**
