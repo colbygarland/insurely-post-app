@@ -6,12 +6,15 @@ use App\Models\CallLog;
 use App\Models\Conversation;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        Auth::user()->updateLastLoginAt();
+
         // Redirect non-admin users to Ring Central page
         if (! Gate::allows('is-admin')) {
             return redirect()->route('ringcentral.index');

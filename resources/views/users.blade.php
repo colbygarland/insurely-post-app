@@ -35,6 +35,9 @@
                                 Verified at
                             </th>
                             <th scope="col" class="px-6 py-3">
+                                Last active
+                            </th>
+                            <th scope="col" class="px-6 py-3">
                                 Actions
                             </th>
                         </tr>
@@ -57,6 +60,15 @@
                               @else
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
                                   Unverified
+                                </span>
+                              @endif
+                            </td>
+                            <td class="px-6 py-4">
+                              @if($user->last_login_at)
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ Carbon\Carbon::parse($user->last_login_at)->setTimezone('America/Edmonton')->format('M j, g:ia') }}</p>
+                              @else
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                  Never
                                 </span>
                               @endif
                             </td>

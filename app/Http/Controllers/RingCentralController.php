@@ -6,6 +6,7 @@ use App\Models\AnalyzePrompt;
 use App\Models\CallLog;
 use App\Models\SummaryPrompt;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -35,6 +36,8 @@ class RingCentralController extends Controller
 
     public function index(Request $request)
     {
+        Auth::user()->updateLastLoginAt();
+
         $perPage = 50;
         $fromNameFilter = $request->get('from_name', 'all');
         $startDate = $request->get('start_date', now()->startOfWeek(\Carbon\Carbon::MONDAY)->format('Y-m-d'));
