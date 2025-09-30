@@ -62,6 +62,7 @@ class CallLogController extends Controller
             $callLog->getTranscript();
             $callLog->getSummary();
             $callLog->getAnalysis();
+            $callLog->getCallType();
         }
 
         Log::debug('[autoGenerateTranscripts] ending at: '.now()->format('Y-m-d H:i:s').'. Call Log IDs: '.implode(', ', $callLogIds));
@@ -97,6 +98,7 @@ class CallLogController extends Controller
 
             $callLog->getSummary();
             $callLog->getAnalysis();
+            $callLog->getCallType();
 
             return back()->with('successMessage', 'Summary and analysis generated successfully!');
 
