@@ -483,7 +483,7 @@ class CallLog extends Model
                     [
                         'parts' => [
                             [
-                                'text' => 'Analyze this transcription and return the call type. Return one of the following: '.$callTypes.'. \n\n'.$this->transcription,
+                                'text' => 'Analyze this transcription and return the call type. Return ONLY one of the following words, nothing else: '.$callTypes.'. \n\n'.$this->transcription,
                             ],
                         ],
                     ],
