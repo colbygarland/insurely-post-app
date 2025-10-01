@@ -524,8 +524,18 @@ class CallLog extends Model
                 return null;
             }
 
+            $callType = $this->cleanInput($callType);
+
+            if (! in_array($callType, static::$callTypes)) {
+                Log::error('Invalid call type generated for call log: '.$this->id);
+                $this->call_type = null;
+                $this->save();
+
+                return null;
+            }
+
             // Save the generated call type to the database
-            $this->call_type = $this->cleanInput($callType);
+            $this->call_type = $callType;
             $this->save();
 
             return $this->call_type;
