@@ -97,7 +97,19 @@
                                     </div>
                                     <div class="ml-3">
                                         <p class="text-sm font-medium text-gray-500 dark:text-gray-200">Call Type</p>
-                                        <p class="text-lg font-semibold text-gray-900 dark:text-gray-200">{{ $callLog->call_type ?? '-' }}</p>
+                                        <form method="POST" action="{{ route('calllog.update-call-type', $callLog->id) }}" class="inline">
+                                            @csrf
+                                            <select name="call_type" 
+                                                    onchange="this.form.submit()"
+                                                    class="text-lg font-semibold text-gray-900 dark:text-gray-200 bg-transparent border-none p-0 focus:ring-0 focus:ring-offset-0 cursor-pointer">
+                                                <option value="" {{ !$callLog->call_type ? 'selected' : '' }}>none</option>
+                                                @foreach(\App\Models\CallLog::$callTypes as $callType)
+                                                    <option value="{{ $callType }}" {{ $callLog->call_type === $callType ? 'selected' : '' }}>
+                                                        {{ ucfirst(str_replace('_', ' ', $callType)) }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

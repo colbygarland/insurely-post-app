@@ -42,8 +42,9 @@ class RingCentralController extends Controller
         $fromNameFilter = $request->get('from_name', 'all');
         $startDate = $request->get('start_date', now()->startOfWeek(\Carbon\Carbon::MONDAY)->format('Y-m-d'));
         $endDate = $request->get('end_date', now()->tomorrow()->format('Y-m-d'));
+        $callTypeFilter = $request->get('call_type', 'all');
 
-        $callLogs = CallLog::list($perPage, $fromNameFilter, $startDate, $endDate);
+        $callLogs = CallLog::list($perPage, $fromNameFilter, $startDate, $endDate, $callTypeFilter);
         $fromNames = CallLog::getDistinctFromNames();
 
         // Calculate stats for the same filtered data
@@ -56,6 +57,10 @@ class RingCentralController extends Controller
 
         if ($fromNameFilter && $fromNameFilter !== 'all') {
             $statsQuery->where('from_name', 'LIKE', $fromNameFilter.'%');
+        }
+
+        if ($callTypeFilter && $callTypeFilter !== 'all') {
+            $statsQuery->where('call_type', $callTypeFilter);
         }
 
         // Apply date filtering
@@ -108,7 +113,7 @@ class RingCentralController extends Controller
         $summaryPrompt = SummaryPrompt::getLatest()->prompt;
         $analyzePrompt = AnalyzePrompt::getLatest()->prompt;
 
-        return view('ring-central', compact('callLogs', 'fromNames', 'fromNameFilter', 'stats', 'startDate', 'endDate', 'summaryPrompt', 'analyzePrompt'));
+        return view('ring-central', compact('callLogs', 'fromNames', 'fromNameFilter', 'stats', 'startDate', 'endDate', 'summaryPrompt', 'analyzePrompt', 'callTypeFilter'));
     }
 
     public function show(CallLog $callLog)

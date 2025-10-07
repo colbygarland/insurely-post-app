@@ -135,4 +135,16 @@ class CallLogController extends Controller
 
         return back()->with('successMessage', 'Analyze prompt updated successfully!');
     }
+
+    public function updateCallType(Request $request, CallLog $callLog)
+    {
+        $request->validate([
+            'call_type' => 'nullable|string|in:'.implode(',', CallLog::$callTypes),
+        ]);
+
+        $callLog->call_type = $request->call_type ?: null;
+        $callLog->save();
+
+        return back()->with('successMessage', 'Call type updated successfully!');
+    }
 }

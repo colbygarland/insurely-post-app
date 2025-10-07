@@ -68,6 +68,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::post('/calllog/{callLog}/summary-analysis', [CallLogController::class, 'generateSummaryAndAnalysis'])->name('calllog.summary-analysis');
     Route::post('/calllog/update-summary-prompt', [CallLogController::class, 'updateSummaryPrompt'])->name('calllog.update-summary-prompt')->middleware('can:is-admin');
     Route::post('/calllog/update-analyze-prompt', [CallLogController::class, 'updateAnalyzePrompt'])->name('calllog.update-analyze-prompt')->middleware('can:is-admin');
+    Route::post('/calllog/{callLog}/update-call-type', [CallLogController::class, 'updateCallType'])->name('calllog.update-call-type');
 });
 
 require __DIR__.'/auth.php';

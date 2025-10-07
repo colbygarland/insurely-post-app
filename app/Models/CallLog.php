@@ -177,7 +177,7 @@ class CallLog extends Model
         return false;
     }
 
-    public static function list($perPage = 25, $fromName = null, $startDate = null, $endDate = null)
+    public static function list($perPage = 25, $fromName = null, $startDate = null, $endDate = null, $callType = null)
     {
         $query = self::orderBy('start_time', 'desc');
 
@@ -207,6 +207,10 @@ class CallLog extends Model
             } catch (\Exception $e) {
                 // Invalid date format, ignore filter
             }
+        }
+
+        if ($callType && $callType !== 'all') {
+            $query->where('call_type', $callType);
         }
 
         return $query->paginate($perPage);

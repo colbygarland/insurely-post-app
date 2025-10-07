@@ -142,6 +142,21 @@
                                        class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                             </label>
                         </div>
+
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm text-gray-600 dark:text-gray-200 flex items-center gap-2">
+                                Filter by call type:
+                                <select id="callTypeFilter" 
+                                        class="rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                                    <option value="all" {{ $callTypeFilter === 'all' ? 'selected' : '' }}>All Call Types</option>
+                                    @foreach(\App\Models\CallLog::$callTypes as $callType)
+                                        <option value="{{ $callType }}" {{ $callTypeFilter === $callType ? 'selected' : '' }}>
+                                            {{ ucfirst(str_replace('_', ' ', $callType)) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </label>
+                        </div>
                         
                         @if(Gate::allows('is-admin'))
                             <!-- Caller Filter -->
@@ -350,6 +365,7 @@
             const fromNameFilter = document.getElementById('fromNameFilter');
             const startDateInput = document.getElementById('startDate');
             const endDateInput = document.getElementById('endDate');
+            const callTypeFilter = document.getElementById('callTypeFilter');
             const clearFiltersBtn = document.getElementById('clearFilters');
             
             function updateFilters() {
@@ -362,6 +378,16 @@
                         currentUrl.searchParams.delete('from_name');
                     } else {
                         currentUrl.searchParams.set('from_name', selectedValue);
+                    }
+                }
+                
+                // Handle call type filter
+                if (callTypeFilter) {
+                    const selectedValue = callTypeFilter.value;
+                    if (selectedValue === 'all') {
+                        currentUrl.searchParams.delete('call_type');
+                    } else {
+                        currentUrl.searchParams.set('call_type', selectedValue);
                     }
                 }
                 
@@ -394,7 +420,7 @@
             
             startDateInput.addEventListener('change', updateFilters);
             endDateInput.addEventListener('change', updateFilters);
-            
+            callTypeFilter.addEventListener('change', updateFilters);
             // Clear filters functionality
             clearFiltersBtn.addEventListener('click', function() {
                 const currentUrl = new URL(window.location.href);
@@ -403,6 +429,7 @@
                 currentUrl.searchParams.delete('from_name');
                 currentUrl.searchParams.delete('start_date');
                 currentUrl.searchParams.delete('end_date');
+                currentUrl.searchParams.delete('call_type');
                 currentUrl.searchParams.delete('page');
                 
                 window.location.href = currentUrl.toString();
