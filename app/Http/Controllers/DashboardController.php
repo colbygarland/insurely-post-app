@@ -20,9 +20,6 @@ class DashboardController extends Controller
             return redirect()->route('ringcentral.index');
         }
 
-        // Refresh from ring central
-        RingCentralController::getCallLog();
-
         // Get recent LinkedIn posts (published and pending)
         $recentPublishedPosts = Post::where('published_at', '!=', null)
             ->orderBy('published_at', 'desc')
