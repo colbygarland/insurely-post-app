@@ -61,8 +61,13 @@ class CallLogController extends Controller
         foreach ($unTranscribedCalls as $callLog) {
             $callLog->getTranscript();
             $callLog->getSummary();
-            $callLog->getAnalysis();
             $callLog->getCallType();
+
+            // Don't generate analysis for voicemail calls
+            if ($callLog->call_type !== 'voicemail') {
+                $callLog->getAnalysis();
+            }
+
         }
 
         Log::debug('[autoGenerateTranscripts] ending at: '.now()->format('Y-m-d H:i:s').'. Call Log IDs: '.implode(', ', $callLogIds));
