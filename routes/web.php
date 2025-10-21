@@ -4,6 +4,7 @@ use App\Http\Controllers\AiController;
 use App\Http\Controllers\CallLogController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocsController;
 use App\Http\Controllers\LinkedInController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfileController;
@@ -69,6 +70,10 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::post('/calllog/update-summary-prompt', [CallLogController::class, 'updateSummaryPrompt'])->name('calllog.update-summary-prompt')->middleware('can:is-admin');
     Route::post('/calllog/update-analyze-prompt', [CallLogController::class, 'updateAnalyzePrompt'])->name('calllog.update-analyze-prompt')->middleware('can:is-admin');
     Route::post('/calllog/{callLog}/update-call-type', [CallLogController::class, 'updateCallType'])->name('calllog.update-call-type');
+
+    // Insurely-specific stuff
+    Route::get('/docs', [DocsController::class, 'index'])->name('docs')->middleware('can:is-admin');
+    Route::post('/docs', [DocsController::class, 'create'])->name('docs.create')->middleware('can:is-admin');
 });
 
 require __DIR__.'/auth.php';
