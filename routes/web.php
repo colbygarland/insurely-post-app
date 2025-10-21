@@ -74,6 +74,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
     // Insurely-specific stuff
     Route::get('/docs', [DocsController::class, 'index'])->name('docs')->middleware('can:is-admin');
     Route::post('/docs', [DocsController::class, 'create'])->name('docs.create')->middleware('can:is-admin');
+    Route::delete('/docs/{id}', [DocsController::class, 'delete'])->name('docs.delete')->middleware('can:is-admin');
 });
 
 require __DIR__.'/auth.php';

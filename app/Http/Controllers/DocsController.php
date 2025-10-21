@@ -37,7 +37,28 @@ class DocsController extends Controller
 
         $doc->save();
 
+        // Store the file to public/documents
+        $request->file('document')->storeAs('public/documents', $doc->file_name);
+
         Session::flash('successMessage', 'Document uploaded successfully');
+
+        return redirect()->route('docs');
+    }
+
+    public function delete($id)
+    {
+        $document = Document::findOrFail($id);
+
+        // Delete the file from storage
+        $filePath = storage_path('app/public/documents/'.$document->file_name);
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        // Delete the database record
+        $document->delete();
+
+        Session::flash('successMessage', 'Document deleted successfully');
 
         return redirect()->route('docs');
     }

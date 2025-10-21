@@ -99,7 +99,7 @@
               <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-4">Wording Booklets</h2>
               
               <!-- Documents Table -->
-              <div class="overflow-x-auto">
+              <div class="overflow-x-auto overflow-y-auto">
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:text-gray-200">
                             <tr>
@@ -122,7 +122,24 @@
                                         {{ $document->getUpdatedBy()->name }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        <a href="{{ asset('storage/documents/'.$document->file_name) }}" target="_blank" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">View</a>
+                                        <div class="relative inline-block text-left">
+                                            <button type="button" id="button-{{ $document->id }}" onclick="toggleDropdown({{ $document->id }})" class="inline-flex justify-center items-center gap-x-1.5 rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-200 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                Actions
+                                                <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                                </svg>
+                                            </button>
+                                            <div id="dropdown-{{ $document->id }}" class="hidden fixed z-50 w-32 rounded-md bg-white dark:bg-gray-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                <div class="py-1">
+                                                    <a href="{{ asset('storage/documents/'.$document->file_name) }}" target="_blank" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">View</a>
+                                                    <form action="{{ route('docs.delete', $document->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this document?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -132,4 +149,40 @@
           </div>
       </div>
   </div>
+
+  <script>
+    function toggleDropdown(id) {
+        const dropdown = document.getElementById('dropdown-' + id);
+        const button = document.getElementById('button-' + id);
+        
+        // Close all other dropdowns first
+        document.querySelectorAll('[id^="dropdown-"]').forEach(d => {
+            if (d.id !== 'dropdown-' + id) {
+                d.classList.add('hidden');
+            }
+        });
+        
+        if (dropdown.classList.contains('hidden')) {
+            // Position the dropdown relative to the button
+            const rect = button.getBoundingClientRect();
+            dropdown.style.top = (rect.bottom + 2) + 'px';
+            dropdown.style.left = (rect.right - 128) + 'px'; // 128px = w-32
+            dropdown.classList.remove('hidden');
+        } else {
+            dropdown.classList.add('hidden');
+        }
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdowns = document.querySelectorAll('[id^="dropdown-"]');
+        dropdowns.forEach(dropdown => {
+            const id = dropdown.id.replace('dropdown-', '');
+            const button = document.getElementById('button-' + id);
+            if (!dropdown.contains(event.target) && !button.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    });
+  </script>
 </x-app-layout>
