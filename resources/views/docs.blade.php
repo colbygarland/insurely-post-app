@@ -95,58 +95,70 @@
                 </form>
             </div>
           
-          <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg mb-16 p-6">
-              <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-4">Wording Booklets</h2>
+          @foreach(\App\Models\Document::$TYPE as $type)
+              @php
+                  $typeDocuments = $documents->where('type', $type);
+              @endphp
               
-              <!-- Documents Table -->
-              <div class="overflow-x-auto overflow-y-auto">
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:text-gray-200">
-                            <tr>
-                                <th scope="col" class="px-6 py-3">Name</th>
-                                <th scope="col" class="px-6 py-3">Last Updated</th>
-                                <th scope="col" class="px-6 py-3">Updated By</th>
-                                <th scope="col" class="px-6 py-3">Actions</th>
-                            </tr>
-                        </thead>
-                            <tbody>
-                                @foreach($documents as $document)
-                                <tr class="{{ $loop->even ? 'bg-gray-50' : 'bg-white' }} border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{ $document['name'] }}
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        {{ \Carbon\Carbon::parse($document['updated_at'])->setTimezone('America/Edmonton')->format('F j, Y g:ia') }}
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        {{ $document->getUpdatedBy()->name }}
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="relative inline-block text-left">
-                                            <button type="button" id="button-{{ $document->id }}" onclick="toggleDropdown({{ $document->id }})" class="inline-flex justify-center items-center gap-x-1.5 rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-200 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                                Actions
-                                                <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                                                </svg>
-                                            </button>
-                                            <div id="dropdown-{{ $document->id }}" class="hidden fixed z-50 w-32 rounded-md bg-white dark:bg-gray-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                                <div class="py-1">
-                                                    <a href="{{ asset('storage/documents/'.$document->file_name) }}" target="_blank" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">View</a>
-                                                    <form action="{{ route('docs.delete', $document->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this document?');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600">Delete</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-          </div>
+              <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg mb-8 p-6">
+                  <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-4">
+                      {{ ucwords(str_replace('_', ' ', $type)) }}
+                  </h2>
+                  
+                  @if($typeDocuments->count() > 0)
+                      <!-- Documents Table -->
+                      <div class="overflow-x-auto">
+                          <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                              <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:text-gray-200">
+                                  <tr>
+                                      <th scope="col" class="px-6 py-3">Name</th>
+                                      <th scope="col" class="px-6 py-3">Last Updated</th>
+                                      <th scope="col" class="px-6 py-3">Updated By</th>
+                                      <th scope="col" class="px-6 py-3">Actions</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  @foreach($typeDocuments as $document)
+                                  <tr class="{{ $loop->even ? 'bg-gray-50' : 'bg-white' }} border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                                      <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        <a class="text-blue-500 hover:text-blue-700" href="{{ asset('storage/documents/'.$document->file_name) }}" target="_blank">{{ $document->name }}</a>
+                                      </th>
+                                      <td class="px-6 py-4">
+                                          {{ \Carbon\Carbon::parse($document->updated_at)->setTimezone('America/Edmonton')->format('F j, Y g:ia') }}
+                                      </td>
+                                      <td class="px-6 py-4">
+                                          {{ $document->getUpdatedBy()->name }}
+                                      </td>
+                                      <td class="px-6 py-4">
+                                          <div class="relative inline-block text-left">
+                                              <button type="button" id="button-{{ $document->id }}" onclick="toggleDropdown({{ $document->id }})" class="inline-flex justify-center items-center gap-x-1.5 rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-200 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                  Actions
+                                                  <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                      <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                                  </svg>
+                                              </button>
+                                              <div id="dropdown-{{ $document->id }}" class="hidden fixed z-50 w-32 rounded-md bg-white dark:bg-gray-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                  <div class="py-1">
+                                                      <a href="{{ asset('storage/documents/'.$document->file_name) }}" target="_blank" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">View</a>
+                                                      <form action="{{ route('docs.delete', $document->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this document?');">
+                                                          @csrf
+                                                          @method('DELETE')
+                                                          <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600">Delete</button>
+                                                      </form>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </td>
+                                  </tr>
+                                  @endforeach
+                              </tbody>
+                          </table>
+                      </div>
+                  @else
+                      <p class="text-gray-500 dark:text-gray-400 text-sm italic">No documents in this category yet.</p>
+                  @endif
+              </div>
+          @endforeach
       </div>
   </div>
 
