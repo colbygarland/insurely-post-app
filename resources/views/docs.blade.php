@@ -47,7 +47,7 @@
                                             @foreach($typeDocuments as $document)
                                             <tr class="{{ $loop->even ? 'bg-gray-50' : 'bg-white' }} border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                                                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                    <a class="text-blue-500 hover:text-blue-700" href="{{ asset('storage/documents/'.$document->file_name) }}" target="_blank">{{ $document->name }}</a>
+                                                    <a class="text-blue-500 hover:text-blue-700" href="{{ route('docs.download', $document->id) }}">{{ $document->name }}</a>
                                                 </th>
                                                 <td class="px-6 py-4">
                                                     {{ \Carbon\Carbon::parse($document->updated_at)->setTimezone('America/Edmonton')->format('F j, Y g:ia') }}
@@ -65,7 +65,7 @@
                                                         </button>
                                                         <div id="dropdown-{{ $document->id }}" class="hidden fixed z-50 w-32 rounded-md bg-white dark:bg-gray-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                                             <div class="py-1">
-                                                                <a href="{{ asset('storage/documents/'.$document->file_name) }}" target="_blank" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">View</a>
+                                                                <a href="{{ route('docs.download', $document->id) }}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">Download</a>
                                                                 <form action="{{ route('docs.delete', $document->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this document?');">
                                                                     @csrf
                                                                     @method('DELETE')

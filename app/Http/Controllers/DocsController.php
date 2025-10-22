@@ -5,10 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class DocsController extends Controller
 {
+    private $storagePath = 'documents';
+
+    private $disk = 'private'; // or set to null to use default disk
+
     public function index()
     {
         $documents = Document::all();
@@ -37,12 +43,26 @@ class DocsController extends Controller
 
         $doc->save();
 
-        // Store the file to public/documents
-        $request->file('document')->storeAs('public/documents', $doc->file_name);
+        // Store the file to the private bucket
+        Storage::disk($this->disk)->putFileAs($this->storagePath, $request->file('document'), $doc->file_name);
 
         Session::flash('successMessage', 'Document uploaded successfully');
 
         return redirect()->route('docs');
+    }
+
+    public function download($id)
+    {
+        $document = Document::findOrFail($id);
+        $filePath = $this->storagePath.'/'.$document->file_name;
+
+        if (! Storage::disk($this->disk)->exists($filePath)) {
+            Session::flash('errorMessage', 'File not found');
+
+            return redirect()->route('docs');
+        }
+
+        return Storage::disk($this->disk)->download($filePath, $document->name.'.'.pathinfo($document->file_name, PATHINFO_EXTENSION));
     }
 
     public function delete($id)
@@ -50,9 +70,14 @@ class DocsController extends Controller
         $document = Document::findOrFail($id);
 
         // Delete the file from storage
-        $filePath = storage_path('app/public/documents/'.$document->file_name);
-        if (file_exists($filePath)) {
-            unlink($filePath);
+        $filePath = $this->storagePath.'/'.$document->file_name;
+
+        try {
+            if (Storage::disk($this->disk)->exists($filePath)) {
+                Storage::disk($this->disk)->delete($filePath);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error deleting file: '.$e->getMessage());
         }
 
         // Delete the database record
