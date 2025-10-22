@@ -17,7 +17,7 @@ class DocsController extends Controller
 
     public function index()
     {
-        $documents = Document::all();
+        $documents = Document::orderBy('updated_at', 'desc')->get();
 
         return view('docs', ['documents' => $documents]);
     }
