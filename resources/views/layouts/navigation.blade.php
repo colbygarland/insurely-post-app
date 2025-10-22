@@ -29,11 +29,9 @@
                         {{ __('Ring Central') }}
                     </x-nav-link>
 
-                    @if(Gate::allows('is-admin'))
-                        <x-nav-link :href="route('docs')" :active="request()->routeIs('docs')">
-                            {{ __('Documentation') }}
-                        </x-nav-link>
-                    @endif
+                    <x-nav-link :href="route('docs')" :active="request()->routeIs('docs')">
+                        {{ __('Documentation') }}
+                    </x-nav-link>
 
                     @if(Gate::allows('is-admin'))
                         <x-nav-link :href="route('posts')" :active="request()->routeIs('posts')">

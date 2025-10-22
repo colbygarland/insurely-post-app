@@ -72,10 +72,10 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::post('/calllog/{callLog}/update-call-type', [CallLogController::class, 'updateCallType'])->name('calllog.update-call-type');
 
     // Insurely-specific stuff
-    Route::get('/docs', [DocsController::class, 'index'])->name('docs')->middleware('can:is-admin');
-    Route::post('/docs', [DocsController::class, 'create'])->name('docs.create')->middleware('can:is-admin');
-    Route::get('/docs/{id}/download', [DocsController::class, 'download'])->name('docs.download')->middleware('can:is-admin');
-    Route::delete('/docs/{id}', [DocsController::class, 'delete'])->name('docs.delete')->middleware('can:is-admin');
+    Route::get('/docs', [DocsController::class, 'index'])->name('docs');
+    Route::post('/docs', [DocsController::class, 'create'])->name('docs.create');
+    Route::get('/docs/{id}/download', [DocsController::class, 'download'])->name('docs.download');
+    Route::delete('/docs/{id}', [DocsController::class, 'delete'])->name('docs.delete');
 });
 
 require __DIR__.'/auth.php';
