@@ -15,7 +15,7 @@ class Document extends Model
         'updatedBy',
     ];
 
-    public static $TYPE = ['memos', 'underwriting_manuals', 'product_feature_guides', 'product_booklets', 'training'];
+    public static $TYPE = ['underwriting_manuals', 'product_feature_guides', 'wording_booklets'];
 
     public function getUpdatedBy()
     {
