@@ -51,6 +51,25 @@ class DocsController extends Controller
         return redirect()->route('docs');
     }
 
+    public function view($id)
+    {
+        $document = Document::findOrFail($id);
+        $filePath = $this->storagePath.'/'.$document->file_name;
+
+        if (! Storage::disk($this->disk)->exists($filePath)) {
+            Session::flash('errorMessage', 'File not found');
+
+            return redirect()->route('docs');
+        }
+
+        $file = Storage::disk($this->disk)->get($filePath);
+        $mimeType = Storage::disk($this->disk)->mimeType($filePath);
+
+        return response($file, 200)
+            ->header('Content-Type', $mimeType)
+            ->header('Content-Disposition', 'inline; filename="'.$document->name.'.'.pathinfo($document->file_name, PATHINFO_EXTENSION).'"');
+    }
+
     public function download($id)
     {
         $document = Document::findOrFail($id);

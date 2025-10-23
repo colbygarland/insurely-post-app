@@ -74,6 +74,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
     // Insurely-specific stuff
     Route::get('/docs', [DocsController::class, 'index'])->name('docs');
     Route::post('/docs', [DocsController::class, 'create'])->name('docs.create');
+    Route::get('/docs/{id}/view', [DocsController::class, 'view'])->name('docs.view');
     Route::get('/docs/{id}/download', [DocsController::class, 'download'])->name('docs.download');
     Route::delete('/docs/{id}', [DocsController::class, 'delete'])->name('docs.delete');
 });
