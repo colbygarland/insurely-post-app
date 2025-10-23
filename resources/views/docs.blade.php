@@ -47,7 +47,7 @@
                                             @foreach($typeDocuments as $document)
                                             <tr class="{{ $loop->even ? 'bg-gray-50' : 'bg-white' }} border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                                                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                    <a class="text-blue-500 hover:text-blue-700" href="{{ route('docs.download', $document->id) }}">{{ $document->name }}</a>
+                                                    <a class="text-blue-500 hover:text-blue-700" href="{{ route('docs.view', $document->id) }}">{{ $document->name }}</a>
                                                 </th>
                                                 <td class="px-6 py-4">
                                                     {{ \Carbon\Carbon::parse($document->updated_at)->setTimezone('America/Edmonton')->format('F j, Y g:ia') }}
