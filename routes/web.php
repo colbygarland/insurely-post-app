@@ -77,6 +77,10 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::get('/docs/{id}/view', [DocsController::class, 'view'])->name('docs.view');
     Route::get('/docs/{id}/download', [DocsController::class, 'download'])->name('docs.download');
     Route::delete('/docs/{id}', [DocsController::class, 'delete'])->name('docs.delete');
+
+    Route::get('/debug-sentry', function () {
+        throw new Exception('My first Sentry error!');
+    });
 });
 
 require __DIR__.'/auth.php';
