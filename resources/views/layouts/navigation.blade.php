@@ -47,10 +47,7 @@
 
                     @if(auth()->user()->email == 'colbygarland@gmail.com')
                         <x-nav-link target="_blank" href="/telescope">
-                            {{ __('Telescope') }}
-                        </x-nav-link>
-                        <x-nav-link target="_blank" href="https://nightwatch.laravel.com/us/environments/9fdca7d5-9d2a-44ee-b5f4-f9cb844bb09b/dashboard?period=24h">
-                            {{ __('Nightwatch') }}
+                            🔭
                         </x-nav-link>
                     @endif
                     
@@ -124,6 +121,10 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('posts')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link href="/telescope">
+                {{ __('Telescope') }}
             </x-responsive-nav-link>
         </div>
 
