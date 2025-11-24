@@ -77,6 +77,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::get('/docs/{id}/view', [DocsController::class, 'view'])->name('docs.view');
     Route::get('/docs/{id}/download', [DocsController::class, 'download'])->name('docs.download');
     Route::delete('/docs/{id}', [DocsController::class, 'delete'])->name('docs.delete');
+
 });
 
 require __DIR__.'/auth.php';
