@@ -34,5 +34,32 @@ class MicrosoftController extends Controller
         return 200;
     }
 
+    /**
+     * Used to get an access token.
+     * https://learn.microsoft.com/en-us/graph/auth-v2-service?tabs=http#step-3-request-an-access-token
+     */
+    public function getAccessToken()
+    {
+        $tenant = env('MICROSOFT_ENTRA_TENANT_ID');
+        $response = Http::asForm()->post("https://login.microsoftonline.com/$tenant/oauth2/v2.0/token", [
+            'client_id' => env('MICROSOFT_ENTRA_APPLICATION_ID'),
+            'scope' => 'https://graph.microsoft.com/.default',
+            'client_secret' => env('MICROSOFT_ENTRA_VALUE'),
+            'grant_type' => 'client_credentials',
+        ]);
+
+        $body = $response->json();
+
+        if (! $response->successful()) {
+            Log::error('Error getting access token from Microsoft');
+
+            return $body;
+        }
+
+        Log::debug('Success getting access token from Microsoft');
+
+        return $body;
+    }
+
     public function callback(Request $request) {}
 }
