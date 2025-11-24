@@ -33,6 +33,12 @@
                         {{ __('Documentation') }}
                     </x-nav-link>
 
+                    @if(auth()->user()->email == 'colbygarland@gmail.com')
+                    <x-nav-link :href="route('partners')" :active="request()->routeIs('partners')">
+                        {{ __('Partners') }}
+                    </x-nav-link>
+                    @endif
+
                     @if(Gate::allows('is-admin'))
                         <x-nav-link :href="route('posts')" :active="request()->routeIs('posts')">
                             {{ __('LinkedIn Posts') }}

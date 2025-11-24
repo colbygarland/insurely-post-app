@@ -4,6 +4,7 @@ use App\Http\Controllers\AiController;
 use App\Http\Controllers\CallLogController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\GoogleAdsController;
+use App\Http\Controllers\MicrosoftController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\RingCentralController;
 use App\Http\Middleware\Verified;
@@ -42,3 +43,9 @@ Route::get('ringcentral/call-log/list', [CallLogController::class, 'list']);
 
 // Google Ads
 Route::any('google-ads/webhook', [GoogleAdsController::class, 'webhook']);
+
+// Microsoft
+Route::get('/microsoft/admin', [MicrosoftController::class, 'getAdminConsent'])->name('microsoft.admin');
+Route::get('/microsoft/callback', [MicrosoftController::class, 'callback'])->name('microsoft.callback');
+
+// Partnerships
