@@ -24,10 +24,18 @@
         </script>
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @viteReactRefresh
+        @vite(['resources/css/app.css', 'resources/js/app.jsx'])
+
+        @if(!empty($page))
+            @inertiaHead
+        @endif
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+            @if(!empty($page))
+                @inertia
+            @else 
             @include('layouts.navigation')
 
             <!-- Page Heading -->
@@ -42,7 +50,9 @@
             <!-- Page Content -->
             <main>
                 {{ $slot }}
+                
             </main>
+            @endif
         </div>
     </body>
 </html>
