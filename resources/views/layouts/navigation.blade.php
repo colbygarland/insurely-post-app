@@ -33,6 +33,10 @@
                         {{ __('Documentation') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('partners')" :active="request()->routeIs('partners')">
+                        {{ __('Partners') }}
+                    </x-nav-link>
+
                     @if(Gate::allows('is-admin'))
                         <x-nav-link :href="route('posts')" :active="request()->routeIs('posts')">
                             {{ __('LinkedIn Posts') }}

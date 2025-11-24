@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 class PartnerController extends Controller
 {
-    public function callback()
+    public function index()
     {
-        return 200;
+        return view('partners.index');
     }
 }

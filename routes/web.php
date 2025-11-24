@@ -6,6 +6,7 @@ use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\LinkedInController;
+use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RingCentralController;
@@ -78,6 +79,7 @@ Route::middleware(['auth', Verified::class])->group(function () {
     Route::get('/docs/{id}/download', [DocsController::class, 'download'])->name('docs.download');
     Route::delete('/docs/{id}', [DocsController::class, 'delete'])->name('docs.delete');
 
+    Route::get('/partners', [PartnerController::class, 'index'])->name('partners');
 });
 
 require __DIR__.'/auth.php';
