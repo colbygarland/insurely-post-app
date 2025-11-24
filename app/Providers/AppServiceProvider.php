@@ -7,7 +7,6 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,8 +42,5 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('is-admin', function (User $user) {
             return $user->role === 'admin';
         });
-
-        // Inertia
-        // Inertia::setRootView('layouts/app');
     }
 }
