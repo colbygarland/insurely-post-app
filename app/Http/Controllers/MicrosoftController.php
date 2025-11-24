@@ -31,7 +31,7 @@ class MicrosoftController extends Controller
         $adminConsentData = $adminConsentResponse->body();
         Log::debug("adminConsentData = $adminConsentData");
 
-        return $adminConsentData;
+        return 200;
     }
 
     public function callback(Request $request) {}
