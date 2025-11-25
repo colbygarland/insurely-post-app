@@ -145,12 +145,9 @@ class MicrosoftController extends Controller
      * Get the active worksheet in a workbook.
      * https://learn.microsoft.com/en-us/graph/api/worksheet-list?view=graph-rest-1.0&tabs=http
      */
-    public function getWorksheetFromWorkbook(Request $request)
+    private function getWorksheetFromWorkbook(string $fileName, string $fileId)
     {
-        $fileName = $request->get('fileName');
-        $fileId = $this->getDriveItemID($fileName);
         $accessToken = $this->getAccessToken();
-        // "https://graph.microsoft.com/v1.0/drives/b!cL5ei3so5k6eRDsPoZ3RZ9WrF49ax-FAqGBuj6ScBAR6GrxICGvJTIJ29bDZH7Ft/items/$fileId/workbook/worksheets"
         $url = "$this->MICROSOFT_API_URL/drives/$this->DRIVE_ID/items/$fileId/workbook/worksheets";
 
         $worksheets = Http::withToken($accessToken)->get($url);
@@ -158,10 +155,22 @@ class MicrosoftController extends Controller
         if ($worksheets->successful()) {
             $selectedSheet = collect($worksheets['value'])->firstWhere('name', $this->WORKSHEET_TAB_MAPPING[$fileName]);
 
-            return $selectedSheet['id'];
+            return $selectedSheet['name'];
         }
 
         return null;
+    }
+
+    public function getDataFromWorksheet(Request $request)
+    {
+        $fileName = $request->get('fileName');
+        $fileId = $this->getDriveItemID($fileName);
+        $worksheetId = $this->getWorksheetFromWorkbook($fileName, $fileId);
+        $accessToken = $this->getAccessToken();
+        $url = "$this->MICROSOFT_API_URL/drives/$this->DRIVE_ID/items/$fileId/workbook/worksheets/$worksheetId/usedRange";
+
+        $range = Http::withToken($accessToken)->get($url)->json();
+        dd($range['values']);
     }
 
     public function callback(Request $request) {}

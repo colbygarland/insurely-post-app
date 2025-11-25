@@ -46,7 +46,7 @@ Route::any('google-ads/webhook', [GoogleAdsController::class, 'webhook']);
 
 // Microsoft
 Route::get('/microsoft/admin', [MicrosoftController::class, 'getAdminConsent'])->name('microsoft.admin');
-Route::get('/microsoft/get-worksheets', [MicrosoftController::class, 'getWorksheetFromWorkbook']);
+Route::get('/microsoft/get-data-from-worksheet', [MicrosoftController::class, 'getDataFromWorksheet']);
 Route::get('/microsoft/callback', [MicrosoftController::class, 'callback'])->name('microsoft.callback');
 
 // Partnerships
