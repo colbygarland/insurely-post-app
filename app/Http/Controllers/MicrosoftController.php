@@ -15,6 +15,14 @@ class MicrosoftController extends Controller
 
     private $MICROSOFT_API_URL = 'https://graph.microsoft.com/v1.0/sites';
 
+    // Shared%20Documents/General/Partnership%20Folder%20(Bible)/Partnership%20Doc.xlsx
+    private $FILE_PATH = 'General/Partnership Folder (Bible)/';
+
+    // Obtained by running a GET on https://graph.microsoft.com/v1.0/sites/$siteId/drives
+    private $DRIVE_ID = 'b!cL5ei3so5k6eRDsPoZ3RZ9WrF49ax-FAqGBuj6ScBAR6GrxICGvJTIJ29bDZH7Ft';
+
+    private $ACCESS_TOKEN = '';
+
     /**
      * Used to request admin consent for the Insight app.
      * Needs to be ran by an administrator account in Microsoft Entra.
@@ -47,6 +55,10 @@ class MicrosoftController extends Controller
      */
     private function getAccessToken()
     {
+        if ($this->ACCESS_TOKEN) {
+            return $this->ACCESS_TOKEN;
+        }
+
         $tenant = env('MICROSOFT_ENTRA_TENANT_ID');
         $response = Http::asForm()->post("https://login.microsoftonline.com/$tenant/oauth2/v2.0/token", [
             'client_id' => env('MICROSOFT_ENTRA_APPLICATION_ID'),
@@ -65,7 +77,10 @@ class MicrosoftController extends Controller
 
         Log::debug('Success getting access token from Microsoft');
 
-        return $body['access_token'];
+        // Save the access token to be used later
+        $this->ACCESS_TOKEN = $body['access_token'];
+
+        return $this->ACCESS_TOKEN;
     }
 
     /**
@@ -89,10 +104,36 @@ class MicrosoftController extends Controller
             ->get($url);
 
         if ($siteResponse->successful()) {
-            return $siteResponse['id'];
+            // Get the correct site ID from the full site ID
+            $siteIds = explode(',', $siteResponse['id']);
+            // The drive's site ID is the second one (the first is the sharepoint URL)
+            $siteId = $siteIds[1];
+
+            return $siteId;
         }
 
         Log::error('getSharePointSiteID(): error getting sharepoint site ID');
+
+        return null;
+    }
+
+    /**
+     * Get the drive item ID for the file.
+     * https://learn.microsoft.com/en-us/graph/api/driveitem-get?view=graph-rest-1.0&tabs=http
+     */
+    public function getDriveItemID(Request $request)
+    {
+        $fileName = $request->get('fileName');
+        $siteId = $this->getSharePointSiteID();
+        $accessToken = $this->getAccessToken();
+        $url = "$this->MICROSOFT_API_URL/$siteId/drives/$this->DRIVE_ID/root:/$this->FILE_PATH/$fileName.xlsx";
+
+        $fileResponse = Http::withToken($accessToken)
+            ->get($url);
+
+        if ($fileResponse->successful()) {
+            return $fileResponse['id'];
+        }
 
         return null;
     }
