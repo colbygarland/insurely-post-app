@@ -161,6 +161,10 @@ class MicrosoftController extends Controller
         return null;
     }
 
+    /**
+     * Get the data from a worksheet on an Excel file.
+     * https://learn.microsoft.com/en-us/graph/api/worksheet-usedrange?view=graph-rest-1.0&tabs=http
+     */
     public function getDataFromWorksheet(Request $request)
     {
         $fileName = $request->get('fileName');
