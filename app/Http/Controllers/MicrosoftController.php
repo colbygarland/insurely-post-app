@@ -54,6 +54,22 @@ class MicrosoftController extends Controller
     }
 
     /**
+     * Get the data from a worksheet on an Excel file.
+     * https://learn.microsoft.com/en-us/graph/api/worksheet-usedrange?view=graph-rest-1.0&tabs=http
+     */
+    public function getDataFromWorksheet(Request $request)
+    {
+        $fileName = $request->get('fileName');
+        $fileId = $this->getDriveItemID($fileName);
+        $worksheetId = $this->getWorksheetFromWorkbook($fileName, $fileId);
+        $accessToken = $this->getAccessToken();
+        $url = "$this->MICROSOFT_API_URL/drives/$this->DRIVE_ID/items/$fileId/workbook/worksheets/$worksheetId/usedRange";
+
+        $range = Http::withToken($accessToken)->get($url)->json();
+        dd($range['values']);
+    }
+
+    /**
      * Used to get an access token.
      * https://learn.microsoft.com/en-us/graph/auth-v2-service?tabs=http#step-3-request-an-access-token
      */
@@ -86,12 +102,6 @@ class MicrosoftController extends Controller
 
         return $this->ACCESS_TOKEN;
     }
-
-    /**
-     * Used to get a session
-     * https://learn.microsoft.com/en-us/graph/api/resources/excel?view=graph-rest-1.0#api-call-to-get-a-session
-     */
-    public function getWorkbookSession() {}
 
     /**
      * Get the Site ID to then access files or Excel worksheets.
@@ -159,22 +169,6 @@ class MicrosoftController extends Controller
         }
 
         return null;
-    }
-
-    /**
-     * Get the data from a worksheet on an Excel file.
-     * https://learn.microsoft.com/en-us/graph/api/worksheet-usedrange?view=graph-rest-1.0&tabs=http
-     */
-    public function getDataFromWorksheet(Request $request)
-    {
-        $fileName = $request->get('fileName');
-        $fileId = $this->getDriveItemID($fileName);
-        $worksheetId = $this->getWorksheetFromWorkbook($fileName, $fileId);
-        $accessToken = $this->getAccessToken();
-        $url = "$this->MICROSOFT_API_URL/drives/$this->DRIVE_ID/items/$fileId/workbook/worksheets/$worksheetId/usedRange";
-
-        $range = Http::withToken($accessToken)->get($url)->json();
-        dd($range['values']);
     }
 
     public function callback(Request $request) {}
