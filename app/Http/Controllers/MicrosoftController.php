@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -26,6 +27,13 @@ class MicrosoftController extends Controller
     private $WORKSHEET_TAB_MAPPING = [
         'Partnership Doc' => 'Partner Codes',
     ];
+
+    public function __construct(Request $request)
+    {
+        if ($request->get('key') != env('MICROSOFT_REQUEST_KEY')) {
+            throw new Exception('Unauthorized');
+        }
+    }
 
     /**
      * Used to request admin consent for the Insight app.
