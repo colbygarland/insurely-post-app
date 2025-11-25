@@ -13,15 +13,19 @@ class MicrosoftController extends Controller
 
     private $SITE_PATH = 'sites/InsurelyInc';
 
-    private $MICROSOFT_API_URL = 'https://graph.microsoft.com/v1.0/sites';
+    private $MICROSOFT_API_URL = 'https://graph.microsoft.com/v1.0';
 
-    // Shared%20Documents/General/Partnership%20Folder%20(Bible)/Partnership%20Doc.xlsx
     private $FILE_PATH = 'General/Partnership Folder (Bible)/';
 
     // Obtained by running a GET on https://graph.microsoft.com/v1.0/sites/$siteId/drives
     private $DRIVE_ID = 'b!cL5ei3so5k6eRDsPoZ3RZ9WrF49ax-FAqGBuj6ScBAR6GrxICGvJTIJ29bDZH7Ft';
 
     private $ACCESS_TOKEN = '';
+
+    // Used to choose which tab from the Excel sheet we want to use (some have multiple)
+    private $WORKSHEET_TAB_MAPPING = [
+        'Partnership Doc' => 'Partner Codes',
+    ];
 
     /**
      * Used to request admin consent for the Insight app.
@@ -98,7 +102,7 @@ class MicrosoftController extends Controller
         Log::debug('getSharePointSiteID(): begin');
 
         $accessToken = $this->getAccessToken();
-        $url = "$this->MICROSOFT_API_URL/$this->HOST_NAME:/$this->SITE_PATH";
+        $url = "$this->MICROSOFT_API_URL/sites/$this->HOST_NAME:/$this->SITE_PATH";
 
         $siteResponse = Http::withToken($accessToken)
             ->get($url);
@@ -121,18 +125,40 @@ class MicrosoftController extends Controller
      * Get the drive item ID for the file.
      * https://learn.microsoft.com/en-us/graph/api/driveitem-get?view=graph-rest-1.0&tabs=http
      */
-    public function getDriveItemID(Request $request)
+    private function getDriveItemID(string $fileName)
     {
-        $fileName = $request->get('fileName');
         $siteId = $this->getSharePointSiteID();
         $accessToken = $this->getAccessToken();
-        $url = "$this->MICROSOFT_API_URL/$siteId/drives/$this->DRIVE_ID/root:/$this->FILE_PATH/$fileName.xlsx";
+        $url = "$this->MICROSOFT_API_URL/sites/$siteId/drives/$this->DRIVE_ID/root:/$this->FILE_PATH/$fileName.xlsx";
 
         $fileResponse = Http::withToken($accessToken)
             ->get($url);
 
         if ($fileResponse->successful()) {
             return $fileResponse['id'];
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the active worksheet in a workbook.
+     * https://learn.microsoft.com/en-us/graph/api/worksheet-list?view=graph-rest-1.0&tabs=http
+     */
+    public function getWorksheetFromWorkbook(Request $request)
+    {
+        $fileName = $request->get('fileName');
+        $fileId = $this->getDriveItemID($fileName);
+        $accessToken = $this->getAccessToken();
+        // "https://graph.microsoft.com/v1.0/drives/b!cL5ei3so5k6eRDsPoZ3RZ9WrF49ax-FAqGBuj6ScBAR6GrxICGvJTIJ29bDZH7Ft/items/$fileId/workbook/worksheets"
+        $url = "$this->MICROSOFT_API_URL/drives/$this->DRIVE_ID/items/$fileId/workbook/worksheets";
+
+        $worksheets = Http::withToken($accessToken)->get($url);
+
+        if ($worksheets->successful()) {
+            $selectedSheet = collect($worksheets['value'])->firstWhere('name', $this->WORKSHEET_TAB_MAPPING[$fileName]);
+
+            return $selectedSheet['id'];
         }
 
         return null;
