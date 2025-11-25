@@ -65,8 +65,13 @@ class MicrosoftController extends Controller
         $accessToken = $this->getAccessToken();
         $url = "$this->MICROSOFT_API_URL/drives/$this->DRIVE_ID/items/$fileId/workbook/worksheets/$worksheetId/usedRange";
 
-        $range = Http::withToken($accessToken)->get($url)->json();
-        dd($range['values']);
+        $response = Http::withToken($accessToken)->get($url);
+
+        if ($response->successful()) {
+            return response()->json($response->json()['values']);
+        }
+
+        return null;
     }
 
     /**
