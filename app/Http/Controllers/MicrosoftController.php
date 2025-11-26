@@ -26,6 +26,8 @@ class MicrosoftController extends Controller
     // Used to choose which tab from the Excel sheet we want to use (some have multiple)
     private $WORKSHEET_TAB_MAPPING = [
         'Partnership Doc' => 'Partner Codes',
+        'GREATWAY FINANCIAL Alpha List' => 'Main Alpha List',
+        'EXPERIOR FINANCIAL Spreadsheet Template Alpha List' => 'MAIN ALPHA LIST',
     ];
 
     public function __construct(Request $request)
