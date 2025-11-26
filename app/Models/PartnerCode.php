@@ -121,7 +121,7 @@ class PartnerCode extends Model
     }
 
     /**
-     * Searches via $data['email'] or $data['code']
+     * Searches via $data['email'] or $data['code'] or $data['fund_serve_code']
      */
     public static function createOrUpdate(array $data)
     {
@@ -133,6 +133,10 @@ class PartnerCode extends Model
 
         if (! empty($data['code'])) {
             $query->orWhere('code', $data['code']);
+        }
+
+        if (! empty($data['fund_serve_code'])) {
+            $query->orWhere('fund_serve_code', $data['fund_serve_code']);
         }
 
         $partnerCode = $query->first();
