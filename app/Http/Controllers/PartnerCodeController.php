@@ -19,7 +19,8 @@ class PartnerCodeController extends Controller
 
     public function index()
     {
-        return Inertia::render('Partners/index');
+        return view('partners.index');
+        // return Inertia::render('Partners/index');
     }
 
     public function list(Request $request)
@@ -27,6 +28,29 @@ class PartnerCodeController extends Controller
         $this->authenticate($request->get('key'));
 
         $partnerCodes = PartnerCode::all();
+
+        return response()->json([
+            'meta' => [
+                'count' => count($partnerCodes),
+            ],
+            'data' => $partnerCodes,
+        ]);
+    }
+
+    public function find(Request $request)
+    {
+        $this->authenticate($request->get('key'));
+
+        $searchCriteria = $request->get('searchCriteria');
+        $query = PartnerCode::query();
+        $query->orWhere('code', 'like', "%$searchCriteria%");
+        $query->orWhere('first_name', 'like', "%$searchCriteria%");
+        $query->orWhere('last_name', 'like', "%$searchCriteria%");
+        $query->orWhere('email', 'like', "%$searchCriteria%");
+        $query->orWhere('company', 'like', "%$searchCriteria%");
+        $query->orWhere('fund_serve_code', 'like', "%$searchCriteria%");
+
+        $partnerCodes = $query->get();
 
         return response()->json([
             'meta' => [

@@ -52,6 +52,7 @@ Route::get('/microsoft/callback', [MicrosoftController::class, 'callback'])->nam
 
 // Partnerships
 Route::get('/partners/list', [PartnerCodeController::class, 'list'])->name('partners.list');
+Route::get('/partners/find', [PartnerCodeController::class, 'find'])->name('partners.find');
 Route::post('/partners/create', [PartnerCodeController::class, 'create'])->name('partners.create');
 Route::post('/partners/update/{id}', [PartnerCodeController::class, 'update'])->name('partners.update');
 Route::delete('/partners/delete/{id}', [PartnerCodeController::class, 'delete'])->name('partners.delete');
