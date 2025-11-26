@@ -179,7 +179,7 @@ class MicrosoftController extends Controller
         $worksheets = Http::withToken($accessToken)->get($url);
 
         if ($worksheets->successful()) {
-            $selectedSheet = collect($worksheets['value'])->firstWhere('name', $this->WORKSHEET_TAB_MAPPING[$fileName]);
+            $selectedSheet = collect($worksheets['value'])->firstWhere('name', $this->WORKSHEET_TAB_MAPPING[$fileName] ?? 'Sheet1');
 
             return $selectedSheet['name'];
         }
