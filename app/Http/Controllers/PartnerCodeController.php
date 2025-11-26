@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 
-class PartnerController extends Controller
+class PartnerCodeController extends Controller
 {
     public function index()
     {
