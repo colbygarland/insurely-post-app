@@ -80,5 +80,24 @@ class PartnerCodeController extends Controller
         return response('Partner code deleted', Response::HTTP_OK);
     }
 
-    public function process() {}
+    /**
+     * Does the processing to add the PartnerCodes into the DB.
+     */
+    public function process(Request $request)
+    {
+        $this->authenticate($request->get('key'));
+
+        $microsoftController = new MicrosoftController($request);
+        $response = $microsoftController->getDataFromWorksheet($request);
+
+        if (! $response) {
+            return response()->json('No data to process');
+        }
+
+        $fileName = $request->get('fileName');
+        $data = json_decode($response->content(), true);
+        PartnerCode::process($data, $fileName);
+
+        return response()->json('Data successfully processed.');
+    }
 }

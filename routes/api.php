@@ -55,3 +55,4 @@ Route::get('/partners/list', [PartnerCodeController::class, 'list'])->name('part
 Route::post('/partners/create', [PartnerCodeController::class, 'create'])->name('partners.create');
 Route::post('/partners/update/{id}', [PartnerCodeController::class, 'update'])->name('partners.update');
 Route::delete('/partners/delete/{id}', [PartnerCodeController::class, 'delete'])->name('partners.delete');
+Route::post('/partners/process', [PartnerCodeController::class, 'process'])->name('partners.process');
