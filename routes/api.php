@@ -5,6 +5,7 @@ use App\Http\Controllers\CallLogController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\GoogleAdsController;
 use App\Http\Controllers\MicrosoftController;
+use App\Http\Controllers\PartnerCodeController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\RingCentralController;
 use App\Http\Middleware\Verified;
@@ -50,3 +51,7 @@ Route::get('/microsoft/get-data-from-worksheet', [MicrosoftController::class, 'g
 Route::get('/microsoft/callback', [MicrosoftController::class, 'callback'])->name('microsoft.callback');
 
 // Partnerships
+Route::get('/partners/list', [PartnerCodeController::class, 'list'])->name('partners.list');
+Route::post('/partners/create', [PartnerCodeController::class, 'create'])->name('partners.create');
+Route::post('/partners/update/{id}', [PartnerCodeController::class, 'update'])->name('partners.update');
+Route::delete('/partners/delete/{id}', [PartnerCodeController::class, 'delete'])->name('partners.delete');
