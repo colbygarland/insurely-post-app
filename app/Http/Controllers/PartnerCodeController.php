@@ -28,7 +28,12 @@ class PartnerCodeController extends Controller
 
         $partnerCodes = PartnerCode::all();
 
-        return response()->json($partnerCodes);
+        return response()->json([
+            'meta' => [
+                'count' => count($partnerCodes),
+            ],
+            'data' => $partnerCodes,
+        ]);
     }
 
     public function create(Request $request)
@@ -97,6 +102,10 @@ class PartnerCodeController extends Controller
         $fileName = $request->get('fileName');
         $data = json_decode($response->content(), true);
         PartnerCode::process($data, $fileName);
+
+        // TODO: needs to be properly tested
+        // TODO: needs error handling
+        // TODO: needs logging
 
         return response()->json('Data successfully processed.');
     }
