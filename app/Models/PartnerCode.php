@@ -54,16 +54,7 @@ class PartnerCode extends Model
         $headers = array_shift($data);
 
         foreach ($data as $row) {
-            $partnerCodeDataToBeCreatedOrUpdated = [];
-
-            for ($i = 0; $i < count($row); $i++) {
-                // Using the headers, get the PartnerCode key to set
-                $key = self::$fieldNameMapping[$headers[$i]];
-                $value = $row[$i];
-
-                $partnerCodeDataToBeCreatedOrUpdated[$key] = $value;
-            }
-
+            $partnerCodeDataToBeCreatedOrUpdated = self::getSanitizedData($row, $headers);
             $partnerCode = self::createOrUpdate($partnerCodeDataToBeCreatedOrUpdated);
             $partnerCode->save();
         }
@@ -85,8 +76,6 @@ class PartnerCode extends Model
         $headers = array_shift($data);
 
         foreach ($data as $row) {
-            $partnerCodeDataToBeCreatedOrUpdated = [];
-
             // Skip empty rows
             if (empty($row[1])) {
                 continue;
@@ -102,22 +91,30 @@ class PartnerCode extends Model
                 continue;
             }
 
-            for ($i = 0; $i < count($row); $i++) {
-                // Using the headers, get the PartnerCode key to set
-                $key = self::$fieldNameMapping[$headers[$i]] ?? null;
-
-                // Handle the empty columns, and the columns we don't care about right now (ie Tenant, Condo, etc.)
-                if (! $key) {
-                    continue;
-                }
-                $value = $row[$i];
-
-                $partnerCodeDataToBeCreatedOrUpdated[$key] = $value;
-            }
-
+            $partnerCodeDataToBeCreatedOrUpdated = self::getSanitizedData($row, $headers);
             $partnerCode = self::createOrUpdate($partnerCodeDataToBeCreatedOrUpdated);
             $partnerCode->save();
         }
+    }
+
+    private static function getSanitizedData(array $row, array $headers)
+    {
+        $data = [];
+
+        for ($i = 0; $i < count($row); $i++) {
+            // Using the headers, get the PartnerCode key to set
+            $key = self::$fieldNameMapping[$headers[$i]] ?? null;
+
+            // Handle the empty columns, and the columns we don't care about right now (ie Tenant, Condo, etc.)
+            if (! $key) {
+                continue;
+            }
+            $value = $row[$i];
+
+            $data[$key] = $value;
+        }
+
+        return $data;
     }
 
     /**

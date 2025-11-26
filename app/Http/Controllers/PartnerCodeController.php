@@ -74,6 +74,12 @@ class PartnerCodeController extends Controller
     {
         $this->authenticate($request->get('key'));
 
+        if ($request->has('delete_all')) {
+            PartnerCode::truncate();
+
+            return response('All records deleted');
+        }
+
         $partnerCode = PartnerCode::find($id);
 
         if (! $partnerCode) {
@@ -102,10 +108,6 @@ class PartnerCodeController extends Controller
         $fileName = $request->get('fileName');
         $data = json_decode($response->content(), true);
         PartnerCode::process($data, $fileName);
-
-        // TODO: needs to be properly tested
-        // TODO: needs error handling
-        // TODO: needs logging
 
         return response()->json('Data successfully processed.');
     }
