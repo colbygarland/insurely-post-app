@@ -10,4 +10,6 @@ class PartnerController extends Controller
     {
         return Inertia::render('Partners/index');
     }
+
+    public function process() {}
 }

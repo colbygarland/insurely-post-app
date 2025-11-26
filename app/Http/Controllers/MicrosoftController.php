@@ -76,6 +76,9 @@ class MicrosoftController extends Controller
         $response = Http::withToken($accessToken)->get($url);
 
         if ($response->successful()) {
+            // Reset the access token
+            $this->ACCESS_TOKEN = null;
+
             return response()->json($response->json()['values']);
         }
 
