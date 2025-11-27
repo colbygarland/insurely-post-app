@@ -123,15 +123,25 @@ class PartnerCodeController extends Controller
         $this->authenticate($request->get('key'));
 
         $microsoftController = new MicrosoftController($request);
-        $response = $microsoftController->getDataFromWorksheet($request);
 
-        if (! $response) {
-            return response()->json('No data to process');
+        // For now, hardcode the names
+        // TODO: add a better way to do this
+        $fileNames = [
+            'BetterLife Global Inc. - Student Sign up for GWF',
+            'EAU CLAIRE PARTNERS Alpha List',
+            'EXPERIOR FINANCIAL Spreadsheet Template Alpha List',
+            'GREATWAY FINANCIAL Alpha List',
+            'Partnership Doc',
+            // TODO: 'PROLEGIS SOLUTIONS'
+        ];
+
+        foreach ($fileNames as $fileName) {
+            $newRequest = new Request(['fileName' => $fileName]);
+            $response = $microsoftController->getDataFromWorksheet($newRequest);
+
+            $data = json_decode($response->content(), true);
+            PartnerCode::process($data, $fileName);
         }
-
-        $fileName = $request->get('fileName');
-        $data = json_decode($response->content(), true);
-        PartnerCode::process($data, $fileName);
 
         return response()->json('Data successfully processed.');
     }

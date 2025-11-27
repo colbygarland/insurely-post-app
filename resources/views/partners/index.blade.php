@@ -16,33 +16,44 @@
             @if(Session::has('errorMessage'))
                 <x-alert type="error" :message="Session::get('errorMessage')" />
             @endif
-            <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
-                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-4">
-                    Search for a Partner Code
-                </h2>
-                <div class="mb-10">
-                    <div>
-                        <x-input-label for="code" :value="__('Search')" />
-                        <x-text-input id="code" name="code" type="text" class="mt-1 block w-full" required autofocus />
-                        <x-input-error class="mt-2" :messages="$errors->get('code')" />
+
+            <div class="lg:grid lg:grid-cols-5 gap-6">
+                <div class="lg:col-span-4">
+                    <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-4">
+                            Search for a Partner Code
+                        </h2>
+                        <div class="mb-10">
+                            <div>
+                                <x-input-label for="code" :value="__('Search')" />
+                                <x-text-input id="code" name="code" type="text" class="mt-1 block w-full" required autofocus />
+                                <x-input-error class="mt-2" :messages="$errors->get('code')" />
+                            </div>
+                        </div>
+                        <div class="">
+                            <p class="mb-2"><small><span id="count">0</span> results</small></p>
+                            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th class="py-2 px-2">Code</th>
+                                        <th class="py-2 px-2">Email</th>
+                                        <th class="py-2 px-2">Company</th>
+                                        <th class="py-2 px-2"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="partnerCodeTableBody">
+                                    
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <div class="">
-                    <p class="mb-2"><small><span id="count">0</span> results</small></p>
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <th class="py-2 px-2">Code</th>
-                                <th class="py-2 px-2">Email</th>
-                                <th class="py-2 px-2">Company</th>
-                                <th class="py-2 px-2"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="partnerCodeTableBody">
-                            
-                        </tbody>
-                    </table>
+                <div class="lg:col-span-1">
+                    <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                        <x-primary-button type="text" id="syncButton">Sync Partner Codes</x-primary-button>
+                    </div>
                 </div>
+                
             </div>
       </div>
   </div>
@@ -53,6 +64,7 @@
     const code = document.getElementById('code')
     const copyButtons = document.getElementsByClassName('copyButton')
     const count = document.getElementById('count')
+    const syncButton = document.getElementById('syncButton')
 
     // From https://www.joshwcomeau.com/snippets/javascript/debounce/
     const debounce = (callback, wait) => {
@@ -119,7 +131,7 @@
             return
         }
         
-        const response = await fetch(`http://localhost:8000/api/partners/find?key=${key}&searchCriteria=${searchCriteria}`)
+        const response = await fetch(`/api/partners/find?key=${key}&searchCriteria=${searchCriteria}`)
         const json = await response.json()
 
         const amount = json['meta']['count']
@@ -142,6 +154,21 @@
         await navigator.clipboard.writeText(code)
         this.querySelector('.copyButtonText').textContent = 'Copied!'
     }
+
+    // Sync button functionality 
+    syncButton.addEventListener('click', async function(){
+        syncButton.innerHTML = 'Syncing, please wait..'
+
+        const response = await fetch(`/api/partners/process?key=${key}`, {
+            method: 'POST'
+        })
+
+        if(response.status === 200){
+            syncButton.innerHTML = 'Syncing complete!'
+        } else {
+            syncButton.innerHTML = 'Something went wrong.'
+        }
+    })
 </script>
 
 </x-app-layout>
