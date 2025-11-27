@@ -72,7 +72,7 @@
 
     const populateTable = (data) => {
         const rows = []
-        data.forEach(row => {
+        data.forEach(row => {      
             rows.push(`
                 <tr data-id="${row.id}" 
                     class="border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
@@ -116,7 +116,7 @@
 
         const count = json['count']
         const data = json['data']
-        
+
         console.log(data)
 
         emptyTable()
