@@ -103,13 +103,20 @@
     }
 
     const handleFormSubmit = debounce(async (event) => {
-        const response = await fetch(`http://localhost:8000/api/partners/find?key=${key}&searchCriteria=${event.target.value}`)
+        const searchCriteria = event.target.value
+
+        // Check for empty state
+        if(!searchCriteria){
+            emptyTable()
+            return
+        }
+        
+        const response = await fetch(`http://localhost:8000/api/partners/find?key=${key}&searchCriteria=${searchCriteria}`)
         const json = await response.json()
 
         const count = json['count']
         const data = json['data']
-
-        // TODO: Enter the data into the table
+        
         console.log(data)
 
         emptyTable()
