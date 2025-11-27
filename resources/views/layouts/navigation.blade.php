@@ -33,7 +33,7 @@
                         {{ __('Documentation') }}
                     </x-nav-link>
 
-                    @if(auth()->user()->email == 'colbygarland@gmail.com' || auth()->user()->email == 'colbyg@insurely.ca')
+                    @if(auth()->user()->email == 'colbygarland@gmail.com' || auth()->user()->email == 'colbyg@insurely.ca' || auth()->user()->email == 'christineb@insurely.ca' || auth()->user()->email == 'kateb@insurely.ca')
                     <x-nav-link :href="route('partners')" :active="request()->routeIs('partners')">
                         {{ __('Partners') }}
                     </x-nav-link>
