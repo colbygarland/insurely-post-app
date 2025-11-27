@@ -28,6 +28,7 @@
                     </div>
                 </div>
                 <div class="">
+                    <p class="mb-2"><small><span id="count">0</span> results</small></p>
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
@@ -51,6 +52,7 @@
     const table = document.getElementById('partnerCodeTableBody')
     const code = document.getElementById('code')
     const copyButtons = document.getElementsByClassName('copyButton')
+    const count = document.getElementById('count')
 
     // From https://www.joshwcomeau.com/snippets/javascript/debounce/
     const debounce = (callback, wait) => {
@@ -69,7 +71,11 @@
 
     const populateTable = (data) => {
         const rows = []
-        data.forEach(row => {      
+        data.forEach(row => {   
+            if(row.code === ''){
+                return
+            }   
+
             rows.push(`
                 <tr data-id="${row.id}" 
                     class="border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
@@ -99,25 +105,32 @@
         });
     }
 
+    const updateCount = (amount) => {
+        count.innerHTML = amount
+    }
+
     const handleFormSubmit = debounce(async (event) => {
         const searchCriteria = event.target.value
 
         // Check for empty state
         if(!searchCriteria){
             emptyTable()
+            updateCount(0)
             return
         }
         
         const response = await fetch(`http://localhost:8000/api/partners/find?key=${key}&searchCriteria=${searchCriteria}`)
         const json = await response.json()
 
-        const count = json['count']
+        const amount = json['meta']['count']
         const data = json['data']
 
         console.log(data)
+        console.log(json)
 
         emptyTable()
         populateTable(data)
+        updateCount(amount)
     }, 250)
 
     code.addEventListener('input', handleFormSubmit)
