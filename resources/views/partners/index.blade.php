@@ -20,7 +20,7 @@
                 <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight mb-4">
                     Search for a Partner Code
                 </h2>
-                <div class="mb-20">
+                <div class="mb-10">
                     <form method="post" class="">
                         @csrf
                         <div>
@@ -34,25 +34,30 @@
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
-                                <th scope="col" class="px-6 py-3">Code</th>
-                                <th scope="col" class="px-6 py-3">Email</th>
-                                <th scope="col" class="px-6 py-3">Company</th>
-                                <th scope="col" class="px-6 py-3"></th>
+                                <th class="py-2 px-2">Code</th>
+                                <th class="py-2 px-2">Email</th>
+                                <th class="py-2 px-2">Company</th>
+                                <th class="py-2 px-2"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                <td class="">
-                                    
+                                <td class="py-2 px-2">
+                                    EGF.LGF
                                 </td>
-                                <td class="">
-                                    
+                                <td class="py-2 px-2">
+                                    colbyg@insurely.ca
                                 </td>
-                                <td class="">
-                                    
+                                <td class="py-2 px-2">
+                                    Insurely Inc.
                                 </td>
-                                <td class="">
-                                Copy button here
+                                <td class="py-2 px-2">
+                                    <button data-code="EFG" type="button" class="copySummaryBtn inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span class="copySummaryBtnText">Copy</span>
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
@@ -64,17 +69,41 @@
 
 <script>
     const key = '@php echo env('MICROSOFT_REQUEST_KEY'); @endphp'
-    document.getElementById('code').addEventListener('input', async function(e){
-        // TODO: debounce this
-        const response = await fetch(`http://localhost:8000/api/partners/find?key=${key}&searchCriteria=${this.value}`)
+
+    // From https://www.joshwcomeau.com/snippets/javascript/debounce/
+    const debounce = (callback, wait) => {
+        let timeoutId = null;
+        return (...args) => {
+            window.clearTimeout(timeoutId);
+            timeoutId = window.setTimeout(() => {
+            callback.apply(null, args);
+            }, wait);
+        };
+    }
+
+    const handleFormSubmit = debounce(async (event) => {
+        const response = await fetch(`http://localhost:8000/api/partners/find?key=${key}&searchCriteria=${event.target.value}`)
         const json = await response.json()
-        
+
         const count = json['count']
         const data = json['data']
 
         // TODO: Enter the data into the table
         console.log(data)
-    })
+    }, 250)
+
+    document.getElementById('code').addEventListener('input', handleFormSubmit)
+
+    // Copy button functionality 
+    const copyButtons = document.getElementsByClassName('copySummaryBtn')
+    const copyHandler = function(){
+        const code = this.getAttribute('data-code')
+        alert(code)
+    }
+
+    Array.from(copyButtons).forEach(function(element) {
+      element.addEventListener('click', copyHandler);
+    });
 </script>
 
 </x-app-layout>
