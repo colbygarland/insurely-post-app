@@ -26,6 +26,8 @@ class MicrosoftController extends Controller
     // Used to choose which tab from the Excel sheet we want to use (some have multiple)
     private $WORKSHEET_TAB_MAPPING = [
         'Partnership Doc' => 'Partner Codes',
+        'GREATWAY FINANCIAL Alpha List' => 'Main Alpha List',
+        'EXPERIOR FINANCIAL Spreadsheet Template Alpha List' => 'MAIN ALPHA LIST',
     ];
 
     public function __construct(Request $request)
@@ -76,6 +78,9 @@ class MicrosoftController extends Controller
         $response = Http::withToken($accessToken)->get($url);
 
         if ($response->successful()) {
+            // Reset the access token
+            $this->ACCESS_TOKEN = null;
+
             return response()->json($response->json()['values']);
         }
 
@@ -176,7 +181,7 @@ class MicrosoftController extends Controller
         $worksheets = Http::withToken($accessToken)->get($url);
 
         if ($worksheets->successful()) {
-            $selectedSheet = collect($worksheets['value'])->firstWhere('name', $this->WORKSHEET_TAB_MAPPING[$fileName]);
+            $selectedSheet = collect($worksheets['value'])->firstWhere('name', $this->WORKSHEET_TAB_MAPPING[$fileName] ?? 'Sheet1');
 
             return $selectedSheet['name'];
         }
