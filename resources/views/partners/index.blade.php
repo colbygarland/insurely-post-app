@@ -40,7 +40,7 @@
                                 <th class="py-2 px-2"></th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="partnerCodeTableBody">
                             <tr class="border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                                 <td class="py-2 px-2">
                                     EGF.LGF
@@ -52,11 +52,11 @@
                                     Insurely Inc.
                                 </td>
                                 <td class="py-2 px-2">
-                                    <button data-code="EFG" type="button" class="copySummaryBtn inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                                    <button data-code="EFG" type="button" class="copyButton inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
                                         <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                                         </svg>
-                                        <span class="copySummaryBtnText">Copy</span>
+                                        <span class="copyButtonText">Copy</span>
                                     </button>
                                 </td>
                             </tr>
@@ -69,6 +69,9 @@
 
 <script>
     const key = '@php echo env('MICROSOFT_REQUEST_KEY'); @endphp'
+    const table = document.getElementById('partnerCodeTableBody')
+    const code = document.getElementById('code')
+    const copyButtons = document.getElementsByClassName('copyButton')
 
     // From https://www.joshwcomeau.com/snippets/javascript/debounce/
     const debounce = (callback, wait) => {
@@ -81,6 +84,14 @@
         };
     }
 
+    const emptyTable = () => {
+        table.innerHTML = ''
+    }
+
+    const populateTable = (data) => {
+
+    }
+
     const handleFormSubmit = debounce(async (event) => {
         const response = await fetch(`http://localhost:8000/api/partners/find?key=${key}&searchCriteria=${event.target.value}`)
         const json = await response.json()
@@ -90,15 +101,18 @@
 
         // TODO: Enter the data into the table
         console.log(data)
+
+        emptyTable()
     }, 250)
 
-    document.getElementById('code').addEventListener('input', handleFormSubmit)
+    code.addEventListener('input', handleFormSubmit)
 
     // Copy button functionality 
-    const copyButtons = document.getElementsByClassName('copySummaryBtn')
-    const copyHandler = function(){
+    const copyHandler = async function(){
         const code = this.getAttribute('data-code')
-        alert(code)
+
+        await navigator.clipboard.writeText(code)
+        this.querySelector('.copyButtonText').textContent = 'Copied!'
     }
 
     Array.from(copyButtons).forEach(function(element) {
