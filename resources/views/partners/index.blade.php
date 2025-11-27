@@ -21,14 +21,11 @@
                     Search for a Partner Code
                 </h2>
                 <div class="mb-10">
-                    <form method="post" class="">
-                        @csrf
-                        <div>
-                            <x-input-label for="code" :value="__('Search')" />
-                            <x-text-input id="code" name="code" type="text" class="mt-1 block w-full" required autofocus />
-                            <x-input-error class="mt-2" :messages="$errors->get('code')" />
-                        </div>
-                    </form>
+                    <div>
+                        <x-input-label for="code" :value="__('Search')" />
+                        <x-text-input id="code" name="code" type="text" class="mt-1 block w-full" required autofocus />
+                        <x-input-error class="mt-2" :messages="$errors->get('code')" />
+                    </div>
                 </div>
                 <div class="">
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
