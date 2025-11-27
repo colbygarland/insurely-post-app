@@ -41,25 +41,7 @@
                             </tr>
                         </thead>
                         <tbody id="partnerCodeTableBody">
-                            <tr class="border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                <td class="py-2 px-2">
-                                    EGF.LGF
-                                </td>
-                                <td class="py-2 px-2">
-                                    colbyg@insurely.ca
-                                </td>
-                                <td class="py-2 px-2">
-                                    Insurely Inc.
-                                </td>
-                                <td class="py-2 px-2">
-                                    <button data-code="EFG" type="button" class="copyButton inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                                        </svg>
-                                        <span class="copyButtonText">Copy</span>
-                                    </button>
-                                </td>
-                            </tr>
+                            
                         </tbody>
                     </table>
                 </div>
@@ -89,7 +71,35 @@
     }
 
     const populateTable = (data) => {
+        const rows = []
+        data.forEach(row => {
+            rows.push(`
+                <tr data-id="${row.id}" 
+                    class="border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+                    <td class="py-2 px-2">${row.code}</td>
+                    <td class="py-2 px-2">${row.email ?? '-'}</td>
+                    <td class="py-2 px-2">${row.company ?? '-'}</td>
+                    <td class="py-2 px-2">
+                        <button data-code="${row.code}" 
+                                type="button"
+                                class="copyButton inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                            <span class="copyButtonText">Copy</span>
+                        </button>
+                    </td>
+                </tr>
+            `);
+        })
 
+        table.innerHTML = rows.join('')
+
+        // Create the event listeners
+        Array.from(copyButtons).forEach(function(element) {
+            element.addEventListener('click', copyHandler);
+        });
     }
 
     const handleFormSubmit = debounce(async (event) => {
@@ -103,6 +113,7 @@
         console.log(data)
 
         emptyTable()
+        populateTable(data)
     }, 250)
 
     code.addEventListener('input', handleFormSubmit)
@@ -114,10 +125,6 @@
         await navigator.clipboard.writeText(code)
         this.querySelector('.copyButtonText').textContent = 'Copied!'
     }
-
-    Array.from(copyButtons).forEach(function(element) {
-      element.addEventListener('click', copyHandler);
-    });
 </script>
 
 </x-app-layout>
