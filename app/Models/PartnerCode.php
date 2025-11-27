@@ -12,6 +12,9 @@ class PartnerCode extends Model
     // The unique doc that has a different structure than the rest of the docs.
     private static $partnershipDocName = 'Partnership Doc';
 
+    // The unique doc that has a different structure than the rest of the docs.
+    private static $prolegicSolutionsDocName = 'PROLEGIS SOLUTIONS';
+
     private static $fieldNameMapping = [
         'FirstName' => 'first_name',
         'LastName' => 'last_name',
@@ -42,7 +45,7 @@ class PartnerCode extends Model
     public static function process(array $data, string $fileName)
     {
         // Partnership Doc is a special case
-        if ($fileName === self::$partnershipDocName) {
+        if ($fileName === self::$partnershipDocName || $fileName === self::$prolegicSolutionsDocName) {
             self::processPartnershipDoc($data);
 
             return;

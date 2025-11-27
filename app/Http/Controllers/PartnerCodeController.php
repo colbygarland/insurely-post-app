@@ -126,14 +126,19 @@ class PartnerCodeController extends Controller
 
         // For now, hardcode the names
         // TODO: add a better way to do this
-        $fileNames = [
-            'BetterLife Global Inc. - Student Sign up for GWF',
-            'EAU CLAIRE PARTNERS Alpha List',
-            'EXPERIOR FINANCIAL Spreadsheet Template Alpha List',
-            'GREATWAY FINANCIAL Alpha List',
-            'Partnership Doc',
-            // TODO: 'PROLEGIS SOLUTIONS'
-        ];
+        $fileNames = [];
+        if ($request->has('fileName')) {
+            $fileNames = [$request->get('fileName')];
+        } else {
+            $fileNames = [
+                'BetterLife Global Inc. - Student Sign up for GWF',
+                'EAU CLAIRE PARTNERS Alpha List',
+                'EXPERIOR FINANCIAL Spreadsheet Template Alpha List',
+                'GREATWAY FINANCIAL Alpha List',
+                'Partnership Doc',
+                'PROLEGIS SOLUTIONS',
+            ];
+        }
 
         foreach ($fileNames as $fileName) {
             $newRequest = new Request(['fileName' => $fileName]);
