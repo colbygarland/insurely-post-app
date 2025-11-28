@@ -42,15 +42,18 @@ class PartnerCodeController extends Controller
         $this->authenticate($request->get('key'));
 
         $searchCriteria = $request->get('searchCriteria');
-        $query = PartnerCode::query();
-        $query->orWhere('code', 'like', "%$searchCriteria%");
-        $query->orWhere('first_name', 'like', "%$searchCriteria%");
-        $query->orWhere('last_name', 'like', "%$searchCriteria%");
-        $query->orWhere('email', 'like', "%$searchCriteria%");
-        $query->orWhere('company', 'like', "%$searchCriteria%");
-        $query->orWhere('fund_serve_code', 'like', "%$searchCriteria%");
 
-        $partnerCodes = $query->get();
+        $partnerCodes = PartnerCode::query()
+            ->where(function ($q) use ($searchCriteria) {
+                $q->where('code', 'like', "%$searchCriteria%")
+                    ->orWhere('first_name', 'like', "%$searchCriteria%")
+                    ->orWhere('last_name', 'like', "%$searchCriteria%")
+                    ->orWhere('email', 'like', "%$searchCriteria%")
+                    ->orWhere('company', 'like', "%$searchCriteria%")
+                    ->orWhere('fund_serve_code', 'like', "%$searchCriteria%");
+            })
+            ->orderByRaw('COALESCE(first_name, company, code)')
+            ->get();
 
         return response()->json([
             'meta' => [
