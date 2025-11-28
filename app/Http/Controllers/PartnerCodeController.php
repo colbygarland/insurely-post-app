@@ -50,7 +50,8 @@ class PartnerCodeController extends Controller
                     ->orWhere('last_name', 'like', "%$searchCriteria%")
                     ->orWhere('email', 'like', "%$searchCriteria%")
                     ->orWhere('company', 'like', "%$searchCriteria%")
-                    ->orWhere('fund_serve_code', 'like', "%$searchCriteria%");
+                    ->orWhere('fund_serve_code', 'like', "%$searchCriteria%")
+                    ->orWhere('type', 'like', "%$searchCriteria%");
             })
             ->orderByRaw('COALESCE(first_name, company, code)')
             ->get();
