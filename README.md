@@ -1,3 +1,15 @@
-## TODO
+# Insight
 
-- [] Schedule telescope pruning https://laravel.com/docs/11.x/telescope#data-pruning
+## Playwright
+
+Running the tests
+
+```bash
+npx playwright test
+```
+
+Auto generate tests with Codegen
+
+```bash
+npx playwright codegen
+```

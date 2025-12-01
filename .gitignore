@@ -24,3 +24,10 @@ yarn-error.log
 storage/.DS_Store
 insight
 insurely_linkedin
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
