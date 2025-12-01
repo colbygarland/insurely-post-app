@@ -130,6 +130,8 @@
             updateCount(0)
             return
         }
+
+        // TODO: disable the button
         
         const response = await fetch(`/api/partners/find?key=${key}&searchCriteria=${searchCriteria}`)
         const json = await response.json()
@@ -143,6 +145,8 @@
         emptyTable()
         populateTable(data)
         updateCount(amount)
+
+        // TODO: undo disable the button
     }, 250)
 
     code.addEventListener('input', handleFormSubmit)
